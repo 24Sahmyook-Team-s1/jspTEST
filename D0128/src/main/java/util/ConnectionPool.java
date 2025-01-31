@@ -6,10 +6,10 @@ import javax.sql.*;
 
 public class ConnectionPool {
     private static DataSource _ds = null;
-	
+
     public static Connection get() throws NamingException, SQLException {
         if (_ds == null) {
-            _ds = (DataSource) (new InitialContext()).lookup("java:comp/env/jdbc/mysns");
+            _ds = (DataSource) (new InitialContext()).lookup("java:comp/env/jdbc/oracleDB"); 
         }
         return _ds.getConnection();
     }
