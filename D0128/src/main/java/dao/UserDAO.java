@@ -14,7 +14,7 @@ public class UserDAO {
         Connection conn = null;
         PreparedStatement stmt = null;
         try {
-            String sql = "INSERT INTO user(id, jsonstr) VALUES(?, ?)";
+            String sql = "INSERT INTO user2(id, jsonstr) VALUES(?, ?)";
             conn = ConnectionPool.get();
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, uid);
@@ -33,7 +33,7 @@ public class UserDAO {
         PreparedStatement stmt = null;
         ResultSet rs = null;
         try {
-            String sql = "SELECT id FROM user WHERE id = ?";
+            String sql = "SELECT id FROM user2 WHERE id = ?";
             conn = ConnectionPool.get();
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, uid);
@@ -50,7 +50,7 @@ public class UserDAO {
         Connection conn = null;
         PreparedStatement stmt = null;
         try {
-            String sql = "DELETE FROM user WHERE id = ?";
+            String sql = "DELETE FROM user2 WHERE id = ?";
             conn = ConnectionPool.get();
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, uid);
@@ -67,7 +67,7 @@ public class UserDAO {
         PreparedStatement stmt = null;
         ResultSet rs = null;
         try {
-            String sql = "SELECT jsonstr FROM user WHERE id = ?";
+            String sql = "SELECT jsonstr FROM user2 WHERE id = ?";
             conn = ConnectionPool.get();
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, uid);
@@ -94,7 +94,7 @@ public class UserDAO {
         ResultSet rs = null;
         StringBuilder str = new StringBuilder("[");
         try {
-            String sql = "SELECT * FROM user";
+            String sql = "SELECT * FROM user2";
             conn = ConnectionPool.get();
             stmt = conn.prepareStatement(sql);
             rs = stmt.executeQuery();
@@ -119,7 +119,7 @@ public class UserDAO {
         PreparedStatement stmt = null;
         ResultSet rs = null;
         try {
-            String sql = "SELECT jsonstr FROM user WHERE id = ?";
+            String sql = "SELECT jsonstr FROM user2 WHERE id = ?";
             conn = ConnectionPool.get();
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, uid);
@@ -137,7 +137,7 @@ public class UserDAO {
         Connection conn = null;
         PreparedStatement stmt = null;
         try {
-            String sql = "UPDATE user SET jsonstr = ? WHERE id = ?";
+            String sql = "UPDATE user2 SET jsonstr = ? WHERE id = ?";
             conn = ConnectionPool.get();
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, jsonstr);

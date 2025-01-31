@@ -3,7 +3,7 @@
     <Resource name="jdbc/oracleDB"
         auth="Container"
         type="javax.sql.DataSource"
-        driverClassName="oracle.jdbc.Driver"
+        driverClassName="oracle.jdbc.OracleDriver"
         url="jdbc:oracle:thin:@localhost:1521:xe"
         username="park"
         password="1111"
