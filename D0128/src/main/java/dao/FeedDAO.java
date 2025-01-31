@@ -13,7 +13,7 @@ import util.*;
 
 public class FeedDAO {
 
-    public boolean insert(String jsonstr) throws NamingException, SQLException, ParseException {
+	public boolean insert(String jsonstr) throws NamingException, SQLException, ParseException {
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -33,12 +33,10 @@ public class FeedDAO {
                 JSONObject jsonobj = (JSONObject) parser.parse(jsonstr);
                 jsonobj.put("no", max + 1);
 
-              
-                
                 // phase 2. add "user" property ------------------------------
                 String uid = jsonobj.get("id").toString();
                 
-                sql = "SELECT jsonstr FROM user WHERE id = ?";
+                sql = "SELECT jsonstr FROM user2 WHERE id = ?"; // user -> user2 변경
                 stmt = conn.prepareStatement(sql);
                 stmt.setString(1, uid);
                 rs = stmt.executeQuery();
@@ -60,7 +58,7 @@ public class FeedDAO {
                 stmt.setString(3, jsonobj.toJSONString());
                     
                 int count = stmt.executeUpdate();
-                return (count == 1) ? true : false;
+                return (count == 1);
             }
         } finally {
             if (rs != null) rs.close(); 
@@ -70,32 +68,26 @@ public class FeedDAO {
     }
 
     public String getList() throws NamingException, SQLException {
-    	Connection conn = ConnectionPool.get();
-    	PreparedStatement stmt = null;
-    	ResultSet rs = null;
-    	try {
-	    	String sql = "SELECT * FROM feed ORDER BY no DESC";
-	    	stmt = conn.prepareStatement(sql);
-	    	rs = stmt.executeQuery();
-	    	/*
-	    	ArrayList<FeedObj> feeds = new ArrayList<FeedObj>();
-	    	while(rs.next()) {
-	    		feeds.add(new FeedObj(rs.getString("id"), rs.getString("name"), rs.getString("ts"), rs.getString("images")));
-    	}
-    	return feeds;*/
-	    	String str = "[";
-	    	int cnt = 0;
-	    	while(rs.next()) {
-	    	if (cnt++ > 0) str += ", ";
-	    	str += rs.getString("jsonstr");
-	    	}
-	    	return str + "]";
-	    	
-    	} finally {
+        Connection conn = ConnectionPool.get();
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        try {
+            String sql = "SELECT * FROM feed ORDER BY no DESC";
+            stmt = conn.prepareStatement(sql);
+            rs = stmt.executeQuery();
+            
+            StringBuilder str = new StringBuilder("[");
+            int cnt = 0;
+            while(rs.next()) {
+                if (cnt++ > 0) str.append(", ");
+                str.append(rs.getString("jsonstr"));
+            }
+            return str.append("]").toString();
+        } finally {
             if (rs != null) rs.close(); 
             if (stmt != null) stmt.close(); 
             if (conn != null) conn.close();
-    	}
+        }
     }
 
     public String getGroup(String frids, String maxNo) throws NamingException, SQLException {
@@ -103,12 +95,18 @@ public class FeedDAO {
         PreparedStatement stmt = null;
         ResultSet rs = null;
         try {
-            String sql = "SELECT jsonstr FROM feed WHERE id IN("+ frids + ")";
+            // IN 연산자의 문자열을 작은따옴표로 변경
+            String formattedFrids = frids.replace("\"", "'");
+
+            // Oracle에서는 ROWNUM을 사용하여 제한
+            String sql = "SELECT jsonstr FROM (SELECT jsonstr FROM feed WHERE id IN(" + formattedFrids + ")";
+            
             if (maxNo != null) {
                 sql += " AND no < " + maxNo;
             }
-            sql += " ORDER BY no DESC LIMIT 3";
-            
+
+            sql += " ORDER BY no DESC) WHERE ROWNUM <= 3"; // ROWNUM을 사용하여 3개 제한
+
             stmt = conn.prepareStatement(sql);
             rs = stmt.executeQuery();
                 
@@ -125,5 +123,6 @@ public class FeedDAO {
             if (stmt != null) stmt.close(); 
             if (conn != null) conn.close();
         }
-    }    
+    }
+
 }

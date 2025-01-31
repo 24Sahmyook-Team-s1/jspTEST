@@ -1,31 +1,28 @@
-<%@ page contentType="text/html" pageEncoding="utf-8" %>
+<%@ page contentType="application/json" pageEncoding="utf-8" %>
 <%@ page import="dao.*" %>
 <%@ page import="java.util.*" %>
 
 <%
-	String str = (new FeedDAO()).getList();
-    /*
-    String str = "<table align=center>";
-    str += "<tr height=40><td><b>작성글 리스트</b></td>";
-    str += "<td align=right>";
-    str += "<a href='feedAdd.html'><button>글쓰기</button></a>"; 
-    str += "</td></tr>";
-    
-    for (FeedObj feed : feeds) {
-        String img = feed.getImages(), imgstr = "";
-        if (img != null) {
-            imgstr = "<img src='images/" + img + "' width=240>";
-        }    	
-        str += "<tr><td colspan=2><hr></td></tr>";
-        str += "<tr>";
-    	str += "<td><small>" + feed.getId() + "</small></td>";
-    	str += "<td><small>&nbsp;(" + feed.getTs() + ")</small></td>";
-        str += "</tr>";
-    	str += "<tr><td colspan=2>" + imgstr + "</td></tr>";
-    	str += "<tr><td colspan=2>" + feed.getContent() + "</td></tr>";
+    // 로그인한 사용자 ID 가져오기
+    String uid = (String) session.getAttribute("id");
+    if (uid == null) {
+        response.sendRedirect("login.html");
+        return;
     }
-    str += "</table>";*/
-    
+
+    // 데이터 가져오기
+    String str = (new FeedDAO()).getList();
+
+    // JSON 응답 설정
+    response.setContentType("application/json");
+    response.setCharacterEncoding("UTF-8");
     out.print(str);
     
+    try {
+        String ar = (new FeedDAO()).getList();
+        out.print(ar);
+    } catch (Exception e) {
+        e.printStackTrace(); // 서버 콘솔에서 확인 가능
+        out.print("오류 발생: " + e.getMessage());
+    }
 %>
