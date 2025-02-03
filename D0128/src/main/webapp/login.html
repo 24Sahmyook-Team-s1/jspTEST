@@ -1,68 +1,77 @@
-<html>
+<!DOCTYPE html>
+<html lang="ko">
 <head>
-<meta name=viewport content="width=device-width, initial-scale=1, user-scalable=0">
-<meta charset="utf-8" />
-<link rel="stylesheet" href="css/core.css">
-<title>MySNS</title>
-<style>
-.desc {
-    float: left;
-    width: 100%;
-    color: #888;
-    font-size: 0.9em;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MOLE PMS</title>
+    <link rel="stylesheet" href="css/Index.css">
 </head>
 <body>
-<div class="page-hdr">MySNS</div>
-<div class="page-body">
-<div class="section pad-24 mtop-30">
-<input id="id" type="text" placeholder="아이디 (이메일주소)">
-<input id="ps" type="password" class="mtop-10" placeholder="패스워드">
-<input type="submit" class="mtop-20" value="로그인하기" onclick="login()">
-</div>
-<div class="section pad-24 mtop-30">
-<div class="desc mtop-20 mbot-20">
-아이디가 없으세요? 
-간단한 가입 절차를 통해 MySNS의 회원이 되실 수 있습니다.
-</div>
-<a href="signup.html"><div class="button">회원 가입하기</div></a>
-</div>
-</div>
-<div class="page-footer">Copyright: mysns.com, 202x</div>
-</body>
+    <div class="container">
+        <div class="quotes">
+            <p>대부분의 프로젝트는 기술이 아니라<br>인적 자원과 프로젝트 관리의 문제로 실패한다.<br><span>- R. Thomsett</span></p>
+            <p>남은 작업량은 남기가 다가오면<br>올수록 늘어난다.<br><span>- Bove</span></p>
+            <h1>‘ 이슈를 두더지처럼 골라잡는 방법 ‘</h1>
+            <p>측정하지 못하면 개선할 수 없다.<br><span>- Gerald Weinberg</span></p>
+            <p>계획에 따라 승리한 전쟁은 없다.<br>하지만 계획 없이 승리한 전쟁도 없다.</p>
+        </div>
+        <div class="login-section">
+            <div class="logo">
+                <img src="public/logo-transparent.png" alt="MOLE PMS Logo">
+            </div>
+           <form class="login-form" onsubmit="return login(event);">
+			    <label for="id">ID</label>
+			    <input type="text" id="id" name="id">
+			    <label for="password">Password</label>
+			    <input type="password" id="ps" name="ps">
+			    <button type="submit">Login</button>
+			</form>
+
+            <div class="links">
+                <a href="signup.html">회원가입</a> | 
+                <a href="#">아이디 찾기</a> | 
+                <a href="#">비밀번호 찾기</a>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
 
 <script src="js/jquery-3.6.0.min.js"></script>
 <script src="js/core.js"></script>
 <script>
-function login() {
-	var id = $("#id").val().trim();
-	if (id == "") {
-		alert("아이디를 입력해 주세요.");
-		$("#id").focus();
-	return;
-}
-	var ps = $("#ps").val().trim();
-	if (ps == "") {
-		alert("패스워드를 입력해 주세요.");
-		$("#ps").focus();
-	return;
+function login(event) {
+    event.preventDefault(); // 폼이 자동 제출되는 것을 방지
+
+    var id = $("#id").val().trim();
+    if (id === "") {
+        alert("아이디를 입력해 주세요.");
+        $("#id").focus();
+        return false;
+    }
+
+    var ps = $("#ps").val().trim();
+    if (ps === "") {
+        alert("패스워드를 입력해 주세요.");
+        $("#ps").focus();
+        return false;
+    }
+
+    var url = "jsp/login.jsp?id=" + id + "&ps=" + ps;
+    AJAX.call(url, null, function(data) {
+        console.log("서버 응답:", data.trim()); // 응답값 콘솔에 출력
+
+        var code = data.trim();
+        if (code === "NE") {
+            alert("아이디가 존재하지 않습니다.");
+        } else if (code === "PE") {
+            alert("패스워드가 일치하지 않습니다.");
+        } else {
+            window.location.href = "MainPage.html";
+        }
+    });
+
+    return false; // 폼 제출 방지
 }
 
-	 var url="jsp/login.jsp?id="+ id + "&ps="+ ps;
-	 AJAX.call(url, null, function(data) {
-	 var code = data.trim();
-	 if(code == "NE") {
-	 alert("아이디가존재하지않습니다.");
-	 }
-	 else if(code == "PE") {
-	 alert("패스워드가일치하지않습니다.");
-	 }
-	 else {
-	 window.location.href= "main.html";
-	 }
-	 });
-	 }
 	 </script>
