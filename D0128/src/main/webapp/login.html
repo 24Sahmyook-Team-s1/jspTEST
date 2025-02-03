@@ -4,7 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MOLE PMS</title>
+
+<script src="js/jquery-3.6.0.min.js"></script>
+<script src="js/core.js"></script>
+
     <link rel="stylesheet" href="css/Index.css">
+    <link rel="stylesheet" href="css/pop-up.css">
+
 </head>
 <body>
     <div class="container">
@@ -19,59 +25,130 @@
             <div class="logo">
                 <img src="public/logo-transparent.png" alt="MOLE PMS Logo">
             </div>
-           <form class="login-form" onsubmit="return login(event);">
-			    <label for="id">ID</label>
-			    <input type="text" id="id" name="id">
-			    <label for="password">Password</label>
-			    <input type="password" id="ps" name="ps">
-			    <button type="submit">Login</button>
-			</form>
+            <form class="login-form" onsubmit="return login(event);">
+		    <label for="id">ID</label>
+		    <input type="text" id="id" name="id">
+		    <label for="password">Password</label>
+		    <input type="password" id="ps" name="ps">
+		    <button type="submit">Login</button>
+		</form>
 
             <div class="links">
-                <a href="signup.html">회원가입</a> | 
+                <a href="#" onclick="openPopup(event)">회원가입</a> | 
                 <a href="#">아이디 찾기</a> | 
                 <a href="#">비밀번호 찾기</a>
             </div>
         </div>
     </div>
+    <div id="popup" class="popup-overlay">
+		<div class="popup-content">
+			<span class="close-btn" onclick="closePopup()">&times;</span>
+			<h2>회원가입</h2>
+			<form>
+				<input type="text" placeholder="이름">
+				<input type="email" placeholder="이메일">
+				<input type="password" placeholder="비밀번호">
+				<input type="submit" value="회원 가입" onclick="signup()">
+			</form>
+		</div>
+	</div>
 </body>
 </html>
-
-<script src="js/jquery-3.6.0.min.js"></script>
-<script src="js/core.js"></script>
 <script>
-function login(event) {
-    event.preventDefault(); // 폼이 자동 제출되는 것을 방지
+	function openPopup() {
+		var popup = document.getElementById("popup");
+		popup.style.visibility = "visible";
+		popup.style.opacity = "1";
+	}
 
+	function closePopup() {
+		var popup = document.getElementById("popup");
+		popup.style.visibility = "hidden";
+		popup.style.opacity = "0";
+	}
+
+	function login(event) {
+	    event.preventDefault(); // 폼이 자동 제출되는 것을 방지
+
+	    var id = $("#id").val().trim();
+	    if (id === "") {
+	        alert("아이디를 입력해 주세요.");
+	        $("#id").focus();
+	        return false;
+	    }
+
+	    var ps = $("#ps").val().trim();
+	    if (ps === "") {
+	        alert("패스워드를 입력해 주세요.");
+	        $("#ps").focus();
+	        return false;
+	    }
+
+	    var url = "jsp/login.jsp?id=" + id + "&ps=" + ps;
+	    AJAX.call(url, null, function(data) {
+	        console.log("서버 응답:", data.trim()); // 응답값 콘솔에 출력
+
+	        var code = data.trim();
+	        if (code === "NE") {
+	            alert("아이디가 존재하지 않습니다.");
+	        } else if (code === "PE") {
+	            alert("패스워드가 일치하지 않습니다.");
+	        } else {
+	            window.location.href = "MainPage.html";
+	        }
+	    });
+
+	    return false; // 폼 제출 방지
+	}
+
+
+    function signup(event) {
+        event.preventDefault();
     var id = $("#id").val().trim();
-    if (id === "") {
+    if (id == "") {
         alert("아이디를 입력해 주세요.");
         $("#id").focus();
-        return false;
+        return;
     }
-
+ 
     var ps = $("#ps").val().trim();
-    if (ps === "") {
+    if (ps == "") {
         alert("패스워드를 입력해 주세요.");
         $("#ps").focus();
-        return false;
+        return;
     }
 
-    var url = "jsp/login.jsp?id=" + id + "&ps=" + ps;
-    AJAX.call(url, null, function(data) {
-        console.log("서버 응답:", data.trim()); // 응답값 콘솔에 출력
+    var ps2 = $("#ps2").val().trim();
+    if (ps != ps2) {
+        alert("입력된 두 개의 패스워드가 일치하지 않습니다.");
+        $("#ps2").focus();
+        return;
+    }
 
+    var name = $("#name").val().trim();
+    if (name == "") {
+        alert("이름을 입력해 주세요.");
+        $("#name").focus();
+        return;
+    }
+    
+    var usrobj = {id: id, password: ps, name: name, ts: getToday()};
+    var params = {id: id, jsonstr: JSON.stringify(usrobj)};
+    
+    var url ="jsp/signup.jsp";
+    AJAX.call(url, params, function(data) {
         var code = data.trim();
-        if (code === "NE") {
-            alert("아이디가 존재하지 않습니다.");
-        } else if (code === "PE") {
-            alert("패스워드가 일치하지 않습니다.");
-        } else {
-            window.location.href = "MainPage.html";
+        if(code == "EX") {
+            alert("이미 가입한 회원입니다.");
+        }
+        else if(code == "ER") {
+            alert("회원가입 처리중 에러가 발생하였습니다.");
+        }
+        else {
+            alert("회원 가입이 완료되었습니다.");
+            window.location.href = "login.html";
         }
     });
-
-    return false; // 폼 제출 방지
+return false;
 }
-
-	 </script>
+</script>
