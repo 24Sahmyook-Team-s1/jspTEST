@@ -6,38 +6,45 @@
 <%@ page import="util.FileUtil" %>
 <%@ page import="dao.UserDAO" %>
 <%
-    request.setCharacterEncoding("utf-8");
+    try {
+        request.setCharacterEncoding("utf-8");
 
-	//String uid = null, ucon = null, ufname = null;
-	String uid = null, jsonstr = null, ufname = null;
-	byte[] ufile = null;
-	
-	ServletFileUpload sfu = new ServletFileUpload(new DiskFileItemFactory());
-	List items = sfu.parseRequest(request);
-	Iterator iter = items.iterator();
-	while(iter.hasNext()) {
-	    FileItem item = (FileItem) iter.next();
-	    String name = item.getFieldName();
-	    if(item.isFormField()) {
-	        String value = item.getString("utf-8");
-	        if (name.equals("id")) uid = value;
-	        if (name.equals("jsonstr")) jsonstr = value;
-	    }
-	    else {
-	        if (name.equals("image")) {
-	            ufname = item.getName();
-	            ufile = item.get();
-	            String root = application.getRealPath(java.io.File.separator);
-	            FileUtil.saveImage(root, ufname, ufile);
-	        }
-	    }
-	}
-	
-	UserDAO dao = new UserDAO();
-	if (dao.update(uid, jsonstr)== true) {
-	    out.print("OK");	
-	}
-	else {
-	    out.print("ER");
-	}
+        String uid = null, jsonstr = null, ufname = null;
+        byte[] ufile = null;
+
+        ServletFileUpload sfu = new ServletFileUpload(new DiskFileItemFactory());
+        List<FileItem> items = sfu.parseRequest(request);
+        Iterator<FileItem> iter = items.iterator();
+        while(iter.hasNext()) {
+            FileItem item = iter.next();
+            String name = item.getFieldName();
+            if(item.isFormField()) {
+                String value = item.getString("utf-8");
+                if (name.equals("id")) uid = value;
+                if (name.equals("jsonstr")) jsonstr = value;
+            } else {
+                if (name.equals("image")) {
+                    ufname = item.getName();
+                    ufile = item.get();
+                    String root = application.getRealPath(java.io.File.separator);
+                    FileUtil.saveImage(root, ufname, ufile);
+                }
+            }
+        }
+
+        // 디버깅 메시지 추가
+        out.println("uid: " + uid);
+        out.println("jsonstr: " + jsonstr);
+        out.println("ufname: " + ufname);
+
+        UserDAO dao = new UserDAO();
+        if (dao.update(uid, jsonstr)) {
+            out.print("OK");    
+        } else {
+            out.print("ER");
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        out.print("ERROR: " + e.getMessage());
+    }
 %>

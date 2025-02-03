@@ -1,0 +1,103 @@
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f8ff;
+    color: #333;
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+.quotes {
+    flex: 1;
+    background-color: #333;
+    color: #fff;
+    padding: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    gap: 20px;
+}
+
+.quotes h1 {
+    font-size: 24px;
+    margin: 20px 0;
+}
+
+.quotes p {
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.quotes span {
+    font-size: 14px;
+    color: #bbb;
+}
+
+.login-section {
+    flex: 1;
+    background-color: #e8f4ff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.logo img {
+    width: 100px;
+    margin-bottom: 20px;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 80%;
+    max-width: 300px;
+}
+
+.login-form label {
+    font-size: 14px;
+    color: #333;
+}
+
+.login-form input {
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.login-form button {
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.login-form button:hover {
+    background-color: #0056b3;
+}
+
+.links {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #007bff;
+}
+
+.links a {
+    text-decoration: none;
+    color: #007bff;
+}
+
+.links a:hover {
+    text-decoration: underline;
+}

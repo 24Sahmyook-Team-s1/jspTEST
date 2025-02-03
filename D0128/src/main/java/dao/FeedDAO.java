@@ -22,7 +22,7 @@ public class FeedDAO {
                 conn = ConnectionPool.get();
 
                 // phase 1. add "no" property -----------------------------
-                String sql = "SELECT no FROM feed ORDER BY no DESC LIMIT 1";
+                String sql = "SELECT no FROM (SELECT no FROM feed ORDER BY no DESC) WHERE ROWNUM = 1";
                 stmt = conn.prepareStatement(sql);
                 rs = stmt.executeQuery();
                 
@@ -36,7 +36,7 @@ public class FeedDAO {
                 // phase 2. add "user" property ------------------------------
                 String uid = jsonobj.get("id").toString();
                 
-                sql = "SELECT jsonstr FROM user2 WHERE id = ?"; // user -> user2 변경
+                sql = "SELECT jsonstr FROM user2 WHERE id = ?";
                 stmt = conn.prepareStatement(sql);
                 stmt.setString(1, uid);
                 rs = stmt.executeQuery();
@@ -67,7 +67,7 @@ public class FeedDAO {
         }
     }
 
-    public String getList() throws NamingException, SQLException {
+	public String getList() throws NamingException, SQLException {
         Connection conn = ConnectionPool.get();
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -89,7 +89,7 @@ public class FeedDAO {
             if (conn != null) conn.close();
         }
     }
-
+	
     public String getGroup(String frids, String maxNo) throws NamingException, SQLException {
         Connection conn = ConnectionPool.get();
         PreparedStatement stmt = null;
