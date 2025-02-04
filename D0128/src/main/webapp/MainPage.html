@@ -80,13 +80,12 @@
   }
 
   function getProjectCode(project) {
-    var name = project.name ? project.name : "Unnamed Project"; 
+	    return `
+	        <div class="project">
+	            <h3>${project.name}</h3>
+	            <p>📅 Created At: ${project.created_at}</p>
+	        </div>
+	    `;
+	}
 
-    var str = "<div class='project'>";
-    str += "<h3>" + name + "</h3>";
-    str += "<p>Created At: " + project.created_at + "</p>";
-    str += "</div>";
-
-    return str;
-  }
 </script>
