@@ -49,14 +49,17 @@
   $(document).ready(function () {
     loadProjects(); // 페이지 로드 시 프로젝트 목록 불러오기
   });
-
   function loadProjects() {
 	    $.ajax({
 	        url: "jsp/GetProjectList.jsp",
 	        type: "GET",
 	        dataType: "json",
+	        cache: false, // ✅ 최신 데이터를 가져오도록 설정
 	        success: function (projects) {
-	            console.log("✅ 프로젝트 데이터 수신:", projects); // ← AJAX 응답 데이터 확인
+	            console.log("✅ 프로젝트 데이터 수신:", projects);
+	            if (projects.length === 0) {
+	                console.warn("⚠ 서버에서 프로젝트 데이터를 가져오지 못했습니다.");
+	            }
 	            showProjects(projects);
 	        },
 	        error: function (xhr, status, error) {
@@ -64,6 +67,8 @@
 	        },
 	    });
 	}
+
+
 
 
   function showProjects(projects) {

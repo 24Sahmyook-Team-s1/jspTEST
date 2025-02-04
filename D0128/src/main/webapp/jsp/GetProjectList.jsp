@@ -11,12 +11,14 @@
 
     try {
         Class.forName("oracle.jdbc.driver.OracleDriver");
-        conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "park", "1111");
+        conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/XE", "park", "1111");
 
         System.out.println("🔍 SQL 실행 시작");
 
-        // ✅ 날짜 변환 추가하여 조회
-        String sql = "SELECT ProjectID, ProjectName, TO_CHAR(CreatedAt, 'YYYY-MM-DD') AS CreatedAt FROM Projects";
+        // 실행할 SQL 로그 출력
+        String sql = "SELECT ProjectID, ProjectName, TO_CHAR(CreatedAt, 'YYYY-MM-DD') AS CreatedAt FROM Projects ORDER BY CreatedAt DESC, ProjectID ASC";
+        System.out.println("✅ 실행할 SQL: " + sql);
+
         pstmt = conn.prepareStatement(sql);
         rs = pstmt.executeQuery();
 
@@ -29,12 +31,11 @@
             projectList.add(project);
             count++;
 
-            // ✅ 개별 프로젝트 정보 출력
-            System.out.println("📌 프로젝트 추가됨: " + project.toJSONString());
+            System.out.println("📌 프로젝트 추가됨: " + project.toJSONString()); // ✅ 개별 프로젝트 확인 로그
         }
 
-        System.out.println("✅ 조회된 프로젝트 개수: " + count);
-        System.out.println("✅ 최종 JSON 결과: " + projectList.toJSONString());
+        System.out.println("✅ 최종 조회된 프로젝트 개수: " + count); // ✅ 총 개수 확인
+        System.out.println("✅ 최종 JSON 결과: " + projectList.toJSONString()); // ✅ 최종 JSON 출력
 
     } catch (Exception e) {
         e.printStackTrace();
