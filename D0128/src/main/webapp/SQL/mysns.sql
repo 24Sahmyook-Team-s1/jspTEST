@@ -17,6 +17,44 @@ CREATE TABLE friend (
     CONSTRAINT fk_friend_frid FOREIGN KEY (frid) REFERENCES user2(id)
 );
 
+CREATE TABLE Projects (
+    ProjectID NUMBER PRIMARY KEY,
+    ProjectName VARCHAR2(100) NOT NULL,
+    ProjectTeamID NUMBER REFERENCES ProjectTeams(ProjectTeamID),
+    CreatedAt DATE DEFAULT SYSDATE
+); 
+
+CREATE TABLE ProjectGanttCharts (
+    ProjectChartID NUMBER PRIMARY KEY,
+    ProjectID NUMBER REFERENCES Projects(ProjectID),
+    TaskName VARCHAR2(200) NOT NULL,
+    CreatedAt DATE DEFAULT SYSDATE
+); 
+
+CREATE TABLE ProjectIssues (
+    ProjectIssueID NUMBER PRIMARY KEY,
+    ProjectUserID VARCHAR2(50) REFERENCES ProjectUsers(ProjectUserID),
+    ProjectID NUMBER REFERENCES Projects(ProjectID),
+    Title VARCHAR2(200) NOT NULL,
+    Description CLOB,
+    CreatedAt DATE DEFAULT SYSDATE
+); 
+
+CREATE TABLE ProjectComments (
+    ProjectCommentID NUMBER PRIMARY KEY,
+    ProjectUserID VARCHAR2(50) REFERENCES ProjectUsers(ProjectUserID),
+    ProjectIssueID NUMBER REFERENCES ProjectIssues(ProjectIssueID),
+    CommentText CLOB NOT NULL,
+    CreatedAt DATE DEFAULT SYSDATE
+); 
+
+CREATE TABLE ProjectDashboards (
+    ProjectDashboardID NUMBER PRIMARY KEY,
+    ProjectID NUMBER REFERENCES Projects(ProjectID),
+    Content CLOB,
+    UpdatedAt DATE DEFAULT SYSDATE
+);
+
 BEGIN
     EXECUTE IMMEDIATE 'DROP SEQUENCE seq_feed_no';
 EXCEPTION
