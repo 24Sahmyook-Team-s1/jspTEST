@@ -149,4 +149,39 @@ public class UserDAO {
             if (conn != null) conn.close();
         }
     }
+    
+    public String findPassword(String name, String email) throws NamingException, SQLException, ParseException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        try {
+            String sql = "SELECT jsonstr FROM user2 WHERE jsonstr LIKE ?";
+            conn = ConnectionPool.get();
+            stmt = conn.prepareStatement(sql);
+            stmt.setString(1, "%\"" + name + "\"%"); // JSON 내 포함된 name 확인
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                String jsonstr = rs.getString("jsonstr");
+                if (jsonstr == null) {
+                    continue; // jsonstr가 null인 경우 다음 반복으로 넘어감
+                }
+
+                JSONObject obj = (JSONObject) (new JSONParser()).parse(jsonstr);
+
+                // 이름과 이메일이 모두 일치하는 경우 비밀번호 반환
+                if (obj.get("name") != null && obj.get("email") != null &&
+                    obj.get("name").toString().equals(name) && obj.get("email").toString().equals(email)) {
+                    return obj.get("password").toString();
+                }
+            }
+        } finally {
+            if (rs != null) rs.close();
+            if (stmt != null) stmt.close();
+            if (conn != null) conn.close();
+        }
+        return null; // 사용자를 찾지 못한 경우
+    }
+
+
 }

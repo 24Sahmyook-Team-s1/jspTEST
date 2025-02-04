@@ -41,11 +41,10 @@
           <input type="text" id="id" name="id" />
           <label for="password">Password</label>
           <input type="password" id="password" name="password" />
-          <button type="submit" onclick="login(event)">Login</button>
+          <button type="button" onclick="login(event)">Login</button>
         </form>
         <div class="links">
           <a href="#" onclick="openPopupSignup()">회원가입</a> |
-          <a href="#" onclick="openPopupID()">아이디 찾기</a> |
           <a href="#" onclick="openPopupPW()">비밀번호 찾기</a>
         </div>
       </div>
@@ -62,28 +61,16 @@
           <input type="submit" value="회원 가입" onclick="signup(event)" />
         </form>
       </div>
-    </div>
-    <div id="popup-ID" class="popup-overlay">
+   </div>
+   <div id="popup-PW" class="popup-overlay">
       <div class="popup-content">
-        <span class="close-btn" onclick="closePopupID()">&times;</span>
-        <h2>아이디 찾기</h2>
-        <form>
-          <input type="text" placeholder="이름" />
-          <input type="email" placeholder="이메일" />
-          <input type="submit" value="회원 가입" />
-        </form>
-      </div>
-    </div>
-    <div id="popup-signup" class="popup-overlay">
-      <div class="popup-content">
-        <span class="close-btn" onclick="closePopupSignup()">&times;</span>
+        <span class="close-btn" onclick="closePopupPW()">&times;</span>
         <h2>비밀번호 찾기</h2>
         <form>
-          <input type="text" placeholder="이름" />
-          <input type="email" placeholder="이메일" />
-          <input type="password" placeholder="비밀번호" />
-          <input type="submit" value="회원 가입" onclick="signup()" />
-        </form>
+          <input type="text" id="search-name" placeholder="이름" />
+          <input type="email" id="search-id" placeholder="이메일" />
+          <input type="submit" value="비밀번호 찾기" onclick="findPassword(event)" />
+	  	</form>
       </div>
     </div>
   </body>
@@ -102,58 +89,49 @@
     popup.style.opacity = "0";
   }
 
-  function openPopupID() {
-    var popup = document.getElementById("popup-ID");
-    popup.style.visibility = "visible";
-    popup.style.opacity = "1";
-  }
-
-  function closePopupID() {
-    var popup = document.getElementById("popup-ID");
-    popup.style.visibility = "hidden";
-    popup.style.opacity = "0";
-  }
 
   function openPopupPW() {
-    var popup = document.getElementById("popup-signup");
+    var popup = document.getElementById("popup-PW");
     popup.style.visibility = "visible";
     popup.style.opacity = "1";
   }
 
   function closePopupPW() {
-    var popup = document.getElementById("popup");
+    var popup = document.getElementById("popup-PW");
     popup.style.visibility = "hidden";
     popup.style.opacity = "0";
   }
 
   function login(event) {
-    event.preventDefault();
-    var id = $("#id").val().trim();
-    if (id == "") {
-      alert("아이디를 입력해 주세요.");
-      $("#id").focus();
-      return;
-    }
-    var ps = $("#ps").val().trim();
-    if (ps == "") {
-      alert("패스워드를 입력해 주세요.");
-      $("#ps").focus();
-      return;
-    }
+	  event.preventDefault(); // 기본 제출 방지
 
-    var url = "jsp/Login.jsp?id=" + id + "&ps=" + ps;
-    AJAX.call(url, null, function (data) {
-      var code = data.trim();
-      if (code == "NE") {
-        alert("아이디가존재하지않습니다.");
-      } else if (code == "PE") {
-        alert("패스워드가일치하지않습니다.");
-      } else {
-        window.location.href = "MainPage.html";
-      }
-    });
-    return false;
-  }
+	  var id = $("#id").val().trim();
+	  if (id == "") {
+	    alert("아이디를 입력해 주세요.");
+	    $("#id").focus();
+	    return;
+	  }
+
+	  var ps = $("#password").val().trim(); // 비밀번호 필드 ID 수정
+	  if (ps == "") {
+	    alert("패스워드를 입력해 주세요.");
+	    $("#password").focus();
+	    return;
+	  }
+
+	  var url = "jsp/login.jsp?id=" + id + "&ps=" + ps;
+	  AJAX.call(url, null, function (data) {
+	    var code = data.trim();
+	    if (code == "NE") {
+	      alert("아이디가 존재하지 않습니다.");
+	    } else if (code == "PE") {
+	      alert("패스워드가 일치하지 않습니다.");
+	    } else {
+	      window.location.href = "MainPage.html";
+	    }
+	  });
+	  return false;
+	}
 
   function signup(event) {
     event.preventDefault();
@@ -202,7 +180,44 @@
     });
     return false;
   }
+  
+  function findPassword(event) {
+	  event.preventDefault();
 
+	  var name = $("#search-name").val().trim();
+	  if (name == "") {
+	    alert("이름을 입력해 주세요.");
+	    $("#search-name").focus();
+	    return;
+	  }
+
+	  var email = $("#search-id").val().trim();
+	  if (email == "") {
+	    alert("이메일을 입력해 주세요.");
+	    $("#search-id").focus();
+	    return;
+	  }
+
+	  var url = "jsp/findPassword.jsp?name=" + encodeURIComponent(name) + "&email=" + encodeURIComponent(email);
+	  $.ajax({
+	    url: url,
+	    method: "GET",
+	    success: function(data) {
+	      var response = data.trim();
+	      if (response.startsWith("PW:")) {
+	        var password = response.substring(3);
+	        alert("비밀번호는: " + password);
+	      } else if (response === "NF") {
+	        alert("사용자를 찾을 수 없습니다.");
+	      } else {
+	        alert("서버 오류: " + response);
+	      }
+	    },
+	    error: function(xhr, status, error) {
+	      alert("AJAX 오류: " + error);
+	    }
+	  });
+	}
   function getToday() {
     var date = new Date();
     var year = date.getFullYear();
