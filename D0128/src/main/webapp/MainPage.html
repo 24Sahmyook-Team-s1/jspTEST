@@ -51,18 +51,20 @@
   });
 
   function loadProjects() {
-    $.ajax({
-      url: "jsp/GetProjectList.jsp",
-      type: "GET",
-      dataType: "json",
-      success: function (projects) {
-        showProjects(projects);
-      },
-      error: function () {
-        console.error("프로젝트 데이터를 불러오지 못했습니다.");
-      },
-    });
-  }
+	    $.ajax({
+	        url: "jsp/GetProjectList.jsp",
+	        type: "GET",
+	        dataType: "json",
+	        success: function (projects) {
+	            console.log("✅ 프로젝트 데이터 수신:", projects); // ← AJAX 응답 데이터 확인
+	            showProjects(projects);
+	        },
+	        error: function (xhr, status, error) {
+	            console.error("❌ AJAX 오류 발생:", error);
+	        },
+	    });
+	}
+
 
   function showProjects(projects) {
     var projectContainer = $(".project-list");
@@ -73,7 +75,7 @@
         projectContainer.append(getProjectCode(projects[i])); // 프로젝트 UI 생성
       }
     } else {
-      projectContainer.append("<p>No ongoing projects</p>"); // 데이터 없을 때 메시지 표시
+      projectContainer.append("<p>No On Going Projects</p>"); // 데이터 없을 때 메시지 표시
     }
   }
 
