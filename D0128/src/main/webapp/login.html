@@ -182,40 +182,30 @@
   }
   
   function findPassword(event) {
-	    event.preventDefault(); // 기본 제출 방지
-	    var name = $("#search-name").val().trim(); // 이름 필드 ID 확인
-	    var email = $("#search-id").val().trim(); // 이메일 필드 ID 확인
+	    event.preventDefault();
 
-	    if (name == "") {
-	        alert("이름을 입력해 주세요.");
-	        $("#search-name").focus();
+	    var name = $("#search-name").val().trim();
+	    var email = $("#search-id").val().trim();
+
+	    if (name === "" || email === "") {
+	        alert("이름과 이메일을 입력해 주세요.");
 	        return;
 	    }
 
-	    if (email == "") {
-	        alert("이메일을 입력해 주세요.");
-	        $("#search-id").focus();
-	        return;
-	    }
-
-	    // findPassword.jsp로 AJAX 호출
 	    var url = "jsp/findPassword.jsp?name=" + encodeURIComponent(name) + "&email=" + encodeURIComponent(email);
-		   $.ajax({
-	        url: url,
-	        method: "GET",
-	        success: function(data) {
-	            var code = data.trim();
-	            if (code.startsWith("PW:")) {
-	                alert("비밀번호: " + code.substring(3));
-	            } else if (code === "NF") {
-	                alert("사용자를 찾을 수 없습니다.");
-	            } else {
-	                alert("에러 발생: " + code);
-	            }
-	        },
-	        error: function(jqXHR, textStatus, errorThrown) {
-	            alert("AJAX 호출 중 에러 발생: " + textStatus);
+	    $.get(url, function(response) {
+	        response = response.trim();
+	        console.log("Server Response:", response);
+	        if (response.startsWith("PW:")) {
+	            var password = response.substring(3);
+	            alert("비밀번호 : " + password);
+	        } else if (response === "NF") {
+	            alert("사용자를 찾을 수 없습니다.");
+	        } else {
+	            alert("에러가 발생했습니다: " + response);
 	        }
+	    }).fail(function(jqXHR, textStatus, errorThrown) {
+	        alert("서버 오류가 발생했습니다: " + textStatus);
 	    });
 	}
 

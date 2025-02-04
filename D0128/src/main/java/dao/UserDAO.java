@@ -155,23 +155,35 @@ public class UserDAO {
         PreparedStatement stmt = null;
         ResultSet rs = null;
         try {
-            conn = ConnectionPool.get(); // 연결 확인
+            conn = ConnectionPool.get();
             if (conn == null) {
-                System.out.println("데이터베이스에 연결할 수 없습니다."); // 디버깅
+                System.out.println("ConnectionPool.get() returned null.");
                 return null;
             }
-            
-            String sql = "SELECT jsonstr FROM user2 WHERE jsonstr LIKE ? AND jsonstr LIKE ?";
+            // CLOB을 문자열로 변환하여 검색 (최대 4000자)
+            String sql = "SELECT jsonstr FROM user2 " +
+                         "WHERE DBMS_LOB.SUBSTR(jsonstr, 4000, 1) LIKE ? " +
+                         "AND DBMS_LOB.SUBSTR(jsonstr, 4000, 1) LIKE ?";
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, "%\"name\":\"" + name + "\"%");
-            stmt.setString(2, "%\"email\":\"" + email + "\"%");
+            // 기존에는 email을 "%\"email\":\"" + email + "\"%"로 검색했지만,
+            // 데이터베이스에는 이메일 정보가 "id" 키에 저장되어 있으므로 아래와 같이 수정합니다.
+            stmt.setString(2, "%\"id\":\"" + email + "\"%");
+            
+            System.out.println("Executing SQL: " + stmt.toString());
             rs = stmt.executeQuery();
 
             while (rs.next()) {
                 String jsonstr = rs.getString("jsonstr");
-                JSONObject obj = (JSONObject) (new JSONParser()).parse(jsonstr);
+                if (jsonstr == null) continue;
+                // 디버깅: 실제 JSON 데이터를 출력
+                System.out.println("Retrieved JSON: " + jsonstr);
+                JSONObject obj = (JSONObject) new JSONParser().parse(jsonstr);
 
-                if (obj.get("name").toString().equals(name) && obj.get("email").toString().equals(email)) {
+                // 이름과 이메일을 비교할 때, 이메일은 "id" 키에 저장되어 있습니다.
+                if (obj.get("name") != null && obj.get("id") != null &&
+                    obj.get("name").toString().equals(name) &&
+                    obj.get("id").toString().equals(email)) {
                     return obj.get("password").toString();
                 }
             }
@@ -180,7 +192,7 @@ public class UserDAO {
             if (stmt != null) stmt.close();
             if (conn != null) conn.close();
         }
-        return null;
+        return null; // 일치하는 사용자를 찾지 못한 경우
     }
 
 
