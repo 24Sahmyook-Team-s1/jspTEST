@@ -3,15 +3,15 @@
 <%@ page import="java.io.StringWriter" %>
 <%@ page import="java.io.PrintWriter" %>
 <%
-    request.setCharacterEncoding("utf-8");
-
-    String name = request.getParameter("name");
-    String email = request.getParameter("email");
-
-    // Debugging: 입력값 출력
-    out.print("Received Name: " + name + ", Email: " + email);
-
-    UserDAO dao = new UserDAO();
+	request.setCharacterEncoding("utf-8");
+	
+	String name = request.getParameter("name");
+	String email = request.getParameter("email");
+	
+	out.print("Received Name: " + name + "<br>");
+	out.print("Received Email: " + email + "<br>");
+    
+	UserDAO dao = new UserDAO();
     
     try {
         String password = dao.findPassword(name, email);
