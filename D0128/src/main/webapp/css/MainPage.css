@@ -155,3 +155,45 @@ body {
   margin: 0;
   line-height: 1.4;
 }
+
+.scroll-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    max-width: 1200px;
+    overflow: hidden; /* 기본적으로 스크롤바 숨김 */
+}
+
+.project-list-wrapper {
+    width: 100%;
+    overflow-x: auto; /* 가로 스크롤 활성화 */
+    scroll-behavior: smooth; /* 부드러운 스크롤 */
+    white-space: nowrap; /* 한 줄 유지 */
+    cursor: grab; /* 마우스로 드래그 가능하도록 설정 */
+    padding-bottom: 10px; /* 스크롤바 아래쪽 간격 확보 */
+}
+
+.project-list {
+    display: flex;
+    gap: 20px;
+    flex-wrap: nowrap; /* 한 줄 유지 */
+    padding: 10px;
+    margin-left: 10px; /* 첫 번째 카드가 보이도록 마진 조정 */
+}
+
+.project {
+    flex: 0 0 auto; /* 크기 고정, 줄바꿈 방지 */
+    width: 250px;
+    height: 150px;
+    background-color: #FFF;
+    border-radius: 10px;
+    text-align: center;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* 스크롤 버튼 제거 */
+.scroll-btn {
+    display: none !important;
+}

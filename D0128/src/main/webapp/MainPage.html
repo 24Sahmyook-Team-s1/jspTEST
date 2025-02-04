@@ -16,9 +16,18 @@
 
     <div class="main-container">
       <div class="ongoing-projects">
-        <h2>On Going</h2>
-        <div class="project-list"></div>
-      </div>
+    <h2>On Going</h2>
+    <div >
+	    <div class="scroll-container">
+	        <button class="scroll-btn left">&lt;</button> <!-- 왼쪽 이동 버튼 -->
+	        <div class="project-list-wrapper">
+	            <div class="project-list"></div> <!-- 프로젝트가 여기에 로드됨 -->
+	        </div>
+	        <button class="scroll-btn right">&gt;</button> <!-- 오른쪽 이동 버튼 -->
+	    </div>
+    </div>
+</div>
+
       <div>
         <div class="recent-and-gantt">
           <div class="box-col">
@@ -46,51 +55,82 @@
   </body>
 </html>
 <script>
-  $(document).ready(function () {
+$(document).ready(function () {
     loadProjects(); // 페이지 로드 시 프로젝트 목록 불러오기
-  });
-  function loadProjects() {
-	    $.ajax({
-	        url: "jsp/GetProjectList.jsp",
-	        type: "GET",
-	        dataType: "json",
-	        cache: false, // ✅ 최신 데이터를 가져오도록 설정
-	        success: function (projects) {
-	            console.log("✅ 프로젝트 데이터 수신:", projects);
-	            if (projects.length === 0) {
-	                console.warn("⚠ 서버에서 프로젝트 데이터를 가져오지 못했습니다.");
-	            }
-	            showProjects(projects);
-	        },
-	        error: function (xhr, status, error) {
-	            console.error("❌ AJAX 오류 발생:", error);
-	        },
-	    });
-	}
 
+    const projectWrapper = $(".project-list-wrapper");
 
+    // 초기에 스크롤을 맨 왼쪽으로 이동 (강제 적용)
+    setTimeout(() => {
+        projectWrapper.scrollLeft(0);
+    }, 200);
 
+    // 마우스로 드래그하여 가로 스크롤 가능하도록 설정
+    let isDown = false;
+    let startX;
+    let scrollLeft;
 
-  function showProjects(projects) {
+    projectWrapper.on("mousedown", function (e) {
+        isDown = true;
+        projectWrapper.addClass("active");
+        startX = e.pageX - projectWrapper.offset().left;
+        scrollLeft = projectWrapper.scrollLeft();
+    });
+
+    projectWrapper.on("mouseleave mouseup", function () {
+        isDown = false;
+        projectWrapper.removeClass("active");
+    });
+
+    projectWrapper.on("mousemove", function (e) {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - projectWrapper.offset().left;
+        const walk = (x - startX) * 2;
+        projectWrapper.scrollLeft(scrollLeft - walk);
+    });
+});
+
+function loadProjects() {
+    $.ajax({
+        url: "jsp/GetProjectList.jsp",
+        type: "GET",
+        dataType: "json",
+        success: function (projects) {
+            console.log("✅ 프로젝트 데이터 수신:", projects);
+            showProjects(projects);
+        },
+        error: function (xhr, status, error) {
+            console.error("❌ AJAX 오류 발생:", error);
+        },
+    });
+}
+
+function showProjects(projects) {
     var projectContainer = $(".project-list");
     projectContainer.empty(); // 기존 리스트 초기화
 
     if (projects.length > 0) {
-      for (var i = 0; i < projects.length; i++) {
-        projectContainer.append(getProjectCode(projects[i])); // 프로젝트 UI 생성
-      }
+        for (var i = 0; i < projects.length; i++) {
+            projectContainer.append(getProjectCode(projects[i]));
+        }
     } else {
-      projectContainer.append("<p>No On Going Projects</p>"); // 데이터 없을 때 메시지 표시
+        projectContainer.append("<p>No On Going Projects</p>");
     }
-  }
 
-  function getProjectCode(project) {
-	    return `
-	        <div class="project">
-	            <h3>${project.name}</h3>
-	            <p>📅 Created At: ${project.created_at}</p>
-	        </div>
-	    `;
-	}
+    // **리스트 로드 후 스크롤을 강제로 초기화**
+    setTimeout(() => {
+        $(".project-list-wrapper").scrollLeft(0);
+    }, 200);
+}
+
+function getProjectCode(project) {
+    return `
+        <div class="project">
+            <h3>${project.name}</h3>
+            <p>📅 Created At: ${project.created_at}</p>
+        </div>
+    `;
+}
 
 </script>
