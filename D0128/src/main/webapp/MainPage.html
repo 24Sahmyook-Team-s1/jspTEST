@@ -1,53 +1,72 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Main Page</title>
-    <link rel="stylesheet" href="css/MainPage.css">
-    <script src="https://code.jquery.com/jquery-3.4.1.js"
-	integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
-	crossorigin="anonymous"></script>
+    <title>MOLE PMS - Main Page</title>
+    <script src="js/jquery-3.6.0.min.js"></script>    
+    <script src="js/core.js"></script>
+    <link rel="stylesheet" href="css/Index.css" />
+    <link rel="stylesheet" href="css/pop-up.css" />
+    <link rel="stylesheet" href="css/MainPage.css" />
 </head>
 <body>
-    <div class="header">
-        <h1>MOLE</h1>
-    </div>
-
-    <div class="main-container">
-        <div class="ongoing-projects">
-            <h2>On Going</h2>
+    
+    <!-- Header -->
+    <header class="header">MOLE</header>
+    
+    <!-- Main Container -->
+    <main class="container">
+        
+        <!-- Ongoing Projects -->
+        <section class="section">
+            <h2>Ongoing Projects</h2>
             <div class="project-list">
-                <div class="project">project 1</div>
-                <div class="project">project 2</div>
-                <div class="project">project 1</div>
-                <div class="project">project 2</div>
-                <div class="project">project 1</div>
+                <div class="project">Project 1</div>
+                <div class="project">Project 2</div>
+                <div class="project">Project 3</div>
             </div>
-        </div>
-          <div>
-        <div class="recent-and-gantt">
-          <div class="box-col">
-          <h2 class="title">recent issue</h2>
-            <div class="recent-issue-container">
-                <div class="recent-issues">
-                    <div class="issue">issue: something on svelte</div>
-                    <div class="issue">issue: something on svelte</div>
-                    <div class="issue">issue: something on svelte</div>
+        </section>
+        
+        <!-- Recent Issues & Gantt Chart -->
+        <section class="section">
+            <!-- Recent Issues -->
+            <div class="section">
+                <h2>Recent Issues</h2>
+                <div class="project-list">
+                    <div class="project">⚠ Issue: Fixing Svelte Bug</div>
+                    <div class="project">⚠ Issue: Database Optimization</div>
                 </div>
             </div>
+            
+            <!-- Gantt Chart -->
+            <div class="section">
+                <h2>Gantt Chart</h2>
+                <p>📊 Gantt Chart - Coming Soon</p>
             </div>
-
-          <div class="box-col">
-            <h2 class="title">Gantt Chart</h2>
-            <div class="gantt-chart-container">
-                <div class="chart">
-                    <div>Example Block A</div>
-                </div>
-            </div>
-            </div>
+        </section>
+    </main>
+    
+    <!-- Floating Action Button -->
+    <button class="floating-button" onclick="toggleMenu()">+</button>
+    
+    <!-- Expanding Menu -->
+    <div id="floatingMenu" class="hidden">
+        <a href="#">Home</a>
+        <a href="#">Projects</a>
+        <a href="#">Issues</a>
+        <a href="#">Gantt Chart</a>
     </div>
-    </div>
-  </div>
+    
+    <script>
+        function toggleMenu() {
+            var menu = document.getElementById("floatingMenu");
+            if (menu.style.display === "block") {
+                menu.style.display = "none";
+            } else {
+                menu.style.display = "block";
+            }
+        }
+    </script>
 </body>
 </html>
