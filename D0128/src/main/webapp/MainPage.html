@@ -5,10 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Main Page</title>
     <link rel="stylesheet" href="css/MainPage.css" />
-
-    <script src="js/jquery-3.6.0.min.js"></script>	
-	<script src="js/core.js"></script>
-	</head>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css"
+    />
+    <link rel="stylesheet" href="css/chart.css" />
+    <script src="js/jquery-3.6.0.min.js"></script>
+  </head>
   <body>
     <div class="header">
       <h1>MOLE</h1>
@@ -16,17 +19,20 @@
 
     <div class="main-container">
       <div class="ongoing-projects">
-    <h2>On Going</h2>
-    <div >
-	    <div class="scroll-container">
-	        <button class="scroll-btn left">&lt;</button> <!-- 왼쪽 이동 버튼 -->
-	        <div class="project-list-wrapper">
-	            <div class="project-list"></div> <!-- 프로젝트가 여기에 로드됨 -->
-	        </div>
-	        <button class="scroll-btn right">&gt;</button> <!-- 오른쪽 이동 버튼 -->
-	    </div>
-    </div>
-</div>
+        <h2>On Going</h2>
+        <div>
+          <div class="scroll-container">
+            <button class="scroll-btn left">&lt;</button>
+            <!-- 왼쪽 이동 버튼 -->
+            <div class="project-list-wrapper">
+              <div class="project-list"></div>
+              <!-- 프로젝트가 여기에 로드됨 -->
+            </div>
+            <button class="scroll-btn right">&gt;</button>
+            <!-- 오른쪽 이동 버튼 -->
+          </div>
+        </div>
+      </div>
 
       <div>
         <div class="recent-and-gantt">
@@ -44,25 +50,45 @@
           <div class="box-col">
             <h2 class="title">Gantt Chart</h2>
             <div class="gantt-chart-container">
-              <div class="chart">
-                <div>Example Block A</div>
+              <div class="chart-wrapper">
+                <ul class="chart-values">
+                  <li>sun</li>
+                  <li>mon</li>
+                  <li>tue</li>
+                  <li>wed</li>
+                  <li>thu</li>
+                  <li>fri</li>
+                  <li>sat</li>
+                </ul>
+                <ul class="chart-bars">
+                  <li data-duration="tue1/2-wed" data-color="#b03532">
+                    Task 1
+                  </li>
+                  <li data-duration="wed-thu1/2" data-color="#33a852">
+                    Task 2
+                  </li>
+                  <li data-duration="thu-fri1/2" data-color="#329ab0">
+                    Task 3
+                  </li>
+                </ul>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+    <script src="js/.js"></script>
   </body>
 </html>
 <script>
-$(document).ready(function () {
+  $(document).ready(function () {
     loadProjects(); // 페이지 로드 시 프로젝트 목록 불러오기
 
     const projectWrapper = $(".project-list-wrapper");
 
     // 초기에 스크롤을 맨 왼쪽으로 이동 (강제 적용)
     setTimeout(() => {
-        projectWrapper.scrollLeft(0);
+      projectWrapper.scrollLeft(0);
     }, 200);
 
     // 마우스로 드래그하여 가로 스크롤 가능하도록 설정
@@ -71,66 +97,65 @@ $(document).ready(function () {
     let scrollLeft;
 
     projectWrapper.on("mousedown", function (e) {
-        isDown = true;
-        projectWrapper.addClass("active");
-        startX = e.pageX - projectWrapper.offset().left;
-        scrollLeft = projectWrapper.scrollLeft();
+      isDown = true;
+      projectWrapper.addClass("active");
+      startX = e.pageX - projectWrapper.offset().left;
+      scrollLeft = projectWrapper.scrollLeft();
     });
 
     projectWrapper.on("mouseleave mouseup", function () {
-        isDown = false;
-        projectWrapper.removeClass("active");
+      isDown = false;
+      projectWrapper.removeClass("active");
     });
 
     projectWrapper.on("mousemove", function (e) {
-        if (!isDown) return;
-        e.preventDefault();
-        const x = e.pageX - projectWrapper.offset().left;
-        const walk = (x - startX) * 2;
-        projectWrapper.scrollLeft(scrollLeft - walk);
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - projectWrapper.offset().left;
+      const walk = (x - startX) * 2;
+      projectWrapper.scrollLeft(scrollLeft - walk);
     });
-});
+  });
 
-function loadProjects() {
+  function loadProjects() {
     $.ajax({
-        url: "jsp/GetProjectList.jsp",
-        type: "GET",
-        dataType: "json",
-        success: function (projects) {
-            console.log("✅ 프로젝트 데이터 수신:", projects);
-            showProjects(projects);
-        },
-        error: function (xhr, status, error) {
-            console.error("❌ AJAX 오류 발생:", error);
-        },
+      url: "jsp/GetProjectList.jsp",
+      type: "GET",
+      dataType: "json",
+      success: function (projects) {
+        console.log("✅ 프로젝트 데이터 수신:", projects);
+        showProjects(projects);
+      },
+      error: function (xhr, status, error) {
+        console.error("❌ AJAX 오류 발생:", error);
+      },
     });
-}
+  }
 
-function showProjects(projects) {
+  function showProjects(projects) {
     var projectContainer = $(".project-list");
     projectContainer.empty(); // 기존 리스트 초기화
 
     if (projects.length > 0) {
-        for (var i = 0; i < projects.length; i++) {
-            projectContainer.append(getProjectCode(projects[i]));
-        }
+      for (var i = 0; i < projects.length; i++) {
+        projectContainer.append(getProjectCode(projects[i]));
+      }
     } else {
-        projectContainer.append("<p>No On Going Projects</p>");
+      projectContainer.append("<p>No On Going Projects</p>");
     }
 
     // **리스트 로드 후 스크롤을 강제로 초기화**
     setTimeout(() => {
-        $(".project-list-wrapper").scrollLeft(0);
+      $(".project-list-wrapper").scrollLeft(0);
     }, 200);
-}
+  }
 
-function getProjectCode(project) {
+  function getProjectCode(project) {
     return `
         <div class="project">
             <h3>${project.name}</h3>
             <p>📅 Created At: ${project.created_at}</p>
         </div>
     `;
-}
-
+  }
 </script>
