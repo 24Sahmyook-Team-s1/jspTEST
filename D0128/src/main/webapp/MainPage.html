@@ -61,19 +61,40 @@
     </div>
 
     <div class="profile-container">
-      <img src="public/logo-transparent.png" alt="MOLE PMS Logo" class="profile-btn" id="profileBtn">
-      <div class="profile-menu" id="profileMenu">
+    <img src="public/logo-transparent.png" alt="MOLE PMS Logo" class="profile-btn" id="profileBtn">
+    <div class="profile-menu" id="profileMenu">
         <ul>
-          <li>홈</li>
-          <li>팀</li>
-          <li>프로필</li>
-          <li>설정</li>
+            <li onclick="goToPage('MainPage.html')">홈</li>
+            <li onclick="goToPage('TeamPage.html')">팀</li>  <!-- ✅ 팀 클릭 시 이동 -->
+            <li onclick="goToPage('ProfilePage.html')">프로필</li>
+            <li onclick="goToPage('SettingsPage.html')">설정</li>
         </ul>
-      </div>
     </div>
+</div>
+
   </body>
 </html>
 <script>
+
+document.addEventListener("DOMContentLoaded", function () {
+    const profileBtn = document.getElementById("profileBtn");
+    const profileMenu = document.getElementById("profileMenu");
+
+    profileBtn.addEventListener("click", function () {
+        profileMenu.classList.toggle("active"); // 메뉴 토글
+    });
+
+    document.addEventListener("click", function (event) {
+        if (!profileBtn.contains(event.target) && !profileMenu.contains(event.target)) {
+            profileMenu.classList.remove("active"); // 메뉴 외부 클릭 시 닫기
+        }
+    });
+
+    // ✅ 페이지 이동 함수
+    window.goToPage = function (page) {
+        window.location.href = page;
+    };
+});
 $(document).ready(function () {
     loadProjects(); // 페이지 로드 시 기본 프로젝트 목록 불러오기
 
@@ -159,5 +180,6 @@ $(document).ready(function () {
         `;
     }
 });
+
 
 </script>

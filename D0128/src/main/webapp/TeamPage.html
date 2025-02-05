@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Page</title>
+    <link rel="stylesheet" href="css/TeamPage.css">
+
+    <script src="js/jquery-3.6.0.min.js"></script>    
+    <script src="js/core.js"></script>
+</head>
+<body>
+    <!-- ✅ 상단바 추가 -->
+    <div class="header">
+        <h1>MOLE</h1>
+    </div>
+
+    <div class="container">
+        <!-- 📌 왼쪽 사이드바 -->
+        <div class="sidebar">
+            <ul>
+                <li class="active">대시보드</li>
+                <li>대충 2</li>
+                <li>대충 2</li>
+                <li>대충 2</li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            <!-- 📌 상태 개요 -->
+            <div class="overview">
+                <div class="status-chart">
+                    <h2>상태 개요</h2>
+                    <p>이슈 현황의 스냅샷을 확인합니다. <a href="#">모든 이슈 보기</a></p>
+                    <div class="chart">
+                        <div class="circle"> 
+                            <span>20</span>
+                            <p>총 이슈</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recent-activities">
+                    <h2>최근 활동</h2>
+                    <p>프로젝트 전반에서 일어나는 최신 정보를 파악하세요.</p>
+                    <div class="activity-log">
+                        <h3>2025년 1월 22일 수요일</h3>
+                        <p><b>Nam Hyeon Jae</b> ODWQA-14 - N&I MVP 개발(오타 수정)에서 2개의 필드 업데이트</p>
+                        <ul>
+                            <li>Start date 업데이트</li>
+                            <li>*5/29/25*(오늘)로 기본 변경됨</li>
+                        </ul>
+                        <h3>2025년 1월 17일 금요일</h3>
+                        <p><b>Eebb</b> 진행 중으로 상태 변경: ODWQA-33 - AWS-Deploy-Front</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 📌 진행 중인 업무 -->
+            <div class="tasks-container">
+                <div class="task-box">
+                    <h3>업무 1</h3>
+                    <ul>
+                        <li>사용자 로그인 UI 개선</li>
+                        <li>데이터베이스 연결 오류 수정</li>
+                        <li>API 응답 속도 개선</li>
+                    </ul>
+                </div>
+
+                <div class="task-box">
+                    <h3>업무 2</h3>
+                    <ul>
+                        <li>Record 도입</li>
+                        <li>Review 도입</li>
+                    </ul>
+                </div>
+
+                <div class="task-box">
+                    <h3>이슈 해결</h3>
+                    <p>대략의 이슈 요약 내용</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 📌 프로필 메뉴 -->
+        <div class="profile-container">
+            <img src="public/logo-transparent.png" alt="MOLE PMS Logo" class="profile-btn" id="profileBtn">
+            <div class="profile-menu" id="profileMenu">
+                <ul>
+                    <li onclick="goToPage('MainPage.html')">홈</li>
+                    <li class="active">팀</li>
+                    <li onclick="goToPage('ProfilePage.html')">프로필</li>
+                    <li onclick="goToPage('SettingsPage.html')">설정</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const profileBtn = document.getElementById("profileBtn");
+    const profileMenu = document.getElementById("profileMenu");
+
+    profileBtn.addEventListener("click", function () {
+        profileMenu.classList.toggle("active");
+    });
+
+    document.addEventListener("click", function (event) {
+        if (!profileBtn.contains(event.target) && !profileMenu.contains(event.target)) {
+            profileMenu.classList.remove("active");
+        }
+    });
+
+    window.goToPage = function (page) {
+        window.location.href = page;
+    };
+});
+</script>
