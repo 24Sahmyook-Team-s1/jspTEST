@@ -55,6 +55,17 @@
   </body>
 </html>
 <script>
+
+document.addEventListener("DOMContentLoaded", function () {
+    const projectWrapper = document.querySelector(".project-list-wrapper");
+    if (projectWrapper) {
+        setTimeout(() => {
+            projectWrapper.scrollLeft = 0; // 첫 번째 박스가 항상 보이도록 설정
+        }, 100);
+    }
+});
+
+
 $(document).ready(function () {
     loadProjects(); // 페이지 로드 시 프로젝트 목록 불러오기
 
