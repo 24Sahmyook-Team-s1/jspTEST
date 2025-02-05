@@ -30,7 +30,7 @@ public class ProjectDAO {
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		try {
-			String sql = "SELECT projectName FROM projects WHERE projectID = ?";
+			String sql = "SELECT projectName FROM projects WHERE projectName = ?";
 			conn = ConnectionPool.get();
 			stmt = conn.prepareStatement(sql);
 			stmt.setString(1, projectID);
@@ -106,18 +106,32 @@ public class ProjectDAO {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
+		StringBuilder jsonResult = new StringBuilder("[");
 		try {
 			String sql = "SELECT projectID, projectName, createDat, projectLeader FROM projects WHERE projectName = ?";
 			conn = ConnectionPool.get();
 			stmt = conn.prepareStatement(sql);
 			stmt.setString(1, projectID);
 			rs = stmt.executeQuery();
-			if (rs.next()) {
-				return "{\"projectID\": \"" + rs.getString("projectID") + "\", " + "\"projectName\": \""
-						+ rs.getString("projectName") + "\", " + "\"createDat\": \"" + rs.getTimestamp("createDat")
-						+ "\", " + "\"projectLeader\": \"" + rs.getString("projectLeader") + "\"}";
+//			if (rs.next()) {
+//				return "{\"projectID\": \"" + rs.getString("projectID") + "\", " + "\"projectName\": \""
+//						+ rs.getString("projectName") + "\", " + "\"createDat\": \"" + rs.getTimestamp("createDat")
+//						+ "\", " + "\"projectLeader\": \"" + rs.getString("projectLeader") + "\"}";
+//			}
+//			return "{}";
+			
+			int count = 0;
+			while (rs.next()) {
+				if (count++ > 0)
+					jsonResult.append(", "); // 첫 번째 항목이 아닐 경우 쉼표 추가
+				jsonResult.append("{").append("\"no\": ").append(rs.getInt("ProjectID")).append(", ")
+						.append("\"name\": \"").append(rs.getString("ProjectName")).append("\", ")
+						.append("\"created_at\": \"").append(rs.getString("CreatedAt")).append("\", ")
+						.append("\"projectLeader\": \"").append(rs.getString("ProjectLeader")).append("\"") // 프로젝트 리더
+																											// 추가
+						.append("}");
 			}
-			return "{}";
+			jsonResult.append("]");
 		} finally {
 			if (rs != null)
 				rs.close();
@@ -126,6 +140,7 @@ public class ProjectDAO {
 			if (conn != null)
 				conn.close();
 		}
+		return jsonResult.toString(); // JSON 문자열 반환
 	}
 
 	// 팀 프로젝트 이름 변경
