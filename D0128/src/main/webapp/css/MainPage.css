@@ -27,25 +27,48 @@ body, html {
     text-transform: uppercase;
     text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
 }
-
-/* 🌟 메인 컨테이너 */
-.main-container {
-    width: 100%;
-    max-width: 1920px;
-    min-height: 100vh;
+/* 🌟 Recent Issue 컨테이너 */
+.recent-issue-container {
+    background-color: #ffffff;
+    border-radius: 8px;
     padding: 20px;
-    box-sizing: border-box;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    width: 100%;
+}
+
+/* 🌟 Recent Issue 리스트 */
+.recent-issues {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    gap: 10px;
 }
+
+/* 🌟 각 이슈 스타일 */
+.issue {
+    background-color: #f1f3f5;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    color: black;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.issue:hover {
+    background-color: #e9ecef;
+    transform: scale(1.02);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
 
 /* 🌟 On Going 프로젝트 섹션 */
 .ongoing-projects {
     text-align: center;
     width: 100%;
     max-width: 1400px;
-    margin-top: 50px; /* 🔹 상단바와 간격 추가 */
+    margin-top: 50px;
     margin-bottom: 50px;
     display: flex;
     flex-direction: column;
@@ -126,8 +149,8 @@ body, html {
     display: flex;
     flex-direction: row;
     gap: 15px;
-    flex-wrap: nowrap;
-    min-width: fit-content;
+    white-space: nowrap;
+    overflow-x: auto;
 }
 
 /* 🌟 프로젝트 카드 */
@@ -140,12 +163,6 @@ body, html {
     text-align: center;
     padding: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: black;
 }
 
 /* 🌟 프로젝트 제목 */
@@ -169,20 +186,14 @@ body, html {
     max-width: 90%;
 }
 
-/* 🌟 프로젝트 카드 hover */
-.project:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-}
-
 /* 🌟 Recent Issue & Gantt Chart 섹션 */
 .recent-and-gantt {
     width: 100%;
     max-width: 1400px;
     display: flex;
     justify-content: space-between;
-    margin-top: 60px; /* 🔹 간격을 더 넓게 조정 */
-    gap: 270px; /* 🔹 두 섹션 사이 간격 증가 */
+    margin-top: 60px;
+    gap: 50px;
 }
 
 /* 🌟 Recent Issue & Gantt Chart 타이틀 */
@@ -197,70 +208,85 @@ body, html {
     border-bottom: 2px solid rgba(0, 0, 0, 0.1);
 }
 
-/* 🌟 Recent Issue & Gantt Chart 컨테이너 */
-.recent-issue-container,
+/* 🌟 Gantt Chart */
 .gantt-chart-container {
-    border: none;
-    padding: 30px; /* 🔹 패딩을 늘려서 여유로운 느낌 */
-    flex-grow: 1;
-    min-width: 500px;
-}
-
-/* 🌟 최근 이슈 카드 */
-.issue {
-    background-color: #f1f3f5;
-    padding: 15px;
+    width: 100%;
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #ffffff;
     border-radius: 8px;
-    font-size: 16px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 🌟 Gantt Chart 스타일 */
+.gantt-chart {
+    display: flex;
+    flex-direction: column;
+}
+
+.gantt-header {
+    display: flex;
+    background: #f1f1f1;
     font-weight: bold;
-    color: black;
-    transition: all 0.3s ease-in-out;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 10px;
 }
 
-.issue:hover {
-    background-color: #e9ecef;
-    transform: scale(1.02);
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+.gantt-project-name {
+    width: 20%;
+    min-width: 120px;
+    text-align: left;
+    padding-left: 10px;
 }
 
-/* 🌟 반응형 디자인 */
-@media (max-width: 1200px) {
-    .recent-and-gantt {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .recent-issue-container,
-    .gantt-chart-container {
-        width: 95%;
-        min-width: auto;
-    }
-
-    .project-list-wrapper {
-        width: 95%;
-    }
+.gantt-days {
+    display: flex;
+    width: 80%;
+    text-align: center;
 }
 
-@media (max-width: 768px) {
-    .project-list-wrapper {
-        width: 100%;
-    }
-
-    .project {
-        width: 90%;
-    }
-
-    .recent-and-gantt {
-        flex-direction: column;
-    }
-
-    .recent-issue-container,
-    .gantt-chart-container {
-        width: 100%;
-    }
+.gantt-days div {
+    flex: 1;
+    padding: 5px;
+    border-left: 1px solid #ccc;
 }
-/* ✅ 프로필 버튼 (오른쪽 아래) */
+
+.gantt-body {
+    display: flex;
+    flex-direction: column;
+}
+
+.gantt-row {
+    display: flex;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.gantt-row .project-name {
+    width: 20%;
+    min-width: 120px;
+    padding-left: 10px;
+}
+
+.gantt-progress {
+    display: flex;
+    width: 80%;
+}
+
+.gantt-progress div {
+    flex: 1;
+    height: 20px;
+    margin: 2px;
+    background-color: #dcdcdc;
+    border-radius: 5px;
+}
+
+.gantt-progress .active {
+    background-color: #76c7c0;
+}
+
+/* 🌟 프로필 버튼 */
 .profile-container {
     position: fixed;
     bottom: 20px;
@@ -270,7 +296,6 @@ body, html {
     align-items: center;
 }
 
-/* 🔵 프로필 아이콘 */
 .profile-btn {
     width: 60px;
     height: 60px;
@@ -284,7 +309,7 @@ body, html {
     transform: scale(1.1);
 }
 
-/* ✅ 프로필 메뉴 (숨김) */
+/* 🌟 프로필 메뉴 */
 .profile-menu {
     position: absolute;
     bottom: 70px;
@@ -298,7 +323,6 @@ body, html {
     transition: all 0.3s ease-in-out;
 }
 
-/* 🔹 메뉴 리스트 */
 .profile-menu ul {
     list-style: none;
     padding: 10px;
@@ -316,20 +340,7 @@ body, html {
     background: #f0f0f0;
 }
 
-/* ✅ 메뉴 활성화 시 보이게 */
 .profile-menu.active {
     display: block;
     opacity: 1;
 }
-
-/* ✅ 반응형 스타일 (모바일) */
-@media (max-width: 768px) {
-    .profile-menu {
-        width: 100px;
-    }
-
-    .profile-menu ul li {
-        font-size: 12px;
-    }
-}
-

@@ -7,117 +7,83 @@
     <link rel="stylesheet" href="css/MainPage.css" />
 
     <script src="js/jquery-3.6.0.min.js"></script>	
-	<script src="js/core.js"></script>
-	</head>
+    <script src="js/core.js"></script>
+  </head>
   <body>
     <div class="header">
       <h1>MOLE</h1>
     </div>
 
     <div class="ongoing-projects">
-    <div class="ongoing-header">
+      <div class="ongoing-header">
         <h2>On Going</h2>
         <button id="loadMoreBtn" class="load-more-btn">더보기</button>
-    </div>
-    <div class="scroll-container">
+      </div>
+      <div class="scroll-container">
         <div class="project-list-wrapper">
-            <div class="project-list" id="projectList">
-	                <!-- JavaScript로 동적으로 추가될 예정 -->
-	            </div>
-	        </div>
-	    </div>
-	</div>
-
-
-      <div>
-        <div class="recent-and-gantt">
-          <div class="box-col">
-            <h2 class="title">recent issue</h2>
-            <div class="recent-issue-container">
-              <div class="recent-issues">
-                <div class="issue">issue: something on svelte</div>
-                <div class="issue">issue: something on svelte</div>
-                <div class="issue">issue: something on svelte</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="box-col">
-            <h2 class="title">Gantt Chart</h2>
-            <div class="gantt-chart-container">
-              <div class="chart">
-                <div>Example Block A</div>
-              </div>
-            </div>
+          <div class="project-list" id="projectList">
+            <!-- JavaScript로 동적으로 추가될 예정 -->
           </div>
         </div>
       </div>
     </div>
-    
-    <div class="profile-container">
-        <img src="public/logo-transparent.png" alt="MOLE PMS Logo" class="profile-btn" id="profileBtn">
-        <div class="profile-menu" id="profileMenu">
-            <ul>
-                <li>홈</li>
-                <li>팀</li>
-                <li>프로필</li>
-                <li>설정</li>
-            </ul>
+
+    <div class="recent-and-gantt">
+      <div class="box-col">
+        <h2 class="title">Recent Issue</h2>
+        <div class="recent-issue-container">
+          <div class="recent-issues">
+            <div class="issue">issue: something on svelte</div>
+            <div class="issue">issue: something on svelte</div>
+            <div class="issue">issue: something on svelte</div>
+          </div>
         </div>
+      </div>
+
+      <div class="gantt-chart-container">
+        <h2 class="title">Gantt Chart</h2>
+        <div class="gantt-chart">
+          <div class="gantt-header">
+            <div class="gantt-project-name">Project</div>
+            <div class="gantt-days">
+              <div>월</div>
+              <div>화</div>
+              <div>수</div>
+              <div>목</div>
+              <div>금</div>
+            </div>
+          </div>
+          <div class="gantt-body" id="ganttBody">
+            <!-- JavaScript로 프로젝트와 진행도를 동적으로 추가 -->
+          </div>
+        </div>
+      </div>
     </div>
-    
+
+    <div class="profile-container">
+      <img src="public/logo-transparent.png" alt="MOLE PMS Logo" class="profile-btn" id="profileBtn">
+      <div class="profile-menu" id="profileMenu">
+        <ul>
+          <li>홈</li>
+          <li>팀</li>
+          <li>프로필</li>
+          <li>설정</li>
+        </ul>
+      </div>
+    </div>
   </body>
 </html>
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-    const projectWrapper = document.querySelector(".project-list-wrapper");
-    if (projectWrapper) {
-        setTimeout(() => {
-            projectWrapper.scrollLeft = 0; // 첫 번째 박스가 항상 보이도록 설정
-        }, 100);
-    }
-});
-
 $(document).ready(function () {
     loadProjects(); // 페이지 로드 시 기본 프로젝트 목록 불러오기
 
     const projectWrapper = $(".project-list-wrapper");
     const loadMoreBtn = $("#loadMoreBtn");
-    
+
     let loadedCount = 4; // 초기 표시 개수
     let allProjects = []; // 전체 프로젝트 저장
 
-    // 초기에 스크롤을 맨 왼쪽으로 이동 (강제 적용)
-    setTimeout(() => {
-        projectWrapper.scrollLeft(0);
-    }, 200);
-
-    // 마우스로 드래그하여 가로 스크롤 가능하도록 설정
-    let isDown = false;
-    let startX;
-    let scrollLeft;
-
-    projectWrapper.on("mousedown", function (e) {
-        isDown = true;
-        projectWrapper.addClass("active");
-        startX = e.pageX - projectWrapper.offset().left;
-        scrollLeft = projectWrapper.scrollLeft();
-    });
-
-    projectWrapper.on("mouseleave mouseup", function () {
-        isDown = false;
-        projectWrapper.removeClass("active");
-    });
-
-    projectWrapper.on("mousemove", function (e) {
-        if (!isDown) return;
-        e.preventDefault();
-        const x = e.pageX - projectWrapper.offset().left;
-        const walk = (x - startX) * 2;
-        projectWrapper.scrollLeft(scrollLeft - walk);
-    });
-
-    // 프로젝트 목록 불러오기
+    // ✅ 프로젝트 데이터를 불러와서 On Going과 Gantt Chart에 반영
     function loadProjects() {
         $.ajax({
             url: "jsp/GetProjectList.jsp",
@@ -134,7 +100,7 @@ $(document).ready(function () {
         });
     }
 
-    // 프로젝트 표시 함수
+    // ✅ On Going 프로젝트 목록 표시
     function showProjects(count) {
         let projectContainer = $("#projectList");
         projectContainer.empty(); // 기존 리스트 초기화
@@ -149,27 +115,41 @@ $(document).ready(function () {
             projectContainer.append("<p>No On Going Projects</p>");
         }
 
-        // **리스트 로드 후 스크롤을 강제로 초기화**
-        setTimeout(() => {
-            $(".project-list-wrapper").scrollLeft(0);
-        }, 200);
+        updateGanttChart(displayProjects); // ✅ 간트차트도 같이 업데이트
 
-        // 모든 프로젝트가 로드되면 버튼 숨김
         if (count >= allProjects.length) {
             loadMoreBtn.hide();
         }
     }
 
-    // 더보기 버튼 클릭 이벤트
+    // ✅ 간트 차트 업데이트 함수
+    function updateGanttChart(projects) {
+        let ganttBody = $("#ganttBody");
+        ganttBody.empty();
+
+        projects.forEach(project => {
+            let row = `<div class="gantt-row">
+                <div class="project-name">${project.name}</div>
+                <div class="gantt-progress">
+                    <div class="${project.schedule[0] ? 'active' : ''}"></div>
+                    <div class="${project.schedule[1] ? 'active' : ''}"></div>
+                    <div class="${project.schedule[2] ? 'active' : ''}"></div>
+                    <div class="${project.schedule[3] ? 'active' : ''}"></div>
+                    <div class="${project.schedule[4] ? 'active' : ''}"></div>
+                </div>
+            </div>`;
+            ganttBody.append(row);
+        });
+    }
+
     loadMoreBtn.on("click", function () {
-        loadedCount += 2; // 2개씩 추가
+        loadedCount += 2;
         if (loadedCount > allProjects.length) {
             loadedCount = allProjects.length;
         }
         showProjects(loadedCount);
     });
 
-    // 프로젝트 HTML 코드 생성
     function getProjectCode(project) {
         return `
             <div class="project">
@@ -179,23 +159,5 @@ $(document).ready(function () {
         `;
     }
 });
-
-document.addEventListener("DOMContentLoaded", function () {
-    const profileBtn = document.getElementById("profileBtn");
-    const profileMenu = document.getElementById("profileMenu");
-
-    profileBtn.addEventListener("click", function () {
-        // 메뉴 토글 (보였다가 숨기기)
-        profileMenu.classList.toggle("active");
-    });
-
-    // 다른 곳을 클릭하면 메뉴 닫기
-    document.addEventListener("click", function (event) {
-        if (!profileBtn.contains(event.target) && !profileMenu.contains(event.target)) {
-            profileMenu.classList.remove("active");
-        }
-    });
-});
-
 
 </script>

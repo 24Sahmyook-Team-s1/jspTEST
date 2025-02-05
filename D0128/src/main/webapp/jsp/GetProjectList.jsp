@@ -15,27 +15,30 @@
 
         System.out.println("🔍 SQL 실행 시작");
 
-        // 실행할 SQL 로그 출력
-        String sql = "SELECT ProjectID, ProjectName, TO_CHAR(CreatedAt, 'YYYY-MM-DD') AS CreatedAt FROM Projects ORDER BY CreatedAt DESC, ProjectID ASC";
-        System.out.println("✅ 실행할 SQL: " + sql);
+        String sql = "SELECT ProjectID, ProjectName, TO_CHAR(CreatedAt, 'YYYY-MM-DD') AS CreatedAt, " +
+                     "ScheduleMonday, ScheduleTuesday, ScheduleWednesday, ScheduleThursday, ScheduleFriday " +
+                     "FROM Projects ORDER BY CreatedAt DESC, ProjectID ASC";
 
         pstmt = conn.prepareStatement(sql);
         rs = pstmt.executeQuery();
 
-        int count = 0;
         while (rs.next()) {
             JSONObject project = new JSONObject();
             project.put("no", rs.getInt("ProjectID"));
             project.put("name", rs.getString("ProjectName"));
             project.put("created_at", rs.getString("CreatedAt"));
+
+            // ✅ Gantt Chart 일정 배열 추가
+            JSONArray schedule = new JSONArray();
+            schedule.add(rs.getInt("ScheduleMonday"));
+            schedule.add(rs.getInt("ScheduleTuesday"));
+            schedule.add(rs.getInt("ScheduleWednesday"));
+            schedule.add(rs.getInt("ScheduleThursday"));
+            schedule.add(rs.getInt("ScheduleFriday"));
+
+            project.put("schedule", schedule);
             projectList.add(project);
-            count++;
-
-            System.out.println("📌 프로젝트 추가됨: " + project.toJSONString()); // ✅ 개별 프로젝트 확인 로그
         }
-
-        System.out.println("✅ 최종 조회된 프로젝트 개수: " + count); // ✅ 총 개수 확인
-        System.out.println("✅ 최종 JSON 결과: " + projectList.toJSONString()); // ✅ 최종 JSON 출력
 
     } catch (Exception e) {
         e.printStackTrace();
