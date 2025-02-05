@@ -13,7 +13,7 @@
         Class.forName("oracle.jdbc.driver.OracleDriver");
         conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/XE", "park", "1111");
 
-        String sql = "SELECT TeamID, TeamName, TO_CHAR(CreatedAt, 'YYYY-MM-DD') AS CreatedAt FROM Teams ORDER BY CreatedAt DESC";
+        String sql = "SELECT TeamID, TeamName, TO_CHAR(CreatedAt, 'YYYY-MM-DD') AS CreatedAt FROM PARK.Teams ORDER BY CreatedAt DESC";
 
         pstmt = conn.prepareStatement(sql);
         rs = pstmt.executeQuery();

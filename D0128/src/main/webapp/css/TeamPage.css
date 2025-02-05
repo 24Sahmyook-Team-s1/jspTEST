@@ -2,140 +2,309 @@
 body, html {
     margin: 0;
     padding: 0;
-    font-family: 'Arial', sans-serif;
+    font-family: 'Pretendard', sans-serif;
     background-color: #E2F9FF;
-    color: black;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-/* 🌟 헤더 스타일 */
+/* 🌟 상단바 */
 .header {
     width: 100%;
-    height: 80px;
+    height: 60px;
     background-color: #f5f7fa;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 28px;
+    font-size: 26px;
     font-weight: bold;
-    color: black;
-    text-transform: uppercase;
-    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+    font-family: 'Pretendard', sans-serif;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* 🌟 전체 컨테이너 */
 .container {
+    max-width: 1400px;  /* ✅ 화면에 맞게 조정 */
+    margin: 0 auto;
     display: flex;
-    width: 90%;
-    max-width: 1400px;
-    margin-top: 20px;
+    justify-content: space-between;
+    padding: 20px;
+    gap: 40px; /* ✅ 좌우 간격 최적화 */
 }
 
-/* 🌟 왼쪽 사이드바 (더 벽쪽으로 이동) */
+/* 🌟 사이드바 */
 .sidebar {
-    width: 180px;
-    background: #f5f7fa;
+    width: 200px;
+    background: #f1f3f5;
     padding: 20px;
     border-radius: 10px;
-    color: black;
-    margin-left: 10px;
-}
-
-.sidebar ul {
-    list-style: none;
-    padding: 0;
-}
-
-.sidebar ul li {
-    padding: 12px;
-    cursor: pointer;
-    transition: background 0.3s ease-in-out;
-    text-align: center;
-}
-
-.sidebar ul li.active {
-    background: #74c0fc;
+    font-size: 16px;
+    font-weight: 500;
+    position: relative;
 }
 
 /* 🌟 메인 컨텐츠 */
 .main-content {
-    flex-grow: 1;
+    flex: 1;
     padding: 20px;
 }
 
-/* 🌟 상태 개요 */
+/* 📌 상태 개요 및 최근 활동 */
 .overview {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 20px;
+    width: 100%;
+    gap: 40px;  /* ✅ 좌우 간격 조정 */
+    margin-bottom: 40px; /* ✅ 아래 여백 추가 */
 }
 
 .status-chart, .recent-activities {
-    width: 48%;
-    background: white;
+    flex: 1;
     padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 40px; /* ✅ 상하 간격 추가 */
 }
 
-/* 🌟 진행 중인 업무 */
+.status-chart h2,
+.recent-activities h2 {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+/* 📌 원형 그래프 */
+#statusPieChart {
+    max-width: 250px;
+    margin: 0 auto;
+}
+
+/* 📌 최근 활동 로그 */
+.activity-log {
+    background: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    max-width: 100%;
+    word-break: break-word;
+    line-height: 1.5;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.activity-log p {
+    padding: 10px;
+    background: white;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* 📌 할 일 관리 */
 .tasks-container {
     display: flex;
     justify-content: space-between;
+    width: 100%;
+    gap: 40px;  /* ✅ 좌우 간격 조정 */
+    margin-bottom: 40px; /* ✅ 아래 여백 추가 */
 }
 
 .task-box {
-    width: 30%;
-    background: white;
+    flex: 1;
     padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 40px; /* ✅ 상하 간격 추가 */
 }
 
-/* 🌟 프로필 버튼 및 메뉴 */
+.task-box h3 {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+/* 📌 할 일 리스트 */
+.task-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.task-item {
+    background-color: #f1f3f5;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.task-item:hover {
+    background-color: #e9ecef;
+    transform: scale(1.05);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* ✅ 진행 중 상태 스타일 */
+#inProgressList .task-item {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+/* ✅ 완료 상태 스타일 */
+#completedList .task-item {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+/* 🌟 할 일 추가 버튼 */
+#addTaskBtn {
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    font-size: 14px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: background-color 0.3s ease-in-out;
+}
+
+#addTaskBtn:hover {
+    background-color: #0056b3;
+}
+
+/* 📌 프로필 버튼 */
 .profile-container {
     position: fixed;
     bottom: 20px;
     right: 20px;
 }
 
+/* ✅ 프로필 버튼 */
 .profile-btn {
     width: 60px;
     height: 60px;
     border-radius: 50%;
     cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease-in-out;
 }
 
+.profile-btn:hover {
+    transform: scale(1.1);
+}
+
+/* ✅ 프로필 메뉴 */
 .profile-menu {
-    display: none;
     position: absolute;
-    bottom: 70px;
+    bottom: 80px;
     right: 0;
+    width: 120px;
     background: white;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    width: 120px;
-    padding: 10px;
-}
-
-.profile-menu.active {
-    display: block;
+    display: none;
+    opacity: 0;
+    transition: all 0.3s ease-in-out;
 }
 
 .profile-menu ul {
     list-style: none;
-    padding: 0;
+    padding: 10px;
     margin: 0;
 }
 
 .profile-menu ul li {
     padding: 10px;
+    font-size: 14px;
+    font-weight: 500;
     cursor: pointer;
-    text-align: center;
+    transition: background 0.3s ease-in-out;
 }
 
 .profile-menu ul li:hover {
     background: #f0f0f0;
+}
+
+/* ✅ 메뉴 활성화 시 보이게 */
+.profile-menu.active {
+    display: block;
+    opacity: 1;
+}
+
+/* 🔹 반응형 스타일 */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .tasks-container {
+        flex-direction: column;
+    }
+
+    .profile-container {
+        bottom: 10px;
+        right: 10px;
+    }
+}
+
+/* 📌 모달 창 */
+.modal {
+    display: none;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.4);
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+}
+
+/* 📌 모달 콘텐츠 */
+.modal-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    width: 300px;
+    margin: auto;
+    position: relative;
+}
+
+/* 📌 모달 버튼 */
+.modal-btn {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.modal-btn:hover {
+    opacity: 0.8;
+}
+
+/* 📌 삭제 버튼 */
+.delete {
+    background: #FF4444;
+    color: white;
+}
+
+/* 📌 닫기 버튼 */
+.close {
+    background: #ccc;
 }

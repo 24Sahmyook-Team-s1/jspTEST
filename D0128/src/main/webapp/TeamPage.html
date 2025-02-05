@@ -1,16 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Team Page</title>
     <link rel="stylesheet" href="css/TeamPage.css">
-
-    <script src="js/jquery-3.6.0.min.js"></script>    
-    <script src="js/core.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <!-- ✅ 상단바 추가 -->
+
+    <!-- 📌 상단바 -->
     <div class="header">
         <h1>MOLE</h1>
     </div>
@@ -27,57 +26,41 @@
         </div>
 
         <div class="main-content">
-            <!-- 📌 상태 개요 -->
+            <!-- 📌 상태 개요 및 최근 활동 -->
             <div class="overview">
                 <div class="status-chart">
                     <h2>상태 개요</h2>
-                    <p>이슈 현황의 스냅샷을 확인합니다. <a href="#">모든 이슈 보기</a></p>
-                    <div class="chart">
-                        <div class="circle"> 
-                            <span>20</span>
-                            <p>총 이슈</p>
-                        </div>
-                    </div>
+                    <p>이슈 현황을 한눈에 확인하세요. <a href="#">모든 이슈 보기</a></p>
+                    <canvas id="statusPieChart"></canvas>
                 </div>
 
                 <div class="recent-activities">
                     <h2>최근 활동</h2>
-                    <p>프로젝트 전반에서 일어나는 최신 정보를 파악하세요.</p>
-                    <div class="activity-log">
-                        <h3>2025년 1월 22일 수요일</h3>
-                        <p><b>Nam Hyeon Jae</b> ODWQA-14 - N&I MVP 개발(오타 수정)에서 2개의 필드 업데이트</p>
-                        <ul>
-                            <li>Start date 업데이트</li>
-                            <li>*5/29/25*(오늘)로 기본 변경됨</li>
-                        </ul>
-                        <h3>2025년 1월 17일 금요일</h3>
-                        <p><b>Eebb</b> 진행 중으로 상태 변경: ODWQA-33 - AWS-Deploy-Front</p>
-                    </div>
+                    <p>작업 변경 사항이 여기에 기록됩니다.</p>
+                    <div class="activity-log" id="activityLog"></div>
                 </div>
             </div>
 
-            <!-- 📌 진행 중인 업무 -->
+            <!-- 📌 할 일 관리 -->
             <div class="tasks-container">
-                <div class="task-box">
-                    <h3>업무 1</h3>
-                    <ul>
-                        <li>사용자 로그인 UI 개선</li>
-                        <li>데이터베이스 연결 오류 수정</li>
-                        <li>API 응답 속도 개선</li>
-                    </ul>
+                <div class="task-box" id="todo">
+                    <h3>할 일</h3>
+                    <div class="task-list" id="todoList">
+                        <div class="task-item">API 응답 속도 개선</div>
+                        <div class="task-item">사용자 로그인 UI 개선</div>
+                        <div class="task-item">데이터베이스 연결 오류 수정</div>
+                    </div>
+                    <button id="addTaskBtn">+ 할 일 추가</button>
                 </div>
 
-                <div class="task-box">
-                    <h3>업무 2</h3>
-                    <ul>
-                        <li>Record 도입</li>
-                        <li>Review 도입</li>
-                    </ul>
+                <div class="task-box" id="inProgress">
+                    <h3>진행 중</h3>
+                    <div class="task-list" id="inProgressList"></div>
                 </div>
 
-                <div class="task-box">
-                    <h3>이슈 해결</h3>
-                    <p>대략의 이슈 요약 내용</p>
+                <div class="task-box" id="completed">
+                    <h3>완료</h3>
+                    <div class="task-list" id="completedList"></div>
                 </div>
             </div>
         </div>
@@ -95,8 +78,22 @@
             </div>
         </div>
     </div>
+    <!-- 📌 작업 상태 변경 모달 -->
+	<div id="taskModal" class="modal">
+	    <div class="modal-content">
+	        <h3 id="modalTitle">작업 상태 변경</h3>
+	        <button id="moveTask" class="modal-btn">진행 중으로 이동</button>
+	        <button id="deleteTask" class="modal-btn delete">삭제</button>
+	        <button id="closeModal" class="modal-btn close">닫기</button>
+	    </div>
+	</div>
+    
+
+    <script src="js/TeamPage.js"></script>
+
 </body>
 </html>
+
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     const profileBtn = document.getElementById("profileBtn");
@@ -115,5 +112,118 @@ document.addEventListener("DOMContentLoaded", function () {
     window.goToPage = function (page) {
         window.location.href = page;
     };
+
+    const addTaskButton = document.getElementById("addTaskBtn");
+    const todoList = document.getElementById("todoList");
+    const inProgressList = document.getElementById("inProgressList");
+    const completedList = document.getElementById("completedList");
+
+    addTaskButton.addEventListener("click", function () {
+        const newTaskText = prompt("새로운 할 일을 입력하세요:");
+        if (newTaskText) {
+            const newTask = createTaskItem(newTaskText);
+            todoList.appendChild(newTask);
+            addActivityLog(`📝 할 일 추가됨: ${newTaskText}`);
+            updateChart();
+        }
+    });
+
+    function createTaskItem(text) {
+        const task = document.createElement("div");
+        task.classList.add("task-item");
+        task.textContent = text;
+
+        task.addEventListener("click", function () {
+            openTaskModal(task, text);
+        });
+
+        return task;
+    }
+
+    function openTaskModal(task, text) {
+        const modal = document.getElementById("taskModal");
+        const modalTitle = document.getElementById("modalTitle");
+        const moveButton = document.getElementById("moveTask");
+        const deleteButton = document.getElementById("deleteTask");
+
+        modal.style.display = "block";
+        modalTitle.textContent = `작업: ${text}`;
+
+        let parentList = task.parentElement;
+
+        // 현재 상태에 따라 버튼 설정
+        if (parentList.id === "todoList") {
+            moveButton.textContent = "진행 중으로 이동";
+            moveButton.onclick = () => moveTask(task, inProgressList, "⏳ 진행 중");
+        } else if (parentList.id === "inProgressList") {
+            moveButton.textContent = "완료로 이동";
+            moveButton.onclick = () => moveTask(task, completedList, "✅ 완료됨");
+        } else {
+            moveButton.style.display = "none";
+        }
+
+        deleteButton.onclick = () => {
+            task.remove();
+            addActivityLog(`❌ 삭제됨: ${text}`);
+            updateChart();
+            closeModal();
+        };
+    }
+
+    function moveTask(task, targetList, message) {
+        targetList.appendChild(task);
+        addActivityLog(`${message}: ${task.textContent}`);
+        updateChart();
+        closeModal();
+
+        if (targetList === completedList) {
+            setTimeout(() => {
+                if (task.parentElement === completedList) {
+                    task.remove();
+                    addActivityLog(`🗑️ 자동 삭제됨: ${task.textContent}`);
+                    updateChart();
+                }
+            }, 10 * 60 * 1000);
+        }
+    }
+
+    function closeModal() {
+        document.getElementById("taskModal").style.display = "none";
+    }
+
+    function addActivityLog(message) {
+        const logContainer = document.getElementById("activityLog");
+        const time = new Date().toLocaleString();
+        const log = document.createElement("p");
+        log.textContent = `[${time}] ${message}`;
+        logContainer.prepend(log);
+    }
+
+    const ctx = document.getElementById("statusPieChart").getContext("2d");
+    const statusPieChart = new Chart(ctx, {
+        type: "doughnut",
+        data: {
+            labels: ["할 일", "진행 중", "완료"],
+            datasets: [
+                {
+                    data: [3, 0, 0],
+                    backgroundColor: ["#FF6384", "#FFD700", "#4CAF50"],
+                },
+            ],
+        },
+    });
+
+    function updateChart() {
+        statusPieChart.data.datasets[0].data = [
+            todoList.children.length,
+            inProgressList.children.length,
+            completedList.children.length,
+        ];
+        statusPieChart.update();
+    }
+
+    document.getElementById("closeModal").addEventListener("click", closeModal);
 });
+
 </script>
+
