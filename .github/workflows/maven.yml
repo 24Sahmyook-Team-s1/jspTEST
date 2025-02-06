@@ -1,0 +1,58 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{secrets.DOCKER_USERNAME}}
+          password: ${{secrets.DOCKER_TOKEN}}
+
+      - name: Build Docker image
+        run: |
+          docker build -t ranpia/tomcat9:latest ./tomcat
+
+      - name: Push Docker image
+        run: |
+          docker push ranpia/tomcat9:latest
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: SSH to EC2 and Deploy
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{secrets.SERVER_HOST}}
+          username: ${{secrets.SERVER_USER}}
+          key: ${{secrets.SERVER_SSH_KEY }}
+          port: 22
+          soutce: "docker-compose.yml"
+          target: "/tomcat"
+
+      - name: SSH to EC2
+        uses: appleboy/ssh-action@0.1.7
+        with:
+          host: ${{secrets.SERVER_HOST}}
+          username: ${{secrets.SERVER_USER}}
+          key: ${{secrets.SERVER_SSH_KEY }}
+          port: 22
+          script: |
+            cd /tomcat
+            docker-compose pull
+            docker-compose up -d
