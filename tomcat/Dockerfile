@@ -1,5 +1,5 @@
 # Tomcat 9 기반 이미지 사용
-FROM tomcat:9.0-jdk21-temurin
+FROM tomcat:9.0
 
 # Tomcat 관리자 계정 설정
 ENV TOMCAT_USER=admin
