@@ -58,6 +58,7 @@ jobs:
         key: ${{ secrets.SERVER_SSH_KEY }}
         source: "target/*.war"
         target: "/home/ec2-user/webapps/"
+        tar: false
 
     - name: Restart Docker Tomcat Container
       uses: appleboy/ssh-action@master
