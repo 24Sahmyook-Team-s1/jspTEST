@@ -11,7 +11,7 @@ RUN echo '<tomcat-users>' > /usr/local/tomcat/conf/tomcat-users.xml && \
     echo '</tomcat-users>' >> /usr/local/tomcat/conf/tomcat-users.xml
 
 # WAR 파일 복사
-COPY target/yourapp.war /usr/local/tomcat/webapps/yourapp.war  # WAR 파일 경로 수정
+COPY target/*.war /usr/local/tomcat/webapps/ROOT.war  # WAR 파일 경로 수정
 
 # Tomcat 실행
 CMD ["catalina.sh", "run"]
