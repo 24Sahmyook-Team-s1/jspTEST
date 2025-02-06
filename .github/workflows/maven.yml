@@ -3,7 +3,7 @@ name: Deploy Java Web App to Docker Tomcat
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   build:
