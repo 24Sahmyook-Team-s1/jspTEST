@@ -40,22 +40,15 @@ jobs:
         name: webapp
         path: target/
 
-    - name: Set up SSH
-      run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
-
-    - name: Test SSH Connection
+    - name: Deploy to EC2 via SSH
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.SERVER_HOST }}
         username: ${{ secrets.SERVER_USER }}
         key: ${{ secrets.SERVER_SSH_KEY }}
+        known_hosts: ${{ secrets.SERVER_KNOWN_HOSTS }}  # 서버의 공개키를 GitHub Secrets로 저장
         script: |
-          echo "✅ SSH 연결 성공"
-          ls -l
+          echo "SSH 연결 성공"
 
     - name: Deploy WAR to EC2 using rsync
       uses: appleboy/ssh-action@master
