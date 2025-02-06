@@ -61,7 +61,7 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: 22
           source: "/tomcat/docker-compose.yml"  # docker-compose.yml 파일을 전송
-          target: "/home/ubuntu/tomcat"
+          target: "/tomcat"
 
       - name: SSH to EC2
         uses: appleboy/ssh-action@master
