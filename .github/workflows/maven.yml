@@ -26,7 +26,7 @@ jobs:
       - name: Upload WAR Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ROOT
+          name: webapp
           path: target/*.war
 
       - name: Set up Docker
@@ -41,7 +41,7 @@ jobs:
       - name: Download WAR Artifact
         uses: actions/download-artifact@v4
         with:
-          name: ROOT
+          name: webapp
 
       - name: Copy WAR to Docker build context
         run: |
