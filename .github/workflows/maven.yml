@@ -53,6 +53,15 @@ jobs:
     needs: build
 
     steps:
+
+      - name: Test SSH connectivity
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -p 22 ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+          ssh -v -i ~/.ssh/id_rsa ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} echo "Success"
+    
       - name: SSH to EC2
         uses: appleboy/ssh-action@master
         with:
