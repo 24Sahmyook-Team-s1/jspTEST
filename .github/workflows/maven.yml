@@ -24,8 +24,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t
-          ranpia/tomcat9:latest ./tomcat
+          docker build -t ranpia/tomcat9:latest ./tomcat
 
       - name: Push Docker image
         run: |
