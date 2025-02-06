@@ -45,7 +45,7 @@ jobs:
           
       - name: Build Docker image
         run: |
-          docker build --no-cache -t ranpia/tomcat9:latest -f ./Dockerfile ./tomcat  # Dockerfile 경로와 컨텍스트 명시
+          docker build --no-cache -t ranpia/tomcat9:latest -f ./tomcat/Dockerfile ./tomcat  # Dockerfile 경로와 컨텍스트 명시
 
       - name: Push Docker image
         run: |
