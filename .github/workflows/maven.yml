@@ -23,9 +23,6 @@ jobs:
       - name: Build WAR with Maven
         run: mvn -B package --file pom.xml -DskipTests
 
-      - name: Create tomcat/webapps directory
-        run: mkdir -p ./tomcat/webapps  # tomcat/webapps 디렉토리 생성
-
       - name: Move WAR to tomcat/webapps directory
         run: |
           cp target/ROOT.war ./tomcat/webapps  # ROOT.war 파일을 tomcat/webapps 디렉토리로 복사
