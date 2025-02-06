@@ -15,15 +15,16 @@
     </div>
 
     <div class="container">
-        <!-- 📌 왼쪽 사이드바 -->
-        <div class="sidebar">
-            <ul>
-                <li class="active">대시보드</li>
-                <li>대충 2</li>
-                <li>대충 2</li>
-                <li>대충 2</li>
-            </ul>
-        </div>
+    <!-- 📌 왼쪽 사이드바 -->
+<div class="sidebar">
+    <ul>
+        <li onclick="location.href='MainPage.jsp'">대시보드</li>
+        <li onclick="location.href='TeamSearch.jsp'">팀 찾기</li>
+        <li onclick="location.href='TeamCreate.jsp'">팀 만들기</li>
+    </ul>
+</div>
+
+
 
         <div class="main-content">
             <!-- 📌 상태 개요 및 최근 활동 -->
@@ -46,13 +47,10 @@
                 <div class="task-box" id="todo">
                     <h3>할 일</h3>
                     <div class="task-list" id="todoList">
-                        <div class="task-item">API 응답 속도 개선</div>
-                        <div class="task-item">사용자 로그인 UI 개선</div>
-                        <div class="task-item">데이터베이스 연결 오류 수정</div>
+                        <div class="task-item">할 일을 추가해보세요!</div>
                     </div>
                     <button id="addTaskBtn">+ 할 일 추가</button>
                 </div>
-
                 <div class="task-box" id="inProgress">
                     <h3>진행 중</h3>
                     <div class="task-list" id="inProgressList"></div>

@@ -2,25 +2,29 @@
 body, html {
     margin: 0;
     padding: 0;
-    font-family: 'Pretendard', sans-serif;
-    background-color: #E2F9FF;
+    font-family: 'Arial', sans-serif;
+    background-color: #E2F9FF !important;
+    color: black;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
-
-/* 🌟 상단바 */
+/* 🌟 헤더 스타일 */
 .header {
     width: 100%;
-    height: 60px;
+    height: 80px;
     background-color: #f5f7fa;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 26px;
+    font-size: 28px;
     font-weight: bold;
-    font-family: 'Pretendard', sans-serif;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    color: black;
+    text-transform: uppercase;
+    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
 }
 
 /* 🌟 전체 컨테이너 */

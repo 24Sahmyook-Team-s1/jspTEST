@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>팀 만들기</title>
+    <link rel="stylesheet" href="css/TeamPage.css">
+</head>
+<body>
+
+    <!-- 📌 상단바 -->
+    <div class="header">
+        <h1>MOLE - 팀 만들기</h1>
+    </div>
+
+    <div class="container">
+        <!-- 📌 왼쪽 사이드바 -->
+        <div class="sidebar">
+            <ul>
+                <li onclick="goToPage('TeamPage.html')">돌아가기</li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            <h2>새로운 팀 만들기</h2>
+            <input type="text" id="teamName" placeholder="팀 이름 입력">
+            <button id="createTeamBtn">팀 생성</button>
+        </div>
+    </div>
+
+    <script src="js/CreateTeam.js"></script>
+</body>
+</html>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const createTeamBtn = document.getElementById("createTeamBtn");
+    const teamNameInput = document.getElementById("teamName");
+
+    createTeamBtn.addEventListener("click", function () {
+        const teamName = teamNameInput.value.trim();
+        if (teamName === "") {
+            alert("팀 이름을 입력해주세요.");
+            return;
+        }
+
+        alert(`팀 "${teamName}"이(가) 생성되었습니다.`);
+        teamNameInput.value = ""; // 입력값 초기화
+    });
+});
+</script>

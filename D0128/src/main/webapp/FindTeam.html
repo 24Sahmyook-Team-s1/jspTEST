@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>팀 찾기</title>
+    <link rel="stylesheet" href="css/TeamPage.css">
+</head>
+<body>
+
+    <!-- 📌 상단바 -->
+    <div class="header">
+        <h1>MOLE - 팀 찾기</h1>
+    </div>
+
+    <div class="container">
+        <!-- 📌 왼쪽 사이드바 -->
+        <div class="sidebar">
+            <ul>
+                <li onclick="goToPage('TeamPage.html')">돌아가기</li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            <h2>팀 목록</h2>
+            <input type="text" id="searchTeam" placeholder="팀 이름 검색...">
+            <div class="team-list" id="teamList">
+                <!-- JS로 동적 생성 -->
+            </div>
+        </div>
+    </div>
+
+    <script src="js/FindTeam.js"></script>
+</body>
+</html>
+<script>document.addEventListener("DOMContentLoaded", function () {
+    const teamList = document.getElementById("teamList");
+    const searchInput = document.getElementById("searchTeam");
+
+    let teams = [
+        { id: 1, name: "개발팀 Alpha", members: 5 },
+        { id: 2, name: "디자인팀 Beta", members: 3 },
+        { id: 3, name: "기획팀 Gamma", members: 4 }
+    ];
+
+    function renderTeams(filter = "") {
+        teamList.innerHTML = "";
+        teams
+            .filter(team => team.name.includes(filter))
+            .forEach(team => {
+                let div = document.createElement("div");
+                div.classList.add("team-card");
+                div.innerHTML = `<strong>${team.name}</strong> <br> 인원: ${team.members}명 <button onclick="joinTeam('${team.name}')">참여</button>`;
+                teamList.appendChild(div);
+            });
+    }
+
+    searchInput.addEventListener("input", function () {
+        renderTeams(this.value);
+    });
+
+    renderTeams();
+
+    window.joinTeam = function (teamName) {
+        alert(`${teamName}에 참여 신청하였습니다.`);
+    };
+});
+</script>
