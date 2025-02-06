@@ -46,7 +46,7 @@ jobs:
       - name: Build Docker image
         run: |
           cd tomcat  # tomcat 디렉토리로 이동
-          docker build -t ranpia/tomcat9:latest .  # 현재 디렉토리에서 Docker 이미지 빌드
+          docker build --no-cache -t ranpia/tomcat9:latest .  # 현재 디렉토리에서 Docker 이미지 빌드
 
       - name: Push Docker image
         run: |
