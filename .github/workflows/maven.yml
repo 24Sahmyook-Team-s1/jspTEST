@@ -38,7 +38,7 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: 22
           source: "./tomcat/webapps/ROOT.war"  # tomcat/webapps 디렉토리에서 WAR 파일을 업로드
-          target: "/home/ubuntu/tomcat/webapps/ROOT.war"  # EC2의 대상 경로
+          target: "/home/ubuntu/tomcat/webapps/"  # EC2의 대상 경로
 
       - name: Set up Docker
         uses: docker/setup-buildx-action@v1
