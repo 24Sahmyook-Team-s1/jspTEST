@@ -28,7 +28,7 @@ jobs:
 
       - name: Move WAR to tomcat/webapps directory
         run: |
-          cp target/ROOT.war ./tomcat/webapps/ROOT.war  # ROOT.war 파일을 tomcat/webapps 디렉토리로 복사
+          cp target/ROOT.war ./tomcat/webapp/ROOT.war  # ROOT.war 파일을 tomcat/webapp 디렉토리로 복사
 
       - name: Upload WAR to EC2
         uses: appleboy/scp-action@master
@@ -38,7 +38,7 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: 22
           source: "./target/ROOT.war"  # tomcat/webapps 디렉토리에서 WAR 파일을 업로드
-          target: "/home/ubuntu/tomcat/webapps/ROOT.war"  # EC2의 대상 경로
+          target: "/home/ubuntu/tomcat/webapp/ROOT.war"  # EC2의 대상 경로
           debug: true
 
       - name: Set up Docker
