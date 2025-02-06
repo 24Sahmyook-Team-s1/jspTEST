@@ -8,29 +8,46 @@
 </head>
 <body>
 
-    <!-- 📌 상단바 -->
     <div class="header">
         <h1>MOLE - 팀 만들기</h1>
     </div>
 
     <div class="container">
-        <!-- 📌 왼쪽 사이드바 -->
-        <div class="sidebar">
-            <ul>
-                <li onclick="goToPage('TeamPage.html')">돌아가기</li>
-            </ul>
-        </div>
-
-        <div class="main-content">
-            <h2>새로운 팀 만들기</h2>
-            <input type="text" id="teamName" placeholder="팀 이름 입력">
-            <button id="createTeamBtn">팀 생성</button>
-        </div>
+        <h2>새로운 팀 만들기</h2>
+        <input type="text" id="teamName" placeholder="팀 이름 입력...">
+        <button id="createTeamBtn">팀 생성</button>
     </div>
 
-    <script src="js/CreateTeam.js"></script>
+    <script>
+        document.getElementById("createTeamBtn").addEventListener("click", function () {
+            const teamName = document.getElementById("teamName").value.trim();
+
+            if (teamName === "") {
+                alert("팀 이름을 입력하세요.");
+                return;
+            }
+
+            fetch("jsp/TeamCreate.jsp", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: `teamName=${encodeURIComponent(teamName)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                if (data.status === "success") {
+                    window.location.href = "FindTeam.html";  // 팀 찾기 페이지로 이동
+                }
+            })
+            .catch(error => console.error("팀 생성 요청 실패:", error));
+        });
+    </script>
+
 </body>
 </html>
+
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     const createTeamBtn = document.getElementById("createTeamBtn");

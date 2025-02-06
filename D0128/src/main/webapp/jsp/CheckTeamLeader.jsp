@@ -1,30 +1,32 @@
 <%@ page language="java" contentType="application/json; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="java.sql.*, org.json.simple.JSONArray, org.json.simple.JSONObject" %>
+<%@ page import="java.sql.*" %>
 
 <%
     request.setCharacterEncoding("UTF-8");
 
+    String userId = (String) session.getAttribute("id");
+    if (userId == null) {
+        out.print("{\"isLeader\": false}");
+        return;
+    }
+
     Connection conn = null;
     PreparedStatement pstmt = null;
     ResultSet rs = null;
-    JSONArray teamList = new JSONArray();
+    boolean isLeader = false;
 
     try {
         Class.forName("oracle.jdbc.driver.OracleDriver");
         conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/XE", "park", "1111");
 
-        String sql = "SELECT PROJECTTEAMID, TEAMNAME, TO_CHAR(CREATEDAT, 'YYYY-MM-DD') AS CREATEDAT FROM PROJECTTEAMS ORDER BY CREATEDAT DESC";
+        String sql = "SELECT COUNT(*) FROM PROJECTTEAMS WHERE ADMINUSERID = ?";
         pstmt = conn.prepareStatement(sql);
+        pstmt.setString(1, userId);
         rs = pstmt.executeQuery();
 
-        while (rs.next()) {
-            JSONObject team = new JSONObject();
-            team.put("id", rs.getInt("PROJECTTEAMID"));
-            team.put("name", rs.getString("TEAMNAME"));
-            team.put("created_at", rs.getString("CREATEDAT"));
-            teamList.add(team);
+        if (rs.next() && rs.getInt(1) > 0) {
+            isLeader = true;
         }
-
     } catch (Exception e) {
         e.printStackTrace();
     } finally {
@@ -33,5 +35,5 @@
         if (conn != null) conn.close();
     }
 
-    out.print(teamList.toJSONString());
+    out.print("{\"isLeader\": " + isLeader + "}");
 %>
