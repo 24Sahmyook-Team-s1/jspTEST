@@ -60,7 +60,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: 22
-          source: "docker-compose.yml"  # docker-compose.yml 파일을 전송
+          source: "/tomcat/docker-compose.yml"  # docker-compose.yml 파일을 전송
           target: "/tomcat"
 
       - name: SSH to EC2
