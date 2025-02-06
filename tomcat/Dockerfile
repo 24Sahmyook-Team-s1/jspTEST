@@ -10,6 +10,9 @@ RUN echo '<tomcat-users>' > /usr/local/tomcat/conf/tomcat-users.xml && \
     echo '<user username="'$TOMCAT_USER'" password="'$TOMCAT_PASS'" roles="manager-gui,admin-gui"/>' >> /usr/local/tomcat/conf/tomcat-users.xml && \
     echo '</tomcat-users>' >> /usr/local/tomcat/conf/tomcat-users.xml
 
+# server.xml 수정: 자동 배포 및 unpackWARs 설정
+RUN sed -i '/<Host name="localhost"/,/<\/Host>/s/<Host name="localhost" appBase="webapps"/<Host name="localhost" appBase="webapps" unpackWARs="true" autoDeploy="true"/' /usr/local/tomcat/conf/server.xml
+
 # WAR 파일 복사 (webapps 디렉토리로)
 COPY ./webapp/ROOT.war /usr/local/tomcat/webapp/ROOT.war
 
