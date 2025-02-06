@@ -36,15 +36,84 @@ body, html {
     gap: 40px;
 }
 
-/* 🌟 사이드바 */
+/* 🌟 사이드바 스타일 개선 */
 .sidebar {
     width: 220px;
     background: #f1f3f5;
     padding: 20px;
-    border-radius: 10px;
-    font-size: 16px;
-    font-weight: 500;
-    min-height: 500px;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 📌 사이드바 리스트 스타일 */
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar li {
+    display: flex;
+    align-items: center;
+    padding: 15px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    color: #333;
+}
+
+/* 📌 아이콘 스타일 */
+.sidebar li::before {
+    content: '📁';  /* 기본 아이콘 */
+    margin-right: 10px;
+    font-size: 18px;
+    transition: transform 0.2s ease;
+}
+
+/* 메뉴별 아이콘 변경 */
+.sidebar li:nth-child(1)::before { content: '📊'; }  /* 대시보드 */
+.sidebar li:nth-child(2)::before { content: '📅'; }  /* 간트차트 */
+.sidebar li:nth-child(3)::before { content: '🐞'; }  /* Issue */
+.sidebar li:nth-child(4)::before { content: '👥'; }  /* TeamBoard */
+.sidebar li:nth-child(5)::before { content: '👥'; }  /* TeamBoard */
+
+/* 📌 호버 시 스타일 */
+.sidebar li:hover {
+    background-color: #007bff;
+    color: white;
+    transform: translateX(5px);
+}
+
+.sidebar li:hover::before {
+    transform: scale(1.2);
+}
+
+/* 📌 선택된 메뉴 스타일 */
+.sidebar li.active {
+    background-color: #007bff;
+    color: white;
+}
+
+/* 🌟 반응형 */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
+        border-radius: 0;
+    }
+
+    .sidebar li {
+        flex: 1;
+        justify-content: center;
+    }
+
+    .sidebar li::before {
+        display: none;
+    }
 }
 
 /* 🌟 메인 컨텐츠 */
@@ -314,4 +383,67 @@ body, html {
 /* 📌 닫기 버튼 */
 .close {
     background: #ccc;
+}
+
+/* 📌 간트 차트 스타일 */
+.gantt-chart-container {
+    background: #fff;
+    padding: 20px;  /* ✅ 메인 콘텐츠와 동일하게 맞춤 */
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: calc(100% - 40px);  /* ✅ 패딩 고려해서 너비 조정 */
+    box-sizing: border-box;  /* ✅ 패딩 포함하여 크기 계산 */
+}
+
+
+.gantt-header {
+    display: flex;
+    font-weight: bold;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #eee;
+}
+
+.gantt-project-name {
+    width: 30%;
+}
+
+.gantt-days {
+    display: flex;
+    width: 70%;
+}
+
+.gantt-days div, .gantt-progress div {
+    flex: 1;
+    text-align: center;
+    padding: 5px;
+    border-right: 1px solid #eee;
+}
+
+.gantt-progress div {
+    background-color: #f0f0f0;
+    height: 20px;
+    margin: 5px 2px;
+    border-radius: 4px;
+}
+
+.gantt-progress .active {
+    background-color: #4CAF50;
+}
+
+/* 간트 차트 행 스타일 */
+.gantt-row {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.project-name {
+    width: 30%;
+    font-weight: 500;
+}
+
+.gantt-progress {
+    display: flex;
+    width: 70%;
 }

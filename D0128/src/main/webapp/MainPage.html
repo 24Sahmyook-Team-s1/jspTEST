@@ -64,10 +64,12 @@
     <img src="public/logo-transparent.png" alt="MOLE PMS Logo" class="profile-btn" id="profileBtn">
     <div class="profile-menu" id="profileMenu">
         <ul>
-            <li onclick="goToPage('MainPage.html')">홈</li>
-            <li onclick="goToPage('TeamPage.html')">팀</li>  <!-- ✅ 팀 클릭 시 이동 -->
-            <li onclick="goToPage('ProfilePage.html')">프로필</li>
-            <li onclick="goToPage('SettingsPage.html')">설정</li>
+            <li data-link="MainPage.html">홈</li>
+                <li data-link="FindTeam.html">팀 찾기</li>
+                <li data-link="CreateTeam.html">팀 만들기</li>
+                <li data-link="TeamManage.html">팀 관리</li>
+                <li data-link="ProfilePage.html">프로필</li>
+                <li data-link="SettingsPage.html">설정</li>
         </ul>
     </div>
 </div>

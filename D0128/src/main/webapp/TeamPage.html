@@ -18,7 +18,11 @@
         <!-- 📌 왼쪽 사이드바 -->
         <div class="sidebar">
             <ul>
-                <li class="sidebar-link" data-link="MainPage.html">대시보드</li>
+                <li class="sidebar-link" data-link="MainPage.html">📊 대시보드</li>
+                <li class="sidebar-link" data-link="TeamPage.html">👥 팀 페이지</li> <!-- ✅ 팀 페이지 추가 -->
+                <li class="sidebar-link" data-link="GanttChart.html">📅 간트 차트</li>
+                <li class="sidebar-link" data-link="IssuePage.html">🐞 이슈</li>
+                <li class="sidebar-link" data-link="TeamBoard.html">👥 팀 보드</li>
             </ul>
         </div>
 
@@ -67,6 +71,7 @@
         <div class="profile-menu" id="profileMenu">
             <ul>
                 <li data-link="MainPage.html">홈</li>
+                <li data-link="TeamPage.html">팀 페이지</li> <!-- ✅ 팀 페이지 추가 -->
                 <li data-link="FindTeam.html">팀 찾기</li>
                 <li data-link="CreateTeam.html">팀 만들기</li>
                 <li data-link="TeamManage.html">팀 관리</li>
@@ -90,7 +95,7 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-    // 📌 사이드바 클릭 이벤트 (대시보드 클릭 가능)
+    // 📌 사이드바 클릭 이벤트 (대시보드, 팀 페이지, 간트 차트 등 클릭 가능)
     document.querySelectorAll('.sidebar-link').forEach(link => {
         link.addEventListener('click', function () {
             const targetPage = this.getAttribute('data-link');
@@ -121,7 +126,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    // 📌 기존 할 일 추가 및 상태 변경 기능 유지
+    // 📌 할 일 추가 및 상태 변경 기능
     const addTaskButton = document.getElementById("addTaskBtn");
     const todoList = document.getElementById("todoList");
     const inProgressList = document.getElementById("inProgressList");
@@ -222,6 +227,4 @@ document.addEventListener("DOMContentLoaded", function () {
 
     document.getElementById("closeModal").addEventListener("click", closeModal);
 });
-
 </script>
-

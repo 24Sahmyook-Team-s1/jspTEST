@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MOLE - Gantt Chart</title>
+    <link rel="stylesheet" href="css/TeamPage.css">
+    <script src="js/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+    <!-- 📌 상단바 -->
+    <div class="header">
+        <h1>MOLE</h1>
+    </div>
+
+    <div class="container">
+        <!-- 📌 왼쪽 사이드바 -->
+        <div class="sidebar">
+            <ul>
+                <li class="sidebar-link" data-link="MainPage.html">대시보드</li>
+                <li class="sidebar-link" data-link="GanttChart.html">간트차트</li>
+                <li class="sidebar-link" data-link="IssuePage.html">Issue</li>
+                <li class="sidebar-link" data-link="TeamPage.html">TeamBoard</li>
+            </ul>
+        </div>
+
+        <!-- 📌 메인 컨텐츠 (간트차트) -->
+        <div class="main-content">
+            <h2>Gantt Chart</h2>
+            <div class="gantt-chart-container">
+                <div class="gantt-chart">
+                    <div class="gantt-header">
+                        <div class="gantt-project-name">Project</div>
+                        <div class="gantt-days">
+                            <div>월</div>
+                            <div>화</div>
+                            <div>수</div>
+                            <div>목</div>
+                            <div>금</div>
+                        </div>
+                    </div>
+                    <div class="gantt-body" id="ganttBody">
+                        <!-- JavaScript로 프로젝트와 진행도를 동적으로 추가 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 📌 프로필 메뉴 (오른쪽 하단 위치) -->
+    <div class="profile-container">
+        <img src="public/logo-transparent.png" alt="MOLE PMS Logo" class="profile-btn" id="profileBtn">
+        <div class="profile-menu" id="profileMenu">
+            <ul>
+                <li data-link="MainPage.html">홈</li>
+                <li data-link="FindTeam.html">팀 찾기</li>
+                <li data-link="CreateTeam.html">팀 만들기</li>
+                <li data-link="TeamManage.html">팀 관리</li>
+                <li data-link="ProfilePage.html">프로필</li>
+                <li data-link="SettingsPage.html">설정</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+    $(document).ready(function () {
+        // 📌 사이드바 및 프로필 메뉴 클릭 시 페이지 이동
+        $(".sidebar-link, .profile-menu li").on("click", function () {
+            const targetPage = $(this).data("link");
+            window.location.href = targetPage;
+        });
+
+        // 📌 프로필 버튼 클릭 시 메뉴 토글
+        const profileBtn = $("#profileBtn");
+        const profileMenu = $("#profileMenu");
+
+        profileBtn.on("click", function (event) {
+            event.stopPropagation();
+            profileMenu.toggleClass("active");
+        });
+
+        $(document).on("click", function (event) {
+            if (!profileBtn.is(event.target) && !profileMenu.is(event.target) && profileMenu.has(event.target).length === 0) {
+                profileMenu.removeClass("active");
+            }
+        });
+
+        // 📌 간트 차트 데이터 불러오기
+        loadGanttChart();
+
+        function loadGanttChart() {
+            $.ajax({
+                url: "jsp/GetProjectList.jsp",
+                type: "GET",
+                dataType: "json",
+                success: function (projects) {
+                    console.log("✅ 간트 차트 데이터 수신:", projects);
+                    renderGanttChart(projects);
+                },
+                error: function (xhr, status, error) {
+                    console.error("❌ 데이터 로드 오류:", error);
+                }
+            });
+        }
+
+        // 📌 간트 차트 렌더링 함수
+        function renderGanttChart(projects) {
+            const ganttBody = $("#ganttBody");
+            ganttBody.empty();
+
+            projects.forEach(project => {
+                const row = `
+                    <div class="gantt-row">
+                        <div class="project-name">${project.name}</div>
+                        <div class="gantt-progress">
+                            <div class="${project.schedule[0] ? 'active' : ''}"></div>
+                            <div class="${project.schedule[4] ? 'active' : ''}"></div>
+                            <div class="${project.schedule[1] ? 'active' : ''}"></div>
+                            <div class="${project.schedule[2] ? 'active' : ''}"></div>
+                            <div class="${project.schedule[3] ? 'active' : ''}"></div>
+                        </div>
+                    </div>
+                `;
+                ganttBody.append(row);
+            });
+        }
+    });
+    </script>
+
+</body>
+</html>
