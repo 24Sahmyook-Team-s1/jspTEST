@@ -23,16 +23,9 @@ jobs:
       - name: Build WAR with Maven
         run: mvn -B package --file pom.xml -DskipTests
 
-      - name: Upload WAR Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: webapp
-          path: target/*.war
-
       - name: Move WAR to /tomcat directory
         run: |
-          mkdir -p tomcat  # /tomcat 디렉토리 생성
-          cp target/*.war tomcat/  # WAR 파일을 /tomcat 디렉토리로 복사
+          cp target/ROOT.war tomcat/  # ROOT.war 파일을 /tomcat 디렉토리로 복사
 
       - name: Set up Docker
         uses: docker/setup-buildx-action@v1
