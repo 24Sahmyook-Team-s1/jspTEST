@@ -28,7 +28,7 @@ jobs:
 
       - name: Move WAR to tomcat/webapps directory
         run: |
-          cp target/ROOT.war ./  # ROOT.war 파일을 tomcat/webapps 디렉토리로 복사
+          cp target/ROOT.war /home/ubuntu/tomcat/webapps  # ROOT.war 파일을 tomcat/webapps 디렉토리로 복사
 
       - name: Upload WAR to EC2
         uses: appleboy/scp-action@master
