@@ -23,9 +23,11 @@ jobs:
       - name: Build WAR with Maven
         run: mvn -B package --file pom.xml -DskipTests
 
-      - name: Move WAR to /tomcat directory
-        run: |
-          cp target/ROOT.war tomcat/  # ROOT.war 파일을 /tomcat 디렉토리로 복사
+      - name: Upload WAR Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ROOT
+          path: target/*.war
 
       - name: Set up Docker
         uses: docker/setup-buildx-action@v1
@@ -37,9 +39,9 @@ jobs:
           password: ${{ secrets.DOCKER_TOKEN }}
 
       - name: Download WAR Artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
-          name: webapp
+          name: ROOT
 
       - name: Copy WAR to Docker build context
         run: |
