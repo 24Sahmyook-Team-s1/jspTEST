@@ -23,9 +23,12 @@ jobs:
       - name: Build WAR with Maven
         run: mvn -B package --file pom.xml -DskipTests
 
-      - name: Debug WAR File
+      - name: Create tomcat/webapps directory
+        run: mkdir -p ./tomcat/webapps  # tomcat/webapps 디렉토리 생성
+
+      - name: Move WAR to tomcat/webapps directory
         run: |
-          ls -l ./target/  # target 디렉토리의 내용을 확인
+          cp target/ROOT.war ./tomcat/webapps/ROOT.war  # ROOT.war 파일을 tomcat/webapps 디렉토리로 복사
 
       - name: Set up Docker
         uses: docker/setup-buildx-action@v1
@@ -35,7 +38,11 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
-
+          
+      - name: Debug WAR File
+        run: |
+          ls -l ./tomcat/webapps/
+          
       - name: Build Docker image
         run: |
           docker build --no-cache -t ranpia/tomcat9:latest -f ./tomcat/Dockerfile ./tomcat  # Dockerfile 경로와 컨텍스트 명시
@@ -64,7 +71,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: 22
-          source: "./target/ROOT.war"  # target 디렉토리에서 WAR 파일을 업로드
+          source: "./tomcat/webapps/ROOT.war"  # tomcat/webapps 디렉토리에서 WAR 파일을 업로드
           target: "/home/ubuntu/tomcat/webapps/ROOT.war"  # EC2의 대상 경로
 
       - name: SSH to EC2
