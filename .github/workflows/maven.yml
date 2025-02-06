@@ -1,8 +1,9 @@
-name: Java CI with Maven
+name: Deploy Java Web App to Docker Tomcat
 
 on:
   push:
-    branches: [ "master" ]
+    branches:
+      - main
 
 jobs:
   build:
@@ -19,7 +20,7 @@ jobs:
         distribution: 'temurin'
         cache: maven
 
-    - name: Build with Maven
+    - name: Build WAR with Maven
       run: mvn -B package --file pom.xml -DskipTests
 
     - name: Upload WAR Artifact
@@ -27,7 +28,18 @@ jobs:
       with:
         name: webapp
         path: target/*.war
-     
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+    - name: Download WAR Artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: webapp
+        path: target/
+
     - name: Test SSH Connection
       uses: appleboy/ssh-action@master
       with:
@@ -35,15 +47,35 @@ jobs:
         username: ${{ secrets.SERVER_USER }}
         key: ${{ secrets.SERVER_SSH_KEY }}
         script: |
-          echo "SSH 연결 성공"
+          echo "✅ SSH 연결 성공"
           ls -l
 
-    - name: Deploy WAR to Remote Server
+    - name: Deploy WAR to EC2
       uses: appleboy/scp-action@master
       with:
         host: ${{ secrets.SERVER_HOST }}
         username: ${{ secrets.SERVER_USER }}
-        key: ${{ secrets.SERVER_PASSWORD }}
+        key: ${{ secrets.SERVER_SSH_KEY }}
         source: "target/*.war"
-        target: "/path/to/tomcat/webapps/"
+        target: "/home/ec2-user/webapps/"
 
+    - name: Restart Docker Tomcat Container
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USER }}
+        key: ${{ secrets.SERVER_SSH_KEY }}
+        script: |
+          echo "🚀 최신 WAR 반영을 위한 Docker 컨테이너 재시작"
+
+          # 기존 컨테이너 중지 및 삭제
+          docker stop my-tomcat-container || true
+          docker rm my-tomcat-container || true
+
+          # 새로운 컨테이너 실행 (webapps 볼륨 마운트)
+          docker run -d --name my-tomcat-container \
+            -p 8080:8080 \
+            -v /home/ec2-user/webapps:/usr/local/tomcat/webapps \
+            tomcat:9
+
+          echo "✅ 배포 완료: http://$SERVER_HOST:8080/myapp/"
