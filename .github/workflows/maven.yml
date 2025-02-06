@@ -25,7 +25,7 @@ jobs:
 
       - name: Move WAR to tomcat/webapps directory
         run: |
-          cp target/ROOT.war ./tomcat/webapps/  # ROOT.war 파일을 tomcat/webapps 디렉토리로 복사
+          cp target/ ./tomcat/webapps/  # ROOT.war 파일을 tomcat/webapps 디렉토리로 복사
           
       - name: Check target directory
         run: |
