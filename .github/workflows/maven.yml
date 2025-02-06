@@ -58,7 +58,7 @@ jobs:
         key: ${{ secrets.SERVER_SSH_KEY }}
         script: |
           mkdir -p /home/ec2-user/webapps/
-          rsync -avz -e "ssh -o StrictHostKeyChecking=no" target/*.war ec2-user@${{ secrets.SERVER_HOST }}:/home/ec2-user/webapps/
+          rsync -avz -e "ssh -o StrictHostKeyChecking=no" target/*.war ubuntu@${{ secrets.SERVER_HOST }}:/home/ubuntu/webapps/
 
     - name: Restart Docker Tomcat Container
       uses: appleboy/ssh-action@master
