@@ -14,7 +14,7 @@ RUN echo '<tomcat-users>' > /usr/local/tomcat/conf/tomcat-users.xml && \
 RUN sed -i '/<Host name="localhost"/,/<\/Host>/s/<Host name="localhost" appBase="webapps"/<Host name="localhost" appBase="webapps" unpackWARs="true" autoDeploy="true"/' /usr/local/tomcat/conf/server.xml
 
 # WAR 파일 복사 (webapps 디렉토리로)
-COPY ./webapp/ROOT.war /usr/local/tomcat/webapp/ROOT.war
+COPY ./webapps/ROOT.war /usr/local/tomcat/webapps/ROOT.war
 
 # Tomcat 실행
 CMD ["catalina.sh", "run"]
