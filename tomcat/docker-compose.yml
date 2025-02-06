@@ -9,4 +9,4 @@ services:
       - TOMCAT_USER=admin  # Tomcat 관리자 사용자 이름
       - TOMCAT_PASS=admin123  # Tomcat 관리자 비밀번호
     volumes:
-      - ./webapp:/usr/local/tomcat/webapp  # 웹 애플리케이션을 위한 볼륨
+      - ./webapps:/usr/local/tomcat/webapps  # 웹 애플리케이션을 위한 볼륨
