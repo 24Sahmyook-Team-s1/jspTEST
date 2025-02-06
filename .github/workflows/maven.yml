@@ -28,8 +28,7 @@ jobs:
 
       - name: Push Docker image
         run: |
-          docker push
-          ranpia/tomcat9:latest
+          docker push ranpia/tomcat9:latest
 
   deploy:
     runs-on: ubuntu-latest
