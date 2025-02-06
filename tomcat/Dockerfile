@@ -17,6 +17,7 @@ RUN sed -i '/<Host name="localhost"/,/<\/Host>/s/<Host name="localhost" appBase=
 COPY ./webapps/ROOT.war /usr/local/tomcat/webapps/ROOT.war
 
 # Tomcat 실행
+USER root
 CMD ["catalina.sh", "run"]
 
 # Tomcat이 8080 포트를 사용하도록 설정
