@@ -39,6 +39,7 @@ jobs:
           port: 22
           source: "target/ROOT.war"  # tomcat/webapps 디렉토리에서 WAR 파일을 업로드
           target: "/home/ubuntu/tomcat/webapps/"  # EC2의 대상 경로
+          debug: true
 
       - name: Set up Docker
         uses: docker/setup-buildx-action@v1
