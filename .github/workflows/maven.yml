@@ -35,7 +35,7 @@ jobs:
 
       - name: Move WAR to tomcat/webapps directory
         run: |
-          cp /D0128/target/ROOT.war ./tomcat/webapps/  # ROOT.war 파일을 tomcat/webapps 디렉토리로 복사
+          cp ./D0128/target/ROOT.war ./tomcat/webapps/  # ROOT.war 파일을 tomcat/webapps 디렉토리로 복사
         
 
       - name: Upload WAR to EC2
