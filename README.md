@@ -5,9 +5,12 @@
 <br>
 **팀원 :** 김정현(Lead),김재욱,박민수,차성호
 <br><br>
-**사용 기술 :** Java (21),  JavaScript,  HTML5,  CSS,  Oracle Database 11g,  AWS ec2,  Tomcat 9. Docker
+**사용 기술 :** Java (JDK 21),  JavaScript,  HTML5,  CSS,  Oracle Database 11g,  AWS ec2,  Tomcat 9. Docker
 <br>
 **구현 방식 설명:** JSP와 AJAX를 활용한 SSR(Sever Side Rendering) Web Project 이다. 
+- Github Action 을 이용하여 자동으로 Pull Request 및 Build 실행
+- Docker 를 이용한 AWS 배포환경 구축
+- Github Action 을 이용하여 Docker로 개설한 Tocam Server를 이용하여 페이지 배포
 
 
 
@@ -37,3 +40,9 @@
 * Modified --> Modify
 
 ```
+
+# CI / CD Pipeline
+
+### Github Action
+- Auto Pull Request @  peter-evans/create-pull-request
+- Java Build to War @ Maven & upload war artifact
