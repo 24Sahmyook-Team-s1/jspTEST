@@ -1,0 +1,12 @@
+version: '3.8'  # Compose 파일 버전
+
+services:
+  tomcat:
+    image: ranpia/tomcat9:latest  # 사용할 Docker 이미지
+    ports:
+      - "8080:8080"  # 호스트의 포트 8080을 컨테이너의 포트 8080에 매핑
+    environment:
+      - TOMCAT_USER=admin  # Tomcat 관리자 사용자 이름
+      - TOMCAT_PASS=admin123  # Tomcat 관리자 비밀번호
+    volumes:
+      - ./webapps:/usr/local/tomcat/webapps  # 웹 애플리케이션을 위한 볼륨
