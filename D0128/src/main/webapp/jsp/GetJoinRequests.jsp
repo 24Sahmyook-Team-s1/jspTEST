@@ -18,7 +18,7 @@
 
     try {
         Class.forName("oracle.jdbc.driver.OracleDriver");
-        conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/XE", "park", "1111");
+        conn = DriverManager.getConnection("jdbc:oracle:thin:@oracle11g:1521/XE", "park", "1111");
 
         // ✅ 관리자의 팀에 대한 참여 요청 조회
         String sql = "SELECT r.REQUESTID, r.USERID, u.JSONSTR, r.REQUEST_DATE " +
@@ -46,6 +46,7 @@
         if (pstmt != null) pstmt.close();
         if (conn != null) conn.close();
     }
+    
 
     out.print(requestList.toJSONString()); // JSON 응답 출력
 %>
