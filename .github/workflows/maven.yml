@@ -25,17 +25,18 @@ jobs:
 
       - name: Create webapps directory
         run: mkdir -p ./tomcat/webapps 
+        
+      - name: Check target directory
+        run: |
+          ls -l ./target/D0128  # ./target 디렉토리 확인
+          file ./target/D0128/ROOT.war
+          ls -l ./tomcat/webapps/  # ./target 디렉토리 확인
+          file ./tomcat/webapps/ROOT.war
 
       - name: Move WAR to tomcat/webapps directory
         run: |
-          cp -r target/D0128/* ./tomcat/webapps/  # ROOT.war 파일을 tomcat/webapps 디렉토리로 복사
-          
-      - name: Check target directory
-        run: |
-          ls -l ./target/  # ./target 디렉토리 확인
-          file ./target/ROOT.war
-          ls -l ./tomcat/webapps/  # ./target 디렉토리 확인
-          file ./tomcat/webapps/ROOT.war
+          cp target/D0128/ROOT.war ./tomcat/webapps/  # ROOT.war 파일을 tomcat/webapps 디렉토리로 복사
+        
 
       - name: Upload WAR to EC2
         uses: appleboy/scp-action@master
