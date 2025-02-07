@@ -6,15 +6,21 @@
 <%@ page import="org.json.simple.JSONArray, org.json.simple.JSONObject" %>
 <%@ page import="org.json.simple.parser.JSONParser" %>
 <%
+
     // JSON 결과를 저장할 변수
     String jsonResult = "[]";
     ProjectDAO projectDAO = new ProjectDAO();
 
+
     try {
+
         // 프로젝트 목록을 JSON 형식으로 가져오기
         jsonResult = projectDAO.getList();
+
     } catch (Exception e) {
         e.printStackTrace();
+
+
     }
 %>
 

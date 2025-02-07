@@ -23,12 +23,6 @@
         <div>
           <div class="scroll-container">
             <button class="scroll-btn left">&lt;</button>
-<<<<<<< HEAD
-            <div class="project-list-wrapper">
-              <div class="project-list"></div>
-            </div>
-            <button class="scroll-btn right">&gt;</button>
-=======
             <!-- 왼쪽 이동 버튼 -->
             <div class="project-list-wrapper">
               <div class="project-list"></div>
@@ -36,7 +30,6 @@
             </div>
             <button class="scroll-btn right">&gt;</button>
             <!-- 오른쪽 이동 버튼 -->
->>>>>>> branch 'master' of https://github.com/24Sahmyook-Team-s1/jspTEST.git
           </div>
         </div>
       </div>
@@ -44,12 +37,12 @@
       <div>
         <div class="recent-and-gantt">
           <div class="box-col">
-            <h2 class="title">Recent Issue</h2>
+            <h2 class="title">recent issue</h2>
             <div class="recent-issue-container">
               <div class="recent-issues">
-                <div class="issue">Issue: Something on Svelte</div>
-                <div class="issue">Issue: Something on Svelte</div>
-                <div class="issue">Issue: Something on Svelte</div>
+                <div class="issue">issue: something on svelte</div>
+                <div class="issue">issue: something on svelte</div>
+                <div class="issue">issue: something on svelte</div>
               </div>
             </div>
           </div>
@@ -59,20 +52,6 @@
             <div class="gantt-chart-container">
               <div class="chart-wrapper">
                 <ul class="chart-values">
-<<<<<<< HEAD
-                  <li>Sun</li>
-                  <li>Mon</li>
-                  <li>Tue</li>
-                  <li>Wed</li>
-                  <li>Thu</li>
-                  <li>Fri</li>
-                  <li>Sat</li>
-                </ul>
-                <ul class="chart-bars">
-                  <li data-duration="tue-wed" data-color="#b03532">Task 1</li>
-                  <li data-duration="wed-thu" data-color="#33a852">Task 2</li>
-                  <li data-duration="thu-fri" data-color="#329ab0">Task 3</li>
-=======
                   <li>sun</li>
                   <li>mon</li>
                   <li>tue</li>
@@ -91,7 +70,6 @@
                   <li data-duration="thu-fri1/2" data-color="#329ab0">
                     Task 3
                   </li>
->>>>>>> branch 'master' of https://github.com/24Sahmyook-Team-s1/jspTEST.git
                 </ul>
               </div>
             </div>
@@ -99,92 +77,9 @@
         </div>
       </div>
     </div>
-<<<<<<< HEAD
-
-    <script src="js/main.js"></script>
-
-    <script>
-      $(document).ready(function () {
-        loadProjects();
-
-        const projectWrapper = $(".project-list-wrapper");
-
-        setTimeout(() => {
-          projectWrapper.scrollLeft(0);
-        }, 200);
-
-        let isDown = false;
-        let startX;
-        let scrollLeft;
-
-        projectWrapper.on("mousedown", function (e) {
-          isDown = true;
-          projectWrapper.addClass("active");
-          startX = e.pageX - projectWrapper.offset().left;
-          scrollLeft = projectWrapper.scrollLeft();
-        });
-
-        $(document).on("mouseup", function () {
-          isDown = false;
-          projectWrapper.removeClass("active");
-        });
-
-        projectWrapper.on("mousemove", function (e) {
-          if (!isDown) return;
-          e.preventDefault();
-          const x = e.pageX - projectWrapper.offset().left;
-          const walk = (x - startX) * 2;
-          projectWrapper.scrollLeft(scrollLeft - walk);
-        });
-      });
-
-      function loadProjects() {
-        $.ajax({
-          url: "jsp/GetProjectList.jsp",
-          type: "GET",
-          dataType: "json",
-          success: function (projects) {
-            showProjects(projects);
-          },
-          error: function (xhr, status, error) {
-            console.error("❌ AJAX 오류 발생:", error);
-          },
-        });
-      }
-
-      function showProjects(projects) {
-        var projectContainer = $(".project-list");
-        projectContainer.empty();
-
-        if (projects.length > 0) {
-          projects.forEach((project) => {
-            projectContainer.append(getProjectCode(project));
-          });
-        } else {
-          projectContainer.append("<p>No Ongoing Projects</p>");
-        }
-
-        setTimeout(() => {
-          $(".project-list-wrapper").scrollLeft(0);
-        }, 200);
-      }
-
-      function getProjectCode(project) {
-        return `
-          <div class="project">
-              <h3>${project.name}</h3>
-              <p>📅 Created At: ${project.created_at}</p>
-          </div>
-      `;
-      }
-    </script>
-=======
     <script src="js/.js"></script>
->>>>>>> branch 'master' of https://github.com/24Sahmyook-Team-s1/jspTEST.git
   </body>
 </html>
-<<<<<<< HEAD
-=======
 <script>
   $(document).ready(function () {
     loadProjects(); // 페이지 로드 시 프로젝트 목록 불러오기
@@ -264,4 +159,3 @@
     `;
   }
 </script>
->>>>>>> branch 'master' of https://github.com/24Sahmyook-Team-s1/jspTEST.git
