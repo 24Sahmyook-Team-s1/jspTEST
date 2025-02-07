@@ -28,14 +28,14 @@ jobs:
         
       - name: Check target directory
         run: |
-          ls -l ./D0128/  # ./target 디렉토리 확인
+          ls -l ./D0128/target/  # ./target 디렉토리 확인
           file ./target/ROOT.war
           ls -l ./tomcat/webapps/  # ./target 디렉토리 확인
           file ./tomcat/webapps/ROOT.war
 
       - name: Move WAR to tomcat/webapps directory
         run: |
-          cp target/ROOT.war ./tomcat/webapps/  # ROOT.war 파일을 tomcat/webapps 디렉토리로 복사
+          cp /D0128/target/ROOT.war ./tomcat/webapps/  # ROOT.war 파일을 tomcat/webapps 디렉토리로 복사
         
 
       - name: Upload WAR to EC2
@@ -45,7 +45,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: 22
-          source: "./target/ROOT.war"  # tomcat/webapps 디렉토리에서 WAR 파일을 업로드
+          source: "./D0128/target/ROOT.war"  # tomcat/webapps 디렉토리에서 WAR 파일을 업로드
           target: "/home/ubuntu/tomcat/webapps/"  # EC2의 대상 경로
           debug: true
 
