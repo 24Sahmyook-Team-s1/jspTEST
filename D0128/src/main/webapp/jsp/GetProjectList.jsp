@@ -7,15 +7,44 @@
 <%@ page import="org.json.simple.parser.JSONParser" %>
 <%
 
+    request.setCharacterEncoding("UTF-8");
+
+    Connection conn = null;
+    PreparedStatement pstmt = null;
+    ResultSet rs = null;
+    JSONArray projectList = new JSONArray();
+
+    try {
+        Class.forName("oracle.jdbc.driver.OracleDriver");
+        conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/XE", "park", "1111");
+
+        System.out.println("🔍 SQL 실행 시작");
+
+        String sql = "SELECT ProjectID, ProjectName, TO_CHAR(CreatedAt, 'YYYY-MM-DD') AS CreatedAt, " +
+                     "ScheduleMonday, ScheduleTuesday, ScheduleWednesday, ScheduleThursday, ScheduleFriday " +
+                     "FROM Projects ORDER BY CreatedAt DESC, ProjectID ASC";
+
     // JSON 결과를 저장할 변수
     String jsonResult = "[]";
     ProjectDAO projectDAO = new ProjectDAO();
 
+        while (rs.next()) {
+            JSONObject project = new JSONObject();
+            project.put("no", rs.getInt("ProjectID"));
+            project.put("name", rs.getString("ProjectName"));
+            project.put("created_at", rs.getString("CreatedAt"));
 
-    try {
+            // ✅ Gantt Chart 일정 배열 추가
+            JSONArray schedule = new JSONArray();
+            schedule.add(rs.getInt("ScheduleMonday"));
+            schedule.add(rs.getInt("ScheduleTuesday"));
+            schedule.add(rs.getInt("ScheduleWednesday"));
+            schedule.add(rs.getInt("ScheduleThursday"));
+            schedule.add(rs.getInt("ScheduleFriday"));
 
-        // 프로젝트 목록을 JSON 형식으로 가져오기
-        jsonResult = projectDAO.getList();
+            project.put("schedule", schedule);
+            projectList.add(project);
+        }
 
     } catch (Exception e) {
         e.printStackTrace();

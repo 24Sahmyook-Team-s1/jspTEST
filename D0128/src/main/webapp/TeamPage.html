@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MOLE - 팀 페이지</title>
+    <link rel="stylesheet" href="css/TeamPage.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <!-- 📌 상단바 -->
+    <div class="header">
+        <h1>MOLE</h1>
+    </div>
+
+    <div class="container">
+        <!-- 📌 왼쪽 사이드바 -->
+        <div class="sidebar">
+            <ul>
+                <li class="sidebar-link" data-link="MainPage.html">대시보드</li>
+                <li class="sidebar-link" data-link="TeamPage.html">팀 페이지</li>
+                <li class="sidebar-link" data-link="GanttChart.html">간트 차트</li>
+                <li class="sidebar-link" data-link="IssuePage.html">이슈</li>
+                <li class="sidebar-link" data-link="TeamBoard.html">팀 보드</li>
+            </ul>
+        </div>
+
+        <!-- 📌 메인 컨텐츠 -->
+        <div class="main-content">
+            <h2>팀 페이지</h2>
+            <p>이곳에서 팀을 관리하고 참여할 수 있습니다.</p>
+
+            <!-- 📌 상태 개요 및 최근 활동 -->
+            <div class="overview">
+                <div class="status-chart">
+                    <h2>상태 개요</h2>
+                    <p>이슈 현황을 한눈에 확인하세요. <a href="#">모든 이슈 보기</a></p>
+                    <canvas id="statusPieChart"></canvas>
+                </div>
+
+                <div class="recent-activities">
+                    <h2>최근 활동</h2>
+                    <p>작업 변경 사항이 여기에 기록됩니다.</p>
+                    <div class="activity-log" id="activityLog"></div>
+                </div>
+            </div>
+
+            <!-- 📌 할 일 관리 -->
+            <div class="tasks-container">
+                <div class="task-box" id="todo">
+                    <h3>할 일</h3>
+                    <div class="task-list" id="todoList"></div>
+                    <button id="addTaskBtn">+ 할 일 추가</button>
+                </div>
+                <div class="task-box" id="inProgress">
+                    <h3>진행 중</h3>
+                    <div class="task-list" id="inProgressList"></div>
+                </div>
+                <div class="task-box" id="completed">
+                    <h3>완료</h3>
+                    <div class="task-list" id="completedList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+<!-- 📌 작업 상태 변경 모달 -->
+<div id="taskModal" class="modal">
+    <div class="modal-content">
+        <h3 id="modalTitle">작업 상태 변경</h3>
+        <button id="moveTask" class="modal-btn">진행 중으로 이동</button>
+        <button id="deleteTask" class="modal-btn delete">삭제</button>
+        <button id="closeModal" class="modal-btn close">닫기</button>
+    </div>
+</div>
+
+    <!-- 📌 프로필 메뉴 -->
+    <div class="profile-container">
+        <img src="public/logo-transparent.png" alt="MOLE PMS Logo" class="profile-btn" id="profileBtn">
+        <div class="profile-menu" id="profileMenu">
+            <ul>
+                <li data-link="MainPage.html">홈</li>
+                <li data-link="TeamPage.html">팀 페이지</li>
+                <li data-link="FindTeam.html">팀 찾기</li>
+                <li data-link="CreateTeam.html">팀 만들기</li>
+                <li data-link="TeamManage.html">팀 관리</li>
+                <li data-link="ProfilePage.html">프로필</li>
+                <li data-link="SettingsPage.html">설정</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    // 📌 사이드바 클릭 이벤트 (대시보드, 팀 페이지, 간트 차트 등 클릭 가능)
+    document.querySelectorAll('.sidebar-link').forEach(link => {
+        link.addEventListener('click', function () {
+            const targetPage = this.getAttribute('data-link');
+            window.location.href = targetPage;
+        });
+    });
+
+    // 📌 프로필 버튼 클릭 시 메뉴 표시
+    const profileBtn = document.getElementById("profileBtn");
+    const profileMenu = document.getElementById("profileMenu");
+
+    profileBtn.addEventListener("click", function (event) {
+        event.stopPropagation();
+        profileMenu.classList.toggle("active");
+    });
+
+    document.addEventListener("click", function (event) {
+        if (!profileBtn.contains(event.target) && !profileMenu.contains(event.target)) {
+            profileMenu.classList.remove("active");
+        }
+    });
+
+    // 📌 프로필 메뉴 클릭 시 페이지 이동
+    document.querySelectorAll('.profile-menu li').forEach(item => {
+        item.addEventListener('click', function () {
+            const targetPage = this.getAttribute('data-link');
+            window.location.href = targetPage;
+        });
+    });
+
+    // 📌 할 일 추가 및 상태 변경 기능
+    const addTaskButton = document.getElementById("addTaskBtn");
+    const todoList = document.getElementById("todoList");
+    const inProgressList = document.getElementById("inProgressList");
+    const completedList = document.getElementById("completedList");
+
+    addTaskButton.addEventListener("click", function () {
+        const newTaskText = prompt("새로운 할 일을 입력하세요:");
+        if (newTaskText) {
+            const newTask = createTaskItem(newTaskText);
+            todoList.appendChild(newTask);
+            addActivityLog(`📝 할 일 추가됨: ${newTaskText}`);
+            updateChart();
+        }
+    });
+
+    function createTaskItem(text) {
+        const task = document.createElement("div");
+        task.classList.add("task-item");
+        task.textContent = text;
+        task.addEventListener("click", function () {
+            openTaskModal(task, text);
+        });
+        return task;
+    }
+
+    function openTaskModal(task, text) {
+        const modal = document.getElementById("taskModal");
+        const modalTitle = document.getElementById("modalTitle");
+        const moveButton = document.getElementById("moveTask");
+        const deleteButton = document.getElementById("deleteTask");
+
+        modal.style.display = "block";
+        modalTitle.textContent = `작업: ${text}`;
+
+        const parentList = task.parentElement;
+
+        if (parentList.id === "todoList") {
+            moveButton.textContent = "진행 중으로 이동";
+            moveButton.onclick = () => moveTask(task, inProgressList, "⏳ 진행 중");
+        } else if (parentList.id === "inProgressList") {
+            moveButton.textContent = "완료로 이동";
+            moveButton.onclick = () => moveTask(task, completedList, "✅ 완료됨");
+        } else {
+            moveButton.style.display = "none";
+        }
+
+        deleteButton.onclick = () => {
+            task.remove();
+            addActivityLog(`❌ 삭제됨: ${text}`);
+            updateChart();
+            closeModal();
+        };
+    }
+
+    function moveTask(task, targetList, message) {
+        targetList.appendChild(task);
+        addActivityLog(`${message}: ${task.textContent}`);
+        updateChart();
+        closeModal();
+    }
+
+    function closeModal() {
+        document.getElementById("taskModal").style.display = "none";
+    }
+
+    // 📌 활동 로그 추가
+    function addActivityLog(message) {
+        const logContainer = document.getElementById("activityLog");
+        const time = new Date().toLocaleString();
+        const log = document.createElement("p");
+        log.textContent = `[${time}] ${message}`;
+        logContainer.prepend(log);
+    }
+
+    // 📌 차트 업데이트
+    const ctx = document.getElementById("statusPieChart").getContext("2d");
+    const statusPieChart = new Chart(ctx, {
+        type: "doughnut",
+        data: {
+            labels: ["할 일", "진행 중", "완료"],
+            datasets: [
+                {
+                    data: [0, 0, 0],
+                    backgroundColor: ["#FF6384", "#FFD700", "#4CAF50"],
+                },
+            ],
+        },
+    });
+
+    function updateChart() {
+        statusPieChart.data.datasets[0].data = [
+            todoList.children.length,
+            inProgressList.children.length,
+            completedList.children.length,
+        ];
+        statusPieChart.update();
+    }
+
+    document.getElementById("closeModal").addEventListener("click", closeModal);
+});
+</script>

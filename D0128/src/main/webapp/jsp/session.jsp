@@ -1,4 +1,10 @@
-<%@ page contentType="text/html" pageEncoding="utf-8" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%
-	out.println(session.getAttribute("id"));
+    String userID = (String) session.getAttribute("id");
+
+    if (userID != null) {
+        out.print("현재 로그인한 사용자 ID: " + userID);
+    } else {
+        out.print("로그인하지 않았습니다.");
+    }
 %>
