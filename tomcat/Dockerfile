@@ -13,6 +13,11 @@ RUN echo '<tomcat-users>' > /usr/local/tomcat/conf/tomcat-users.xml && \
 # server.xml 수정: 자동 배포 및 unpackWARs 설정
 RUN sed -i '/<Host name="localhost"/,/<\/Host>/s/<Host name="localhost" appBase="webapps"/<Host name="localhost" appBase="webapps" unpackWARs="true" autoDeploy="true"/' /usr/local/tomcat/conf/server.xml
 
+ENV TZ=Asia/Seoul
+RUN apt-get update && apt-get install -y tzdata && \
+    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
+    echo $TZ > /etc/timezone
+
 # WAR 파일 복사 (webapps 디렉토리로)
 COPY ./webapps/ROOT.war /usr/local/tomcat/webapps/ROOT.war
 

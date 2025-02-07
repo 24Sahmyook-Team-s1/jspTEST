@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>팀 찾기</title>
+    <link rel="stylesheet" href="css/TeamPage.css">
+</head>
+<body>
+
+    <!-- 📌 상단바 -->
+    <div class="header">
+        <h1>MOLE - 팀 찾기</h1>
+    </div>
+
+    <div class="container">
+        <!-- 📌 왼쪽 사이드바 -->
+        <div class="sidebar">
+            <ul>
+                <li onclick="goToPage('TeamPage.html')">돌아가기</li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            <h2>팀 목록</h2>
+            <input type="text" id="searchTeam" placeholder="팀 이름 검색...">
+            <div class="team-list" id="teamList">
+                <!-- ✅ 여기에 DB에서 가져온 팀 목록이 표시됨 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const teamList = document.getElementById("teamList");
+            const searchInput = document.getElementById("searchTeam");
+
+            function fetchTeams() {
+                fetch("jsp/GetTeamList.jsp")
+                    .then(response => response.json())
+                    .then(teams => {
+                        renderTeams(teams);
+                    })
+                    .catch(error => console.error("팀 목록을 가져오는 데 실패했습니다.", error));
+            }
+
+            function renderTeams(teams, filter = "") {
+                teamList.innerHTML = "";
+                teams
+                    .filter(team => team.name.includes(filter))
+                    .forEach(team => {
+                        let div = document.createElement("div");
+                        div.classList.add("team-card");
+                        div.innerHTML = `
+                            <strong>${team.name}</strong> <br>
+                            생성 날짜: ${team.created_at} <br>
+                            <button onclick="joinTeam(${team.id}, '${team.name}')">참여</button>
+                        `;
+                        teamList.appendChild(div);
+                    });
+            }
+
+            searchInput.addEventListener("input", function () {
+                fetch("jsp/GetTeamList.jsp")
+                    .then(response => response.json())
+                    .then(teams => {
+                        renderTeams(teams, this.value);
+                    });
+            });
+
+            window.joinTeam = function (teamId, teamName) {
+                if (confirm(`"${teamName}" 팀에 참여 신청을 하시겠습니까?`)) {
+                    fetch("jsp/JoinTeam.jsp", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                        body: `teamId=${teamId}`
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(data.message);
+                    })
+                    .catch(error => console.error("팀 참여 요청 실패:", error));
+                }
+            };
+
+            fetchTeams();
+        });
+    </script>
+
+</body>
+</html>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const teamList = document.getElementById("teamList");
+
+    function fetchTeams() {
+        fetch("jsp/GetTeamList.jsp")
+            .then(response => response.json())
+            .then(teams => {
+                renderTeams(teams);
+            })
+            .catch(error => console.error("팀 목록을 가져오는 데 실패했습니다.", error));
+    }
+
+    function renderTeams(teams) {
+        teamList.innerHTML = "";
+        teams.forEach(team => {
+            let div = document.createElement("div");
+            div.classList.add("team-card");
+            div.innerHTML = `
+                <strong>${team.name}</strong> <br>
+                생성 날짜: ${team.created_at} <br>
+                <button onclick="joinTeam(${team.id})">참여</button>  <!-- ✅ team.id 전달 -->
+            `;
+            teamList.appendChild(div);
+        });
+    }
+
+    window.joinTeam = function (teamId) {
+        if (confirm(`이 팀에 참여 신청을 하시겠습니까?`)) {
+            fetch("jsp/JoinTeam.jsp", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: `teamId=${teamId}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+            })
+            .catch(error => console.error("팀 참여 요청 실패:", error));
+        }
+    };
+
+    fetchTeams();
+});
+</script>

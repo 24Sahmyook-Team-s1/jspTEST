@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>팀 만들기</title>
+    <link rel="stylesheet" href="css/TeamPage.css">
+</head>
+<body>
+
+    <div class="header">
+        <h1>MOLE - 팀 만들기</h1>
+    </div>
+
+    <div class="container">
+        <h2>새로운 팀 만들기</h2>
+        <input type="text" id="teamName" placeholder="팀 이름 입력...">
+        <button id="createTeamBtn">팀 생성</button>
+    </div>
+
+    <script>
+        document.getElementById("createTeamBtn").addEventListener("click", function () {
+            const teamName = document.getElementById("teamName").value.trim();
+
+            if (teamName === "") {
+                alert("팀 이름을 입력하세요.");
+                return;
+            }
+
+            fetch("jsp/TeamCreate.jsp", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: `teamName=${encodeURIComponent(teamName)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                if (data.status === "success") {
+                    window.location.href = "FindTeam.html";  // 팀 찾기 페이지로 이동
+                }
+            })
+            .catch(error => console.error("팀 생성 요청 실패:", error));
+        });
+    </script>
+
+</body>
+</html>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const createTeamBtn = document.getElementById("createTeamBtn");
+    const teamNameInput = document.getElementById("teamName");
+
+    createTeamBtn.addEventListener("click", function () {
+        const teamName = teamNameInput.value.trim();
+        if (teamName === "") {
+            alert("팀 이름을 입력해주세요.");
+            return;
+        }
+
+        alert(`팀 "${teamName}"이(가) 생성되었습니다.`);
+        teamNameInput.value = ""; // 입력값 초기화
+    });
+});
+</script>

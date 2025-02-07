@@ -1,217 +1,450 @@
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  height: 100vh;
+/* 🌟 기본 스타일 */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #E2F9FF !important;
+    color: black;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
+/* 🌟 헤더 스타일 */
 .header {
-  width: 100%;
-  height: 80px;
-  background-color: #E2F9FF;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
+    width: 100%;
+    height: 80px;
+    background-color: #f5f7fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: bold;
+    color: black;
+    text-transform: uppercase;
+    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
 }
-
-.main-container {
-  width: 100%;
-  max-width: 1920px;
-  height: 100%;
-  max-height: 1080px;
-  background-color: #3A3A3A;
-  padding: 20px;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  flex-shrink: 0;
-}
-
-.ongoing-projects {
-  margin-bottom: 40px;
-}
-
-.ongoing-projects h2 {
-  color: #FFF;
-  margin-bottom: 20px;
-}
-
-.project-list {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.project {
-  width: 200px;
-  height: 150px;
-  background-color: #FFF;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.recent-and-gantt {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  max-width: 1600px;
-  height: 100%;
-  gap: 20px;
-}
-
-.recent-issue-container, .gantt-chart-container {
-  background-color: #FFF;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
+/* 🌟 Recent Issue 컨테이너 */
 .recent-issue-container {
-  width: 508px;
-  height: 422px;
-  flex-shrink: 0;
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    width: 100%;
 }
 
-.gantt-chart-container {
-  width: 50vw;
-  height: 422px;
-  flex-shrink: 0;
-}
-
-.title {
-  color: #FFF;
-  margin-bottom: 20px;
-  margin-left: 10px;
-}
-
+/* 🌟 Recent Issue 리스트 */
 .recent-issues {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
+/* 🌟 각 이슈 스타일 */
 .issue {
-  background-color: #F9F9F9;
-  padding: 10px;
-  border-radius: 5px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    background-color: #f1f3f5;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    color: black;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.chart {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding-top: 20px;
+.issue:hover {
+    background-color: #e9ecef;
+    transform: scale(1.02);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.project-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: center;
-  padding: 20px;
+
+/* 🌟 On Going 프로젝트 섹션 */
+.ongoing-projects {
+    text-align: center;
+    width: 100%;
+    max-width: 1400px;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 20px;
 }
 
-.project {
-  width: 250px;
-  height: 160px;
-  background-color: #fff;
-  border-radius: 12px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  padding: 15px;
-  text-align: center;
-  font-size: 1.1rem;
-  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+/* 🌟 On Going 헤더 */
+.ongoing-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 1400px;
+    padding: 0 15px;
+    margin-bottom: 10px;
+    position: relative;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
 }
 
-.project:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+/* 🌟 On Going 제목 */
+.ongoing-header h2 {
+    font-size: 22px;
+    margin: 0;
 }
 
-.project h3 {
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 8px;
+/* 🌟 더보기 버튼 */
+.load-more-btn {
+    padding: 6px 12px;
+    background-color: #f8f9fa;
+    color: #333;
+    border: none;
+    border-radius: 8px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    position: absolute;
+    right: 20px;
+    top: -15px;
 }
 
-.project p {
-  font-size: 1rem;
-  color: #555;
-  margin: 0;
-  line-height: 1.4;
+.load-more-btn:hover {
+    background-color: #ddd;
 }
 
+/* 🌟 프로젝트 리스트 컨테이너 */
 .scroll-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  width: 100%;
-  max-width: 1200px;
-  overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 1400px;
+    position: relative;
+    padding: 15px;
 }
 
+/* 🌟 프로젝트 리스트 (가로 스크롤) */
 .project-list-wrapper {
-  width: calc(250px * 4 + 20px * 3);
-  overflow-x: auto;
-  scroll-behavior: smooth;
-  white-space: nowrap;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  padding: 10px 0;
-  cursor: grab;
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    white-space: nowrap;
+    width: 100%;
+    max-width: 1200px;
+    padding: 10px;
+    border-radius: 10px;
+    min-height: 160px;
+    scrollbar-width: none;
 }
 
-.project-list {
-  display: flex;
-  gap: 20px;
-  flex-wrap: nowrap;
-  padding: 10px;
-  min-width: fit-content;
-}
-
-.project {
-  flex: 0 0 auto;
-  width: 250px;
-  height: 160px;
-  background-color: #FFF;
-  border-radius: 12px;
-  text-align: center;
-  padding: 15px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-}
-
-.project:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
-}
-
+/* 🌟 스크롤바 숨기기 */
 .project-list-wrapper::-webkit-scrollbar {
-  height: 6px;
+    display: none;
 }
 
-.project-list-wrapper::-webkit-scrollbar-thumb {
-  background-color: rgba(255, 255, 255, 0.5);
-  border-radius: 10px;
+/* 🌟 프로젝트 리스트 (가로 정렬) */
+.project-list {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    white-space: nowrap;
+    overflow-x: auto;
 }
 
-.scroll-btn {
-  display: none !important;
+/* 🌟 프로젝트 카드 디자인 수정 */
+.project {
+    flex: 0 0 auto;
+    width: 180px;
+    height: 160px;
+    background-color: #ffffff;
+    border-radius: 15px;
+    padding: 15px;
+    text-align: center;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+    border: 1px solid #ddd;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 🌟 프로젝트 제목 글자 넘침 방지 */
+.project h3 {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 8px;
+    font-weight: bold;
+    word-wrap: break-word; /* 줄바꿈 허용 */
+    overflow: hidden; /* 넘치는 텍스트 숨기기 */
+    text-overflow: ellipsis; /* 말줄임표 표시 */
+    white-space: normal; /* 여러 줄 표시 */
+    max-height: 40px; /* 최대 높이 제한 */
+}
+
+/* 🌟 프로젝트 생성 날짜 */
+.project p {
+    font-size: 12px;
+    color: #666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    margin: 0;
+}
+
+/* 🌟 프로젝트 카드 호버 효과 */
+.project:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2);
+    border: 1px solid #007bff;
+}
+
+/* 🌟 프로젝트 추가 버튼 세련되게 */
+.add-project-btn {
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    font-weight: bold;
+}
+
+/* 🌟 버튼 호버 및 클릭 효과 */
+.add-project-btn:hover {
+    background: linear-gradient(135deg, #0056b3, #003f7f);
+    transform: scale(1.05);
+}
+
+.add-project-btn:active {
+    transform: scale(0.95);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* 🌟 Recent Issue & Gantt Chart 섹션 */
+.recent-and-gantt {
+    width: 100%;
+    max-width: 1400px;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 60px;
+    gap: 50px;
+}
+
+/* 🌟 Recent Issue & Gantt Chart 타이틀 */
+.title {
+    font-size: 22px;
+    font-weight: bold;
+    text-transform: capitalize;
+    width: 100%;
+    max-width: 1400px;
+    padding: 0 15px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+}
+
+/* 🌟 Gantt Chart */
+.gantt-chart-container {
+    width: 100%;
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 🌟 Gantt Chart 스타일 */
+.gantt-chart {
+    display: flex;
+    flex-direction: column;
+}
+
+.gantt-header {
+    display: flex;
+    background: #f1f1f1;
+    font-weight: bold;
+    padding: 10px;
+}
+
+.gantt-project-name {
+    width: 20%;
+    min-width: 120px;
+    text-align: left;
+    padding-left: 10px;
+}
+
+.gantt-days {
+    display: flex;
+    width: 80%;
+    text-align: center;
+}
+
+.gantt-days div {
+    flex: 1;
+    padding: 5px;
+    border-left: 1px solid #ccc;
+}
+
+.gantt-body {
+    display: flex;
+    flex-direction: column;
+}
+
+.gantt-row {
+    display: flex;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.gantt-row .project-name {
+    width: 20%;
+    min-width: 120px;
+    padding-left: 10px;
+}
+
+.gantt-progress {
+    display: flex;
+    width: 80%;
+}
+
+.gantt-progress div {
+    flex: 1;
+    height: 20px;
+    margin: 2px;
+    background-color: #dcdcdc;
+    border-radius: 5px;
+}
+
+.gantt-progress .active {
+    background-color: #76c7c0;
+}
+
+/* 🌟 프로필 버튼 */
+.profile-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.profile-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease-in-out;
+}
+
+.profile-btn:hover {
+    transform: scale(1.1);
+}
+
+/* 🌟 프로필 메뉴 */
+.profile-menu {
+    position: absolute;
+    bottom: 70px;
+    right: 0;
+    width: 120px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    display: none;
+    opacity: 0;
+    transition: all 0.3s ease-in-out;
+}
+
+.profile-menu ul {
+    list-style: none;
+    padding: 10px;
+    margin: 0;
+}
+
+.profile-menu ul li {
+    padding: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+}
+
+.profile-menu ul li:hover {
+    background: #f0f0f0;
+}
+
+.profile-menu.active {
+    display: block;
+    opacity: 1;
+}
+
+/* 모달 창 스타일 */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: #E2F9FF;
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 12px;
+    width: 400px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.modal-content img.modal-logo {
+    width: 80px;
+    margin-bottom: 10px;
+}
+
+.modal-content h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #333;
+}
+
+.modal-content label {
+    display: block;
+    margin: 10px 0 5px;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.modal-content input {
+    width: 80%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.modal-content button {
+    background-color: #000;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.modal-content button:hover {
+    background-color: #444;
 }
