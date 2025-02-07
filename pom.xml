@@ -8,6 +8,10 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>war</packaging>
 
+<modules>
+        <module>D0128</module> <!-- 하위 모듈 지정 -->
+</modules>
+
 <build>
   <finalName>ROOT</finalName>
     <plugins>
