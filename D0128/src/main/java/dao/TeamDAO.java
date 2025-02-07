@@ -43,7 +43,30 @@ public class TeamDAO {
 
         return false; // 승인 실패
     }
-	
+
+	public boolean rejectJoinRequest(int requestId) throws Exception {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        boolean isUpdated = false;
+
+        try {
+            conn = ConnectionPool.get();
+            String sql = "UPDATE TEAM_REQUESTS SET STATUS = 'REJECTED' WHERE REQUEST_ID = ?";
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, requestId);
+            int updatedRows = pstmt.executeUpdate();
+
+            if (updatedRows > 0) {
+                isUpdated = true;
+            }
+        } finally {
+            if (pstmt != null) pstmt.close();
+            if (conn != null) conn.close();
+        }
+
+        return isUpdated;
+    }
+
 	public JSONArray getPendingRequests(String adminId) throws NamingException, SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
