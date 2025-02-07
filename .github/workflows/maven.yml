@@ -28,7 +28,7 @@ jobs:
         
       - name: Check target directory
         run: |
-          ls -l ./  # ./target 디렉토리 확인
+          ls -l ./D0128/  # ./target 디렉토리 확인
           file ./target/ROOT.war
           ls -l ./tomcat/webapps/  # ./target 디렉토리 확인
           file ./tomcat/webapps/ROOT.war
