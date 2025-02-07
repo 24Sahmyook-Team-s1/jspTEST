@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Main Page</title>
     <link rel="stylesheet" href="css/MainPage.css" />
-
     <script src="js/jquery-3.6.0.min.js"></script>	
     <script src="js/core.js"></script>
   </head>
@@ -13,7 +12,6 @@
     <div class="header">
       <h1>MOLE</h1>
     </div>
-
     <div class="ongoing-projects">
       <div class="ongoing-header">
         <h2>On Going</h2>
@@ -36,6 +34,7 @@
             <div class="issue">issue: something on svelte</div>
             <div class="issue">issue: something on svelte</div>
             <div class="issue">issue: something on svelte</div>
+
           </div>
         </div>
       </div>
@@ -51,6 +50,7 @@
               <div>수</div>
               <div>목</div>
               <div>금</div>
+
             </div>
           </div>
           <div class="gantt-body" id="ganttBody">
@@ -117,6 +117,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 $(document).ready(function () {
     loadProjects(); // 페이지 로드 시 기본 프로젝트 목록 불러오기
+
 
     const projectWrapper = $(".project-list-wrapper");
     const loadMoreBtn = $("#loadMoreBtn");
@@ -205,8 +206,9 @@ document.querySelectorAll('.profile-menu li').forEach(item => {
     item.addEventListener('click', function () {
         const targetPage = this.getAttribute('data-link');
         window.location.href = targetPage;
+
     });
-});
+  });
 
 $(document).ready(function () {
     const addProjectBtn = $("#addProjectBtn");
