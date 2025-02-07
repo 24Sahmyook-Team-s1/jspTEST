@@ -21,7 +21,7 @@ jobs:
           cache: maven
 
       - name: Build WAR with Maven
-        run: mvn -B package --file pom.xml -DskipTests
+        run: mvn -B package --file D0128/pom.xml -DskipTests
 
       - name: Create webapps directory
         run: mkdir -p ./tomcat/webapps 
