@@ -17,7 +17,7 @@
     <div class="ongoing-projects">
       <div class="ongoing-header">
         <h2>On Going</h2>
-        <button id="loadMoreBtn" class="load-more-btn">더보기</button>
+         <button id="addProjectBtn" class="add-project-btn">프로젝트 추가</button>
       </div>
       <div class="scroll-container">
         <div class="project-list-wrapper">
@@ -73,6 +73,25 @@
 				<li data-link="SettingsPage.html">설정</li> </ul>
 	    </div>
 	</div>
+	
+	<!-- 프로젝트 추가 모달 창 -->
+    <div id="projectModal" class="modal">
+        <div class="modal-content">
+            <img src="public/logo-transparent.png" alt="MOLE Logo" class="modal-logo">
+            <h2>새로운 프로젝트</h2>
+
+            <label for="projectName">프로젝트 이름</label>
+            <input type="text" id="projectName" placeholder="프로젝트 이름을 입력">
+
+            <label for="projectDesc">프로젝트 설명</label>
+            <input type="text" id="projectDesc" placeholder="프로젝트 설명을 입력">
+
+            <label for="projectOwner">프로젝트 소유자</label>
+            <input type="text" id="projectOwner" placeholder="현재 프로젝트를 만드는 유저명">
+
+            <button id="createProjectBtn">프로젝트 만들기</button>
+        </div>
+    </div>
   </body>
 </html>
 <script>
@@ -187,6 +206,67 @@ document.querySelectorAll('.profile-menu li').forEach(item => {
         const targetPage = this.getAttribute('data-link');
         window.location.href = targetPage;
     });
+});
+
+$(document).ready(function () {
+    const addProjectBtn = $("#addProjectBtn");
+    const projectModal = $("#projectModal");
+    const createProjectBtn = $("#createProjectBtn");
+
+    // 프로젝트 추가 버튼 클릭 시 모달 열기
+    addProjectBtn.on("click", function () {
+        projectModal.show();
+    });
+
+    // 모달 외부 클릭 시 닫기
+    $(window).on("click", function (event) {
+        if ($(event.target).is(projectModal)) {
+            projectModal.hide();
+        }
+    });
+
+ // 📌 프로젝트 생성 로직 (날짜 및 이모지 추가)
+    createProjectBtn.on("click", function () {
+        const projectName = $("#projectName").val();
+        const projectDesc = $("#projectDesc").val();
+        const projectOwner = $("#projectOwner").val();
+
+        if (projectName && projectDesc && projectOwner) {
+            const today = new Date().toISOString().split('T')[0];  // YYYY-MM-DD 형식의 날짜 가져오기
+            addProjectToPage(projectName, projectDesc, today);
+            projectModal.hide();
+            clearInputs();
+        } else {
+            alert("모든 필드를 입력해주세요!");
+        }
+    });
+
+    // 📌 On Going과 Gantt Chart에 프로젝트 추가 (날짜 포함)
+    function addProjectToPage(name, desc, date) {
+        $("#projectList").append(`
+            <div class="project">
+                <h3>${name}</h3>
+                <p>📅 Created At: ${date}</p>
+            </div>
+        `);
+
+        $("#ganttBody").append(`
+            <div class="gantt-row">
+                <div class="project-name">${name}</div>
+                <div class="gantt-progress">
+                    <div></div><div></div><div></div><div></div><div></div>
+                </div>
+            </div>
+        `);
+    }
+
+
+    // 입력 필드 초기화
+    function clearInputs() {
+        $("#projectName").val('');
+        $("#projectDesc").val('');
+        $("#projectOwner").val('');
+    }
 });
 
 </script>

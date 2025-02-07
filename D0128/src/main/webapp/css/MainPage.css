@@ -153,37 +153,78 @@ body, html {
     overflow-x: auto;
 }
 
-/* 🌟 프로젝트 카드 */
+/* 🌟 프로젝트 카드 디자인 수정 */
 .project {
     flex: 0 0 auto;
-    width: 140px;
-    height: 140px;
-    background-color: #FFF;
-    border-radius: 12px;
+    width: 180px;
+    height: 160px;
+    background-color: #ffffff;
+    border-radius: 15px;
+    padding: 15px;
     text-align: center;
-    padding: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+    border: 1px solid #ddd;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
-/* 🌟 프로젝트 제목 */
+/* 🌟 프로젝트 제목 글자 넘침 방지 */
 .project h3 {
-    font-size: 12px;
-    margin-bottom: 6px;
-    white-space: normal;
-    word-wrap: break-word;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 90%;
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 8px;
+    font-weight: bold;
+    word-wrap: break-word; /* 줄바꿈 허용 */
+    overflow: hidden; /* 넘치는 텍스트 숨기기 */
+    text-overflow: ellipsis; /* 말줄임표 표시 */
+    white-space: normal; /* 여러 줄 표시 */
+    max-height: 40px; /* 최대 높이 제한 */
 }
 
-/* 🌟 프로젝트 날짜 */
+/* 🌟 프로젝트 생성 날짜 */
 .project p {
-    font-size: 10px;
-    color: #555;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 90%;
+    font-size: 12px;
+    color: #666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    margin: 0;
+}
+
+/* 🌟 프로젝트 카드 호버 효과 */
+.project:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2);
+    border: 1px solid #007bff;
+}
+
+/* 🌟 프로젝트 추가 버튼 세련되게 */
+.add-project-btn {
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    font-weight: bold;
+}
+
+/* 🌟 버튼 호버 및 클릭 효과 */
+.add-project-btn:hover {
+    background: linear-gradient(135deg, #0056b3, #003f7f);
+    transform: scale(1.05);
+}
+
+.add-project-btn:active {
+    transform: scale(0.95);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 /* 🌟 Recent Issue & Gantt Chart 섹션 */
@@ -343,4 +384,67 @@ body, html {
 .profile-menu.active {
     display: block;
     opacity: 1;
+}
+
+/* 모달 창 스타일 */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: #E2F9FF;
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 12px;
+    width: 400px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.modal-content img.modal-logo {
+    width: 80px;
+    margin-bottom: 10px;
+}
+
+.modal-content h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #333;
+}
+
+.modal-content label {
+    display: block;
+    margin: 10px 0 5px;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.modal-content input {
+    width: 80%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.modal-content button {
+    background-color: #000;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.modal-content button:hover {
+    background-color: #444;
 }
