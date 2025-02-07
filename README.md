@@ -3,14 +3,40 @@
 
 **프로젝트 설명 :** 문서,일정,이슈를 한번에 볼수있는 프로젝트 진행 통합관리 시스템
 <br>
-**팀원 :** 김정현(Lead),김재욱,박민수,차성호
+#### 팀원 
+**김정현(Lead)**
+- 서버 구축 / 관리 (AWS EC2)
+- 일정 관리
+
+**김재욱 (Devops)**
+- UI / UX Design (Figma, HTML, CSS)
+- CI / CD Pipeline 구축 (Github Actions)
+- GIT VCS 최신화 관리
+
+**박민수 (Software Engineer)**
+- Database 구축 SQL Command Line 설계 (Oracle)
+- Frontend 구현 (HTML, JS, CSS)
+
+**차성호 (Software Engineer)**
+- Backend JSP 설계, 구현 (JAVA)
+- Database 구조 설계 (Oracle)
+- 데이터 암호화, 보안관리
+
 <br><br>
 **사용 기술 :** Java (JDK 21),  JavaScript,  HTML5,  CSS,  Oracle Database 11g,  AWS ec2,  Tomcat 9. Docker
 <br>
+
+# CI / CD Pipeline
+### Github Action
+- Auto Pull Request @  peter-evans/create-pull-request
+- Java Build to War @ Maven & upload war artifact
+
 **구현 방식 설명:** JSP와 AJAX를 활용한 SSR(Sever Side Rendering) Web Project 이다. 
-- Github Action 을 이용하여 자동으로 Pull Request 및 Build 실행
-- Docker 를 이용한 AWS 배포환경 구축
-- Github Action 을 이용하여 Docker로 개설한 Tocam Server를 이용하여 페이지 배포
+1. Github Action 을 이용하여 자동으로 Pull Request 개설, 해당 풀리퀘스트를 확인 후 병합
+2. Master Branch에 Push 가 있을 경우 Maven 을 이용한 WAR (Tomcat 확장자) 파일로 빌드
+3. War 파일을 포함 Tomcat Docker를 구성 Docker hub에 Push
+4. EC2 서버에서 Docker hub에 Docker Image 를 Pull 후 컨테이너 생성
+5. Github Action 에서 SSH 커넥션을 이용하여 자동으로 Tomcat서버를 종료 후 재실행
 
 
 
@@ -41,8 +67,3 @@
 
 ```
 
-# CI / CD Pipeline
-
-### Github Action
-- Auto Pull Request @  peter-evans/create-pull-request
-- Java Build to War @ Maven & upload war artifact
