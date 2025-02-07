@@ -13,10 +13,10 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
-	<classpathentry kind="lib" path="C:/Users/pmsoo/Downloads/commons-fileupload-1.4.jar"/>
-	<classpathentry kind="lib" path="C:/Users/pmsoo/Downloads/mysql-connector-java-8.0.22.jar"/>
-	<classpathentry kind="lib" path="C:/Users/pmsoo/Downloads/commons-io-2.8.0.jar"/>
-	<classpathentry kind="lib" path="C:/Users/pmsoo/Downloads/json-simple-1.1.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/pmsoo/Downloads/ojdbc11.jar"/>
+	<classpathentry kind="lib" path="C:/Users/richa/Downloads/ojdbc11.jar"/>
+	<classpathentry kind="lib" path="C:/kim/Mole_pms/extarnaljar/commons-fileupload-1.4.jar"/>
+	<classpathentry kind="lib" path="C:/kim/Mole_pms/extarnaljar/commons-io-2.8.0.jar"/>
+	<classpathentry kind="lib" path="C:/kim/Mole_pms/extarnaljar/json-simple-1.1.1.jar"/>
+	<classpathentry kind="lib" path="C:/kim/Mole_pms/extarnaljar/mysql-connector-java-8.0.22.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
