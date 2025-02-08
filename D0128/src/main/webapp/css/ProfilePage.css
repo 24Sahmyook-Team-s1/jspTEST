@@ -2,7 +2,7 @@
 body {
     margin: 0;
     font-family: 'Arial', sans-serif;
-    background-color: #E3F5FC;  /* 배경 색상 유지 */
+    background-color: #E3F5FC;
     color: black;
     display: flex;
     flex-direction: column;
@@ -13,7 +13,7 @@ body {
 .header {
     width: 100%;
     height: 80px;
-    background-color: #F2F5F7;  /* 상단바 색상 유지 */
+    background-color: #F2F5F7;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -25,29 +25,37 @@ body {
 /* 전체 레이아웃 */
 .profile-container {
     display: flex;
-    flex-direction: column;  /* 전체를 세로로 배치 */
-    align-items: flex-start; /* 왼쪽 정렬 */
+    flex-direction: column;
+    align-items: flex-start;
     width: 90%;
     max-width: 1200px;
     margin-top: 50px;
-    gap: 20px; /* 프로필과 아래 섹션 간격 */
+    gap: 20px;
 }
 
-/* 프로필 정보 - 왼쪽 상단 */
+/* 프로필 정보 - 박스 확장 */
 .profile-info {
-    width: 250px;
+    display: flex;  /* 프로필 사진과 소개글 나란히 배치 */
+    width: 100%;
     background: #b8e6f8;
     border-radius: 15px;
     padding: 20px;
-    text-align: center;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    position: relative;
+    gap: 20px;
+}
+
+/* 프로필 왼쪽 섹션 (사진, 이름, 이메일) */
+.profile-left {
+    width: 250px;
+    text-align: center;
 }
 
 /* 프로필 사진 */
 .profile-picture {
     width: 150px;
     height: 150px;
-    background-image: url('public/logo-transparent.png');  /* 프로필 사진 경로 */
+    background-image: url('public/logo-transparent.png');
     background-size: cover;
     background-position: center;
     border-radius: 50%;
@@ -55,18 +63,18 @@ body {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-/* 프로필 수정 버튼 스타일 */
+/* 프로필 수정 버튼 */
 .edit-profile-btn {
     padding: 12px 25px;
-    background-color: #4CAF50;  /* 부드러운 초록색 */
+    background-color: #4CAF50;
     color: white;
     border: none;
-    border-radius: 30px;  /* 둥근 모서리 */
+    border-radius: 30px;
     cursor: pointer;
     font-weight: bold;
     font-size: 14px;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);  /* 그림자 효과 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .edit-profile-btn:hover {
@@ -75,14 +83,35 @@ body {
     transform: translateY(-2px);
 }
 
-/* 소개글과 Pinned 섹션을 프로필 아래로 나란히 배치 */
+/* 소개글 오른쪽 섹션 */
+.profile-bio {
+    flex: 1;  /* 남은 공간 전체 차지 */
+    background: #FFF;
+    border-radius: 15px;
+    padding: 20px;
+    color: #333;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    min-height: 200px;
+}
+
+/* 소개글이 없을 때 */
+.profile-bio.empty {
+    color: #bbb;
+    font-style: italic;
+}
+
+/* 소개글 입력 섹션 */
 .sections-row {
     display: flex;
     gap: 20px;
     width: 100%;
 }
 
-/* 소개글과 Pinned 스타일 */
+/* 소개글 작성 및 Pinned 섹션 */
 .bio-section, .pinned-section {
     background: #FFF;
     color: #333;
@@ -91,22 +120,6 @@ body {
     width: 50%;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     min-height: 200px;
-}
-
-/* 소개글 미리보기 공간 스타일 */
-.bio-preview {
-    width: 250px;
-    background: #FFF;
-    border-radius: 15px;
-    padding: 20px;
-    color: #333;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    margin-top: 20px;
-    display: none;  /* 기본은 숨김 */
-}
-
-.bio-preview.active {
-    display: block;  /* 내용이 작성되면 표시 */
 }
 
 /* Pinned 섹션 */
@@ -142,61 +155,4 @@ body {
 .pinned-project:hover {
     transform: translateY(-5px);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-}
-
-/* 프로필 버튼 */
-.profile-menu-container {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 1000;
-}
-
-.profile-btn {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    cursor: pointer;
-    border: 2px solid #FFF;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s ease-in-out;
-}
-
-.profile-btn:hover {
-    transform: scale(1.1);
-}
-
-/* 프로필 메뉴 */
-.profile-menu {
-    display: none;
-    position: absolute;
-    bottom: 80px;
-    right: 0;
-    background: #FFF;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    width: 150px;
-    text-align: center;
-}
-
-.profile-menu.active {
-    display: block;
-}
-
-.profile-menu ul {
-    list-style: none;
-    margin: 0;
-    padding: 10px 0;
-}
-
-.profile-menu ul li {
-    padding: 10px;
-    font-weight: bold;
-    cursor: pointer;
-    color: #333;
-    transition: background 0.3s ease;
-}
-
-.profile-menu ul li:hover {
-    background: #F0F0F0;
 }

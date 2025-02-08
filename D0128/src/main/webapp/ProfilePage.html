@@ -14,21 +14,24 @@
 
     <!-- 프로필 콘텐츠 -->
     <div class="profile-container">
-        <!-- 프로필 정보 -->
+        <!-- 확장된 프로필 박스 -->
         <div class="profile-info">
-            <div class="profile-picture"></div>
-            <h2 id="userName">사용자 이름</h2>
-            <p id="userEmail">이메일</p>
-            <button class="edit-profile-btn">프로필 수정</button>
+            <!-- 프로필 왼쪽 (사진, 이름, 이메일) -->
+            <div class="profile-left">
+                <div class="profile-picture"></div>
+                <h2 id="userName">사용자 이름</h2>
+                <p id="userEmail">이메일</p>
+                <button class="edit-profile-btn">프로필 수정</button>
+            </div>
 
-            <!-- ✨ 개인소개글 미리보기 공간 -->
-            <div class="bio-preview" id="bioPreview">여기에 소개글이 표시됩니다.</div>
+            <!-- 소개글 오른쪽 -->
+            <div class="profile-bio empty" id="bioPreview">소개글이 없습니다.</div>
         </div>
 
-        <!-- 개인 소개글과 Pinned 프로젝트 -->
+        <!-- 개인 소개글 작성 및 Pinned 프로젝트 -->
         <div class="sections-row">
             <div class="bio-section">
-                <p>개인소개글 쓸수있는 창</p>
+                <p contenteditable="true" id="bioInput">여기에 개인소개글을 작성하세요.</p>
             </div>
 
             <div class="pinned-section">
@@ -38,41 +41,34 @@
         </div>
     </div>
 
-    <!-- 📌 프로필 메뉴 -->
-    <div class="profile-menu-container">
-        <img src="public/logo-transparent.png" alt="MOLE PMS Logo" class="profile-btn" id="profileBtn">
-        <div class="profile-menu" id="profileMenu">
-            <ul>
-                <li data-link="MainPage.html">홈</li>
-                <li data-link="TeamPage.html">팀 페이지</li>
-                <li data-link="FindTeam.html">팀 찾기</li>
-                <li data-link="CreateTeam.html">팀 만들기</li>
-                <li data-link="TeamManage.html">팀 관리</li>
-                <li data-link="ProfilePage.html">프로필</li>
-                <li data-link="SettingsPage.html">설정</li>
-            </ul>
-        </div>
-    </div>
-
     <script src="js/core.js"></script>
 </body>
 </html>
 
+
 <script>
 $(document).ready(function () {
-    // 프로필 메뉴 토글
+    // 프로필 수정 버튼 클릭 시 소개글 표시
+    $(".edit-profile-btn").click(function () {
+        const bioContent = $("#bioInput").text().trim();
+        if (bioContent !== "") {
+            $("#bioPreview").removeClass('empty').text(bioContent);
+        } else {
+            $("#bioPreview").addClass('empty').text("소개글이 없습니다.");
+        }
+    });
+
+    // 메뉴 기능 (기존 유지)
     $("#profileBtn").click(function () {
         $("#profileMenu").toggleClass("active");
     });
 
-    // 메뉴 외부 클릭 시 닫기
     $(document).click(function (event) {
         if (!$(event.target).closest('#profileBtn, #profileMenu').length) {
             $("#profileMenu").removeClass("active");
         }
     });
 
-    // 메뉴 항목 클릭 시 페이지 이동
     $(".profile-menu li").click(function () {
         window.location.href = $(this).data("link");
     });
@@ -105,17 +101,6 @@ $(document).ready(function () {
         },
         error: function () {
             console.error("프로젝트 목록을 불러오지 못했습니다.");
-        }
-    });
-
-    // 소개글 입력 시 오른쪽에 실시간 반영
-    $(".bio-section p").attr("contenteditable", "true");  // 소개글 편집 가능하게 설정
-    $(".bio-section p").on("input", function () {
-        const bioContent = $(this).text();
-        if (bioContent.trim() !== "") {
-            $("#bioPreview").addClass("active").text(bioContent);
-        } else {
-            $("#bioPreview").removeClass("active").text("여기에 소개글이 표시됩니다.");
         }
     });
 });
