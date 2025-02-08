@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>프로필 페이지</title>
+    <link rel="stylesheet" href="css/ProfilePage.css">
+    <script src="js/jquery-3.6.0.min.js"></script>	
+    <script src="js/core.js"></script>
+</head>
+<body>
+
+    <!-- 상단 로고 -->
+    <div class="header">
+        <h1>MOLE</h1>
+    </div>
+
+    <div class="profile-container">
+        <!-- 프로필 정보 -->
+        <div class="profile-info">
+            <div class="profile-image"></div>  <!-- 프로필 사진 -->
+            <h2 id="userName">사용자 이름</h2>
+            <p id="userEmail">이메일</p>
+            <button id="editProfileBtn">프로필 수정</button>
+        </div>
+
+        <!-- 개인 소개글 -->
+        <div class="bio-section">
+            <textarea id="userBio" placeholder="개인소개글을 입력하세요"></textarea>
+        </div>
+
+        <!-- 핀한 프로젝트 -->
+        <div class="pinned-section">
+            <h3>Pinned</h3>
+            <div class="pinned-projects" id="pinnedProjects">
+                <!-- JavaScript로 동적 추가 -->
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-sidebar">
+        <ul>
+            <li data-link="MainPage.html">홈</li>
+            <li data-link="TeamPage.html">팀</li>
+            <li data-link="ProfilePage.html" class="active">프로필</li>
+            <li data-link="SettingsPage.html">설정</li>
+        </ul>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            // 세션에서 사용자 ID 가져오기
+            $.get("jsp/session.jsp", function (sessionData) {
+                let userID = sessionData.trim();
+                if (userID && userID !== "로그인하지 않았습니다.") {
+                    // 사용자 정보 가져오기
+                    $.get("jsp/GetUserProfile.jsp?id=" + userID, function (data) {
+                        let user = JSON.parse(data);
+                        $("#userName").text(user.name);
+                        $("#userEmail").text(user.id); // 이메일이 id로 저장됨
+                        $("#userBio").val(user.bio || "개인소개글을 입력하세요");
+                    });
+
+                    // Pinned 프로젝트 불러오기
+                    $.get("jsp/GetProjectList.jsp", function (projects) {
+                        let pinnedProjects = JSON.parse(projects);
+                        pinnedProjects.slice(0, 4).forEach(proj => {
+                            $("#pinnedProjects").append(`<div class="project-card">${proj.name}</div>`);
+                        });
+                    });
+                } else {
+                    alert("로그인이 필요합니다.");
+                    window.location.href = "login.html";
+                }
+            });
+
+            // 네비게이션 이동
+            $(".profile-sidebar li").on("click", function () {
+                let targetPage = $(this).attr("data-link");
+                window.location.href = targetPage;
+            });
+
+        });
+    </script>
+</body>
+</html>
