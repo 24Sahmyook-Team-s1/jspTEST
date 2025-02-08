@@ -10,14 +10,14 @@ String message = "";
 if (request.getMethod().equalsIgnoreCase("POST")) {
 	request.setCharacterEncoding("utf-8");
 
-	String projectname = request.getParameter("projectname");
+	int projectid = Integer.parseInt(request.getParameter("projectid"));
 	String leadername = request.getParameter("leadername");
 
 	ProjectDAO dao = new ProjectDAO();
 	boolean code = false;
 
 	try {
-		code = dao.updateProjectLeader(projectname, leadername);
+		code = dao.updateProjectLeaderById(projectid, leadername);
 	} catch (NamingException | SQLException e) {
 		e.printStackTrace();
 	}
@@ -46,7 +46,7 @@ if (request.getMethod().equalsIgnoreCase("POST")) {
 	}
 	%>
 	<form method="post">
-		<label for="projectname">프로젝트 이름:</label> 
+		<label for="projectname">프로젝트 id:</label> 
 		<input type="text" id="projectname" name="projectname" required>
 		<br>
 		<br> 

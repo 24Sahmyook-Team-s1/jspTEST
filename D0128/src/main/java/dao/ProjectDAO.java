@@ -122,6 +122,47 @@ public class ProjectDAO {
         return project; // JSON 객체 반환, 없으면 null
     }
     
+    public String getProjectByprojectname(String projectName) throws NamingException, SQLException {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		StringBuilder jsonResult = new StringBuilder("[");
+		try {
+			String sql = "SELECT projectID, projectName, createDat, projectLeader FROM projects WHERE projectName = ?";
+			conn = ConnectionPool.get();
+			stmt = conn.prepareStatement(sql);
+			stmt.setString(1, projectName);
+			rs = stmt.executeQuery();
+//			if (rs.next()) {
+//				return "{\"projectID\": \"" + rs.getString("projectID") + "\", " + "\"projectName\": \""
+//						+ rs.getString("projectName") + "\", " + "\"createDat\": \"" + rs.getTimestamp("createDat")
+//						+ "\", " + "\"projectLeader\": \"" + rs.getString("projectLeader") + "\"}";
+//			}
+//			return "{}";
+			
+			int count = 0;
+			while (rs.next()) {
+				if (count++ > 0)
+					jsonResult.append(", "); // 첫 번째 항목이 아닐 경우 쉼표 추가
+				jsonResult.append("{").append("\"no\": ").append(rs.getInt("ProjectID")).append(", ")
+						.append("\"name\": \"").append(rs.getString("ProjectName")).append("\", ")
+						.append("\"created_at\": \"").append(rs.getString("CreatedAt")).append("\", ")
+						.append("\"projectLeader\": \"").append(rs.getString("ProjectLeader")).append("\"") // 프로젝트 리더
+																											// 추가
+						.append("}");
+			}
+			jsonResult.append("]");
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (stmt != null)
+				stmt.close();
+			if (conn != null)
+				conn.close();
+		}
+		return jsonResult.toString(); // JSON 문자열 반환
+	}
+    
     // 사용자 id로 참여하고 있는 프로젝트 조회
     public JSONArray getProjectsByUserId(String userId) throws NamingException, SQLException {
         JSONArray projectList = new JSONArray();
