@@ -70,7 +70,7 @@ public class ProjectDAO {
         JSONArray jsonResult = new JSONArray();
 
         try {
-            String sql = "SELECT ProjectID, ProjectName, TO_CHAR(CreatedAt, 'YYYY-MM-DD') AS CreatedAt, ProjectLeader FROM projects ORDER BY CreatedAt DESC, ProjectID ASC";
+            String sql = "SELECT ProjectID, ProjectName, TO_CHAR(CreatedAt, 'YYYY-MM-DD') AS CreatedAt FROM projects ORDER BY CreatedAt DESC, ProjectID ASC";
             conn = ConnectionPool.get();
             stmt = conn.prepareStatement(sql);
             rs = stmt.executeQuery();
@@ -80,7 +80,6 @@ public class ProjectDAO {
                 project.put("id", rs.getInt("ProjectID"));
                 project.put("name", rs.getString("ProjectName"));
                 project.put("created_at", rs.getString("CreatedAt"));
-                project.put("projectLeader", rs.getString("ProjectLeader"));
                 jsonResult.add(project);
             }
         } finally {
