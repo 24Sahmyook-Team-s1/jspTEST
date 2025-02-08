@@ -121,6 +121,39 @@ public class ProjectDAO {
 
         return project; // JSON 객체 반환, 없으면 null
     }
+    
+    // 사용자 id로 참여하고 있는 프로젝트 조회
+    public JSONArray getProjectsByUserId(String userId) throws NamingException, SQLException {
+        JSONArray projectList = new JSONArray();
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = ConnectionPool.get();
+            // 사용자가 속한 프로젝트 ID 조회
+            String sql = "SELECT ProjectID FROM Projects WHERE ProjectTeamID IN (SELECT ProjectTeamID FROM TeamMembers WHERE ProjectUserID = ?)";
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, userId);
+            rs = pstmt.executeQuery();
+
+            // 결과를 JSON 배열에 추가
+            while (rs.next()) {
+                int projectId = rs.getInt("ProjectID");
+                JSONObject projectData = getProjectById(projectId); // 프로젝트 정보를 조회
+                if (projectData != null) {
+                    projectList.add(projectData);
+                }
+            }
+        } finally {
+            if (rs != null) rs.close();
+            if (pstmt != null) pstmt.close();
+            if (conn != null) conn.close();
+        }
+
+        return projectList;
+    }
+
 
     // 프로젝트 이름 변경
     public boolean updateProjectNameById(int projectID, String newProjectName) throws NamingException, SQLException {
