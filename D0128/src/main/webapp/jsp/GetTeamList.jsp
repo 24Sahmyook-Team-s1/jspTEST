@@ -1,37 +1,22 @@
 <%@ page language="java" contentType="application/json; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="java.sql.*, org.json.simple.JSONArray, org.json.simple.JSONObject" %>
+<%@ page import="dao.TeamDAO" %>
+<%@ page import="org.json.simple.JSONArray" %>
+<%@ page import="org.json.simple.JSONObject" %>
+<%@ page import="java.sql.SQLException" %>
 
 <%
     request.setCharacterEncoding("UTF-8");
-
-    Connection conn = null;
-    PreparedStatement pstmt = null;
-    ResultSet rs = null;
+    TeamDAO teamDAO = new TeamDAO();
     JSONArray teamList = new JSONArray();
 
     try {
-        Class.forName("oracle.jdbc.driver.OracleDriver");
-        conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/XE", "park", "1111");
-
-        String sql = "SELECT PROJECTTEAMID, TEAMNAME, TO_CHAR(CREATEDAT, 'YYYY-MM-DD') AS CREATEDAT FROM PROJECTTEAMS ORDER BY CREATEDAT DESC";
-        pstmt = conn.prepareStatement(sql);
-        rs = pstmt.executeQuery();
-
-        while (rs.next()) {
-            JSONObject team = new JSONObject();
-            team.put("id", rs.getInt("PROJECTTEAMID"));
-            team.put("name", rs.getString("TEAMNAME"));
-            team.put("created_at", rs.getString("CREATEDAT"));
-            teamList.add(team);
-        }
-
-    } catch (Exception e) {
-        e.printStackTrace();
-    } finally {
-        if (rs != null) rs.close();
-        if (pstmt != null) pstmt.close();
-        if (conn != null) conn.close();
+        teamList = teamDAO.getTeamList(); // TeamDAO를 통해 팀 목록 가져오기
+    } catch (SQLException e) {
+        e.printStackTrace(); // 오류를 콘솔에 출력
+        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // 500 상태 코드 설정
+        out.print("{\"error\": \"팀 목록을 가져오는 데 실패했습니다.\"}"); // JSON 형태로 오류 메시지 반환
+        return; // 추가 처리 중단
     }
 
-    out.print(teamList.toJSONString());
+    out.print(teamList.toJSONString()); // JSON 형태로 팀 목록 출력
 %>
