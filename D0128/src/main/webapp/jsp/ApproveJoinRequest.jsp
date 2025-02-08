@@ -33,7 +33,7 @@
     try {
         // ✅ 데이터베이스 연결
         Class.forName("oracle.jdbc.driver.OracleDriver");
-        conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/XE", "park", "1111");
+        conn = DriverManager.getConnection("jdbc:oracle:thin:@oracla11g:1521/XE", "park", "1111");
 
         // ✅ 요청 상태를 "APPROVED"로 변경
         String updateSql = "UPDATE TEAM_REQUESTS SET STATUS = 'APPROVED' WHERE REQUEST_ID = ?";

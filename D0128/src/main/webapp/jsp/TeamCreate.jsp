@@ -26,7 +26,7 @@
 
     try {
         Class.forName("oracle.jdbc.driver.OracleDriver");
-        conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/XE", "park", "1111");
+        conn = DriverManager.getConnection("jdbc:oracle:thin:@oracle11g:1521/XE", "park", "1111");
 
         // ✅ 자동 증가되는 TeamID 추가
         String sql = "INSERT INTO PROJECTTEAMS (PROJECTTEAMID, TEAMNAME, CREATEDAT, ADMINUSERID) VALUES (PROJECTTEAMS_SEQ.NEXTVAL, ?, SYSDATE, ?)";
