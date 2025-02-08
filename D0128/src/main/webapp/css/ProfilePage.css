@@ -1,18 +1,19 @@
+/* 기본 스타일 */
 body {
     margin: 0;
-    padding: 0;
     font-family: 'Arial', sans-serif;
-    background-color: #2E2E2E;
-    color: white;
+    background-color: #E3F5FC;  /* 배경 색상 유지 */
+    color: black;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
+/* 🌟 헤더 스타일 */
 .header {
     width: 100%;
     height: 80px;
-    background-color: #E2F9FF;
+    background-color: #F2F5F7;  /* 상단바 색상 유지 */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -21,101 +22,181 @@ body {
     color: black;
 }
 
+/* 전체 레이아웃 */
 .profile-container {
-    width: 80%;
-    max-width: 900px;
-    background: #333;
-    padding: 20px;
-    border-radius: 10px;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 30px;
+    flex-direction: column;  /* 전체를 세로로 배치 */
+    align-items: flex-start; /* 왼쪽 정렬 */
+    width: 90%;
+    max-width: 1200px;
+    margin-top: 50px;
+    gap: 20px; /* 프로필과 아래 섹션 간격 */
 }
 
+/* 프로필 정보 - 왼쪽 상단 */
 .profile-info {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 20px;
+    width: 250px;
+    background: #b8e6f8;
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
-.profile-image {
-    width: 120px;
-    height: 120px;
-    background: white;
+/* 프로필 사진 */
+.profile-picture {
+    width: 150px;
+    height: 150px;
+    background-image: url('public/logo-transparent.png');  /* 프로필 사진 경로 */
+    background-size: cover;
+    background-position: center;
     border-radius: 50%;
-    margin-bottom: 10px;
+    margin: 0 auto 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-#editProfileBtn {
-    padding: 10px;
-    background: white;
-    color: black;
+/* 프로필 수정 버튼 스타일 */
+.edit-profile-btn {
+    padding: 12px 25px;
+    background-color: #4CAF50;  /* 부드러운 초록색 */
+    color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 30px;  /* 둥근 모서리 */
     cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);  /* 그림자 효과 */
 }
 
-.bio-section {
-    width: 100%;
-    margin-bottom: 20px;
+.edit-profile-btn:hover {
+    background-color: #45A049;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
 }
 
-#userBio {
+/* 소개글과 Pinned 섹션을 프로필 아래로 나란히 배치 */
+.sections-row {
+    display: flex;
+    gap: 20px;
     width: 100%;
-    height: 80px;
-    background: white;
-    color: black;
-    border: none;
-    padding: 10px;
-    border-radius: 5px;
-    resize: none;
 }
 
-.pinned-section {
-    width: 100%;
+/* 소개글과 Pinned 스타일 */
+.bio-section, .pinned-section {
+    background: #FFF;
+    color: #333;
+    padding: 20px;
+    border-radius: 15px;
+    width: 50%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    min-height: 200px;
+}
+
+/* 소개글 미리보기 공간 스타일 */
+.bio-preview {
+    width: 250px;
+    background: #FFF;
+    border-radius: 15px;
+    padding: 20px;
+    color: #333;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    margin-top: 20px;
+    display: none;  /* 기본은 숨김 */
+}
+
+.bio-preview.active {
+    display: block;  /* 내용이 작성되면 표시 */
+}
+
+/* Pinned 섹션 */
+.pinned-section h3 {
+    display: flex;
+    justify-content: space-between;
+    font-size: 20px;
+}
+
+.customize {
+    font-size: 14px;
+    color: #8A9DF0;
+    cursor: pointer;
 }
 
 .pinned-projects {
-    display: flex;
-    gap: 10px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-top: 10px;
 }
 
-.project-card {
-    width: 100px;
-    height: 100px;
-    background: white;
-    color: black;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 5px;
-}
-
-.profile-sidebar {
-    position: fixed;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: white;
-    color: black;
-    padding: 10px;
+.pinned-project {
+    background: #F0F0F0;
+    padding: 15px;
     border-radius: 10px;
+    text-align: center;
+    font-weight: bold;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-.profile-sidebar ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+.pinned-project:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
-.profile-sidebar li {
-    padding: 10px;
+/* 프로필 버튼 */
+.profile-menu-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.profile-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
     cursor: pointer;
+    border: 2px solid #FFF;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease-in-out;
+}
+
+.profile-btn:hover {
+    transform: scale(1.1);
+}
+
+/* 프로필 메뉴 */
+.profile-menu {
+    display: none;
+    position: absolute;
+    bottom: 80px;
+    right: 0;
+    background: #FFF;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    width: 150px;
     text-align: center;
 }
 
-.profile-sidebar .active {
+.profile-menu.active {
+    display: block;
+}
+
+.profile-menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 10px 0;
+}
+
+.profile-menu ul li {
+    padding: 10px;
     font-weight: bold;
+    cursor: pointer;
+    color: #333;
+    transition: background 0.3s ease;
+}
+
+.profile-menu ul li:hover {
+    background: #F0F0F0;
 }

@@ -1,22 +1,21 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="java.sql.*, javax.naming.*, org.json.simple.JSONObject, org.json.simple.parser.JSONParser" %>
+<%@ page contentType="application/json;charset=UTF-8" %>
 <%@ page import="dao.UserDAO" %>
+<%@ page import="org.json.simple.JSONObject" %>
 
 <%
-    request.setCharacterEncoding("utf-8");
-    String userID = request.getParameter("id");
+    String uid = (String) session.getAttribute("id");
+    JSONObject userInfo = new JSONObject();
 
-    if (userID != null && !userID.isEmpty()) {
-        try {
-            UserDAO dao = new UserDAO();
-            String userJson = dao.get(userID);
-            JSONObject userObj = (JSONObject) new JSONParser().parse(userJson);
-            out.print(userObj.toJSONString());
-        } catch (Exception e) {
-            e.printStackTrace();
-            out.print("{}");
-        }
+    if (uid != null) {
+        UserDAO dao = new UserDAO();
+        String jsonstr = dao.get(uid);
+        JSONObject userJson = (JSONObject) new org.json.simple.parser.JSONParser().parse(jsonstr);
+        
+        userInfo.put("name", userJson.get("name"));
+        userInfo.put("email", userJson.get("id")); // 이메일은 'id'에 저장됨
     } else {
-        out.print("{}");
+        userInfo.put("error", "로그인되지 않았습니다.");
     }
+
+    out.print(userInfo.toJSONString());
 %>

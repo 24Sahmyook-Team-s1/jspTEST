@@ -2,85 +2,122 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>프로필 페이지</title>
     <link rel="stylesheet" href="css/ProfilePage.css">
-    <script src="js/jquery-3.6.0.min.js"></script>	
-    <script src="js/core.js"></script>
+    <script src="js/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-
-    <!-- 상단 로고 -->
+    <!-- 📌 상단바 -->
     <div class="header">
         <h1>MOLE</h1>
     </div>
 
+    <!-- 프로필 콘텐츠 -->
     <div class="profile-container">
         <!-- 프로필 정보 -->
         <div class="profile-info">
-            <div class="profile-image"></div>  <!-- 프로필 사진 -->
+            <div class="profile-picture"></div>
             <h2 id="userName">사용자 이름</h2>
             <p id="userEmail">이메일</p>
-            <button id="editProfileBtn">프로필 수정</button>
+            <button class="edit-profile-btn">프로필 수정</button>
+
+            <!-- ✨ 개인소개글 미리보기 공간 -->
+            <div class="bio-preview" id="bioPreview">여기에 소개글이 표시됩니다.</div>
         </div>
 
-        <!-- 개인 소개글 -->
-        <div class="bio-section">
-            <textarea id="userBio" placeholder="개인소개글을 입력하세요"></textarea>
-        </div>
+        <!-- 개인 소개글과 Pinned 프로젝트 -->
+        <div class="sections-row">
+            <div class="bio-section">
+                <p>개인소개글 쓸수있는 창</p>
+            </div>
 
-        <!-- 핀한 프로젝트 -->
-        <div class="pinned-section">
-            <h3>Pinned</h3>
-            <div class="pinned-projects" id="pinnedProjects">
-                <!-- JavaScript로 동적 추가 -->
+            <div class="pinned-section">
+                <h3>Pinned <span class="customize">customize</span></h3>
+                <div id="pinnedProjects" class="pinned-projects"></div>
             </div>
         </div>
     </div>
 
-    <div class="profile-sidebar">
-        <ul>
-            <li data-link="MainPage.html">홈</li>
-            <li data-link="TeamPage.html">팀</li>
-            <li data-link="ProfilePage.html" class="active">프로필</li>
-            <li data-link="SettingsPage.html">설정</li>
-        </ul>
+    <!-- 📌 프로필 메뉴 -->
+    <div class="profile-menu-container">
+        <img src="public/logo-transparent.png" alt="MOLE PMS Logo" class="profile-btn" id="profileBtn">
+        <div class="profile-menu" id="profileMenu">
+            <ul>
+                <li data-link="MainPage.html">홈</li>
+                <li data-link="TeamPage.html">팀 페이지</li>
+                <li data-link="FindTeam.html">팀 찾기</li>
+                <li data-link="CreateTeam.html">팀 만들기</li>
+                <li data-link="TeamManage.html">팀 관리</li>
+                <li data-link="ProfilePage.html">프로필</li>
+                <li data-link="SettingsPage.html">설정</li>
+            </ul>
+        </div>
     </div>
 
-    <script>
-        $(document).ready(function () {
-            // 세션에서 사용자 ID 가져오기
-            $.get("jsp/session.jsp", function (sessionData) {
-                let userID = sessionData.trim();
-                if (userID && userID !== "로그인하지 않았습니다.") {
-                    // 사용자 정보 가져오기
-                    $.get("jsp/GetUserProfile.jsp?id=" + userID, function (data) {
-                        let user = JSON.parse(data);
-                        $("#userName").text(user.name);
-                        $("#userEmail").text(user.id); // 이메일이 id로 저장됨
-                        $("#userBio").val(user.bio || "개인소개글을 입력하세요");
-                    });
-
-                    // Pinned 프로젝트 불러오기
-                    $.get("jsp/GetProjectList.jsp", function (projects) {
-                        let pinnedProjects = JSON.parse(projects);
-                        pinnedProjects.slice(0, 4).forEach(proj => {
-                            $("#pinnedProjects").append(`<div class="project-card">${proj.name}</div>`);
-                        });
-                    });
-                } else {
-                    alert("로그인이 필요합니다.");
-                    window.location.href = "login.html";
-                }
-            });
-
-            // 네비게이션 이동
-            $(".profile-sidebar li").on("click", function () {
-                let targetPage = $(this).attr("data-link");
-                window.location.href = targetPage;
-            });
-
-        });
-    </script>
+    <script src="js/core.js"></script>
 </body>
 </html>
+
+<script>
+$(document).ready(function () {
+    // 프로필 메뉴 토글
+    $("#profileBtn").click(function () {
+        $("#profileMenu").toggleClass("active");
+    });
+
+    // 메뉴 외부 클릭 시 닫기
+    $(document).click(function (event) {
+        if (!$(event.target).closest('#profileBtn, #profileMenu').length) {
+            $("#profileMenu").removeClass("active");
+        }
+    });
+
+    // 메뉴 항목 클릭 시 페이지 이동
+    $(".profile-menu li").click(function () {
+        window.location.href = $(this).data("link");
+    });
+
+    // 사용자 정보 불러오기
+    $.ajax({
+        url: "jsp/GetUserProfile.jsp",
+        method: "GET",
+        dataType: "json",
+        success: function (data) {
+            $("#userName").text(data.name);
+            $("#userEmail").text(data.email);
+        },
+        error: function () {
+            console.error("사용자 정보를 불러오지 못했습니다.");
+        }
+    });
+
+    // 프로젝트 불러오기
+    $.ajax({
+        url: "jsp/GetProjectList.jsp",
+        method: "GET",
+        dataType: "json",
+        success: function (projects) {
+            projects.forEach(function (project) {
+                $("#pinnedProjects").append(`
+                    <div class="pinned-project">${project.name}</div>
+                `);
+            });
+        },
+        error: function () {
+            console.error("프로젝트 목록을 불러오지 못했습니다.");
+        }
+    });
+
+    // 소개글 입력 시 오른쪽에 실시간 반영
+    $(".bio-section p").attr("contenteditable", "true");  // 소개글 편집 가능하게 설정
+    $(".bio-section p").on("input", function () {
+        const bioContent = $(this).text();
+        if (bioContent.trim() !== "") {
+            $("#bioPreview").addClass("active").text(bioContent);
+        } else {
+            $("#bioPreview").removeClass("active").text("여기에 소개글이 표시됩니다.");
+        }
+    });
+});
+
+</script>
