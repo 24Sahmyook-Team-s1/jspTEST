@@ -3,44 +3,15 @@
 <%@ page import="java.sql.*"%>
 <%@ page import="javax.naming.*"%>
 <%@ page import="org.json.simple.JSONArray, org.json.simple.JSONObject" %>
-<%@ page import="util.ConnectionPool" %>
+<%@ page import="dao.ProjectDAO" %>
 <%
 
     request.setCharacterEncoding("UTF-8");
 
-    Connection conn = null;
-    PreparedStatement pstmt = null;
-    ResultSet rs = null;
+	ProjectDAO projectdao = new ProjectDAO();
     JSONArray projectList = new JSONArray();
 
-    try {
-        // 커넥션 풀에서 연결 가져오기
-        conn = ConnectionPool.get();
-        
-        // SQL 쿼리 작성
-        String sql = "SELECT ProjectID, ProjectName, TO_CHAR(CreatedAt, 'YYYY-MM-DD') AS CreatedAt " +
-                     "FROM Projects ORDER BY CreatedAt DESC, ProjectID ASC";
-
-        pstmt = conn.prepareStatement(sql);
-        rs = pstmt.executeQuery();
-
-        // 결과를 JSON 배열에 추가
-        while (rs.next()) {
-            JSONObject project = new JSONObject();
-            project.put("no", rs.getInt("ProjectID"));
-            project.put("name", rs.getString("ProjectName"));
-            project.put("created_at", rs.getString("CreatedAt"));
-            projectList.add(project);
-        }
-
-    } catch (Exception e) {
-        e.printStackTrace();
-    } finally {
-        // 자원 해제
-        try { if (rs != null) rs.close(); } catch (SQLException e) { e.printStackTrace(); }
-        try { if (pstmt != null) pstmt.close(); } catch (SQLException e) { e.printStackTrace(); }
-        try { if (conn != null) conn.close(); } catch (SQLException e) { e.printStackTrace(); }
-    }
+    projectList =projectdao.getAllProjects();
 %>
 
 <!DOCTYPE html>
@@ -71,7 +42,7 @@
                     JSONObject project = (JSONObject) obj;
             %>
             <tr>
-                <td><%= project.get("no") %></td>
+                <td><%= project.get("id") %></td>
                 <td><%= project.get("name") %></td>
                 <td><%= project.get("created_at") %></td>
             </tr>
