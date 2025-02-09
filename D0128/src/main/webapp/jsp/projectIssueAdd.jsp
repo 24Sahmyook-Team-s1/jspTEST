@@ -46,8 +46,8 @@
 	}
 	%>
 	<form method="post">
-		<label for="projectuserid">작성자 코드:</label> 
-		<input type="text" id="projectuserid" name="projectuserid" required>
+		<label for="user2">작성자 코드:</label> 
+		<input type="text" id="user2" name="user2" required>
 		
 		<label for="projectid">프로젝트 코드:</label> 
 		<input type="text" id="projectid" name="projectid" required>
