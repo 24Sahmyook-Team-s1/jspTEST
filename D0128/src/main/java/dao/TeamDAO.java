@@ -2,6 +2,8 @@ package dao;
 
 import java.sql.*;
 import javax.naming.NamingException;
+import javax.naming.event.NamingExceptionEvent;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -109,7 +111,38 @@ public class TeamDAO {
 
         return responseJson;
     }
+    
+    
+    public boolean isTeamLeader(String userId) throws NamingException, SQLException {
+    	Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        boolean isLeader = false;
+        
+        if (userId == null) {
+            return isLeader;
+        }
 
+        try {
+            conn = ConnectionPool.get();
+
+            String sql = "SELECT COUNT(*) FROM PROJECTTEAMS WHERE ADMINUSERID = ?";
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, userId);
+            rs = pstmt.executeQuery();
+
+            if (rs.next() && rs.getInt(1) > 0) {
+                isLeader = true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (rs != null) rs.close();
+            if (pstmt != null) pstmt.close();
+            if (conn != null) conn.close();
+        }
+        return isLeader;
+    }
 	
 	public boolean approveRequest(int requestId, String userId, int teamId) throws NamingException, SQLException {
         Connection conn = null;
