@@ -106,6 +106,49 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
+document.addEventListener("DOMContentLoaded", function () {
+    fetchIssues();  // 페이지 로드 시 이슈 목록 불러오기
+});
+
+function fetchIssues() {
+    fetch('jsp/ProjectissueList.jsp', { method: 'POST' })  // 수정된 경로
+        .then(response => response.text())
+        .then(data => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(data, 'text/html');
+            const issues = doc.querySelectorAll('tbody tr');
+
+            const hazardList = document.getElementById('hazardList');
+            const issueList = document.getElementById('issueList');
+            const solvedList = document.getElementById('solvedList');
+
+            hazardList.innerHTML = '';
+            issueList.innerHTML = '';
+            solvedList.innerHTML = '';
+
+            issues.forEach(issue => {
+                const title = issue.children[3].innerText;
+                const description = issue.children[4].innerText;
+
+                const issueElement = document.createElement('p');
+                issueElement.innerHTML = `<span>${title}</span><span>${description}</span>`;
+
+                if (title.includes("HAZARD")) {
+                    hazardList.appendChild(issueElement);
+                } else if (title.includes("SOLVED")) {
+                    solvedList.appendChild(issueElement);
+                } else {
+                    issueList.appendChild(issueElement);
+                }
+            });
+        })
+        .catch(error => {
+            console.error('이슈를 불러오는 중 오류 발생:', error);
+        });
+}
+
+
+
 // 📌 프로필 버튼 클릭 시 메뉴 표시
 const profileBtn = document.getElementById("profileBtn");
 const profileMenu = document.getElementById("profileMenu");
@@ -128,15 +171,19 @@ document.querySelectorAll('.profile-menu li').forEach(item => {
         window.location.href = targetPage;
     });
 });
-//이슈 추가, 삭제, 업데이트 버튼 이벤트 핸들러 (기능 추가 가능)
+//이슈 추가 버튼 클릭 시
 document.querySelector('.add-btn').addEventListener('click', function() {
-    alert('이슈 추가 기능을 구현하세요.');
+    window.location.href = 'jsp/projectIssueAdd.jsp';  // 수정된 경로
 });
+
+// 이슈 삭제 버튼 클릭 시
 document.querySelector('.delete-btn').addEventListener('click', function() {
-    alert('이슈 삭제 기능을 구현하세요.');
+    window.location.href = 'jsp/projectIssueDelete.jsp';  // 수정된 경로
 });
+
+// 이슈 업데이트 버튼 클릭 시
 document.querySelector('.update-btn').addEventListener('click', function() {
-    alert('이슈 업데이트 기능을 구현하세요.');
+    window.location.href = 'jsp/projectIssueUpdate.jsp';  // 수정된 경로
 });
 
 </script>
