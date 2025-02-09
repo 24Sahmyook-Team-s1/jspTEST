@@ -77,7 +77,7 @@ public class TeamDAO {
         try {
             conn = ConnectionPool.get(); // ConnectionPool을 통해 연결 받기
 
-            String sql = "INSERT INTO PROJECTTEAMS (PROJECTTEAMID, TEAMNAME, CREATEDAT, ADMINUSERID) VALUES (?, SYSDATE, ?)";
+            String sql = "INSERT INTO PROJECTTEAMS (TEAMNAME, CREATEDAT, ADMINUSERID) VALUES (?, SYSDATE, ?)";
             pstmt = conn.prepareStatement(sql, new String[]{"PROJECTTEAMID"});
             pstmt.setString(1, teamName);
             pstmt.setString(2, adminId);
