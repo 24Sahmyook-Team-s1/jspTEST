@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>프로필 페이지</title>
+    <link rel="stylesheet" href="css/ProfilePage.css">
+    <script src="js/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <!-- 📌 상단바 -->
+    <div class="header">
+        <h1>MOLE</h1>
+    </div>
+
+    <!-- 프로필 콘텐츠 -->
+    <div class="profile-container">
+        <!-- 확장된 프로필 박스 -->
+        <div class="profile-info">
+            <!-- 프로필 왼쪽 (사진, 이름, 이메일) -->
+            <div class="profile-left">
+                <div class="profile-picture"></div>
+                <h2 id="userName">사용자 이름</h2>
+                <p id="userEmail">이메일</p>
+                <button class="edit-profile-btn">프로필 수정</button>
+            </div>
+
+            <!-- 소개글 오른쪽 -->
+            <div class="profile-bio empty" id="bioPreview">소개글이 없습니다.</div>
+        </div>
+
+        <!-- 개인 소개글 작성 및 Pinned 프로젝트 -->
+        <div class="sections-row">
+            <div class="bio-section">
+                <p contenteditable="true" id="bioInput">여기에 개인소개글을 작성하세요.</p>
+            </div>
+
+            <div class="pinned-section">
+                <h3>Pinned <span class="customize">customize</span></h3>
+                <div id="pinnedProjects" class="pinned-projects"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/core.js"></script>
+</body>
+</html>
+
+
+<script>
+$(document).ready(function () {
+    // 프로필 수정 버튼 클릭 시 소개글 표시
+    $(".edit-profile-btn").click(function () {
+        const bioContent = $("#bioInput").text().trim();
+        if (bioContent !== "") {
+            $("#bioPreview").removeClass('empty').text(bioContent);
+        } else {
+            $("#bioPreview").addClass('empty').text("소개글이 없습니다.");
+        }
+    });
+
+    // 메뉴 기능 (기존 유지)
+    $("#profileBtn").click(function () {
+        $("#profileMenu").toggleClass("active");
+    });
+
+    $(document).click(function (event) {
+        if (!$(event.target).closest('#profileBtn, #profileMenu').length) {
+            $("#profileMenu").removeClass("active");
+        }
+    });
+
+    $(".profile-menu li").click(function () {
+        window.location.href = $(this).data("link");
+    });
+
+    // 사용자 정보 불러오기
+    $.ajax({
+        url: "jsp/GetUserProfile.jsp",
+        method: "GET",
+        dataType: "json",
+        success: function (data) {
+            $("#userName").text(data.name);
+            $("#userEmail").text(data.email);
+        },
+        error: function () {
+            console.error("사용자 정보를 불러오지 못했습니다.");
+        }
+    });
+
+    // 프로젝트 불러오기
+    $.ajax({
+        url: "jsp/GetProjectList.jsp",
+        method: "GET",
+        dataType: "json",
+        success: function (projects) {
+            projects.forEach(function (project) {
+                $("#pinnedProjects").append(`
+                    <div class="pinned-project">${project.name}</div>
+                `);
+            });
+        },
+        error: function () {
+            console.error("프로젝트 목록을 불러오지 못했습니다.");
+        }
+    });
+});
+
+</script>

@@ -18,6 +18,7 @@
         JSONArray requestList = dao.getPendingRequests();
         out.print(requestList.toJSONString()); // JSON 응답 출력
     } catch (SQLException | NamingException e) {
+
         e.printStackTrace();
         out.print("{\"status\": \"error\", \"message\": \"서버 오류 발생: " + e.getMessage() + "\"}");
     }

@@ -16,6 +16,7 @@
         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // 500 상태 코드 설정
         out.print("{\"error\": \"팀 목록을 가져오는 데 실패했습니다.\"}"); // JSON 형태로 오류 메시지 반환
         return; // 추가 처리 중단
+
     }
 
     out.print(teamList.toJSONString()); // JSON 형태로 팀 목록 출력

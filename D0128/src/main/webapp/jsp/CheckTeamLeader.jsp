@@ -10,4 +10,5 @@
 
 
     out.print("{\"isLeader\": " + teamdao.isTeamLeader(userId) + "}");
+
 %>
