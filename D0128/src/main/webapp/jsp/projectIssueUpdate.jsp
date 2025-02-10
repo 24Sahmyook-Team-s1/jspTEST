@@ -16,7 +16,8 @@
 			int projectissueid = Integer.parseInt(request.getParameter("projectissueid"));
 			String title = request.getParameter("title");
 			String description = request.getParameter("description");
-		    DAO.updateIssue(projectissueid, title, description);
+			int issuelevel = Integer.parseInt(request.getParameter("issuelevel"));
+		    DAO.updateIssue(projectissueid, title, description, issuelevel);
 		} catch (Exception e) {
 		    e.printStackTrace();
 		    message = "프로젝트 이슈를 불러오는 중 오류가 발생했습니다.";
@@ -45,7 +46,7 @@
 	}
 	%>
 	<form method="post">
-		<label for="projectissueid">프로젝트 코드:</label> 
+		<label for="projectissueid">프로젝트 이슈 코드:</label> 
 		<input type="text" id="projectissueid" name="projectissueid" required>
 		
 		<label for="title">제목:</label> 
@@ -53,6 +54,9 @@
 		
 		<label for="description">본문:</label> 
 		<input type="text" id="description" name="description" required>
+		
+		<label for="issuelevel">위험정도:</label> 
+		<input type="text" id="issuelevel" name="issuelevel" required>
 		<br><br>
 		<button type="submit">프로젝트 이슈 업데이트</button>
 	</form>

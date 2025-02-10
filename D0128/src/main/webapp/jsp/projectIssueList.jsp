@@ -58,6 +58,7 @@
                 <th>프로젝트 ID</th>
                 <th>타이틀</th>
                 <th>설명</th>
+                <th>이슈 레벨</th>
                 <th>생성일</th>
             </tr>
         </thead>
@@ -71,6 +72,7 @@
                 <td><%= issue.getProjectId() %></td>
                 <td><%= issue.getTitle() %></td>
                 <td><%= issue.getDescription() %></td>
+                <td><%= issue.getIssueLevel() %></td>
                 <td><%= issue.getCreatedAt() %></td>
             </tr>
             <%

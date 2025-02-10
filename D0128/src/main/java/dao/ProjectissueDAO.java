@@ -8,15 +8,16 @@ import util.ConnectionPool;
 
 public class ProjectissueDAO {
 	// 프로젝트 이슈 추가
-	public void addIssue(String userid, int projectId, String title, String description)
+	public void addIssue(String userid, int projectId, String title, String description, int issuelevel)
 			throws NamingException, SQLException {
-		String sql = "INSERT INTO projectissues (projectissueid, userid, projectid, title, description, createdat) VALUES (2, ?, ?, ?, ?, SYSDATE)";
+		String sql = "INSERT INTO projectissues (projectissueid, userid, projectid, title, description, issuelevel, createdat) VALUES (2, ?, ?, ?, ?, ?, SYSDATE)";
 
 		try (Connection conn = ConnectionPool.get(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 			stmt.setString(1, userid); // 사용자 ID
 			stmt.setInt(2, projectId); // 프로젝트 ID
 			stmt.setString(3, title); // 제목
 			stmt.setString(4, description); // 설명
+			stmt.setInt(5, issuelevel);
 			stmt.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace(); // 예외 처리 강화
@@ -26,7 +27,7 @@ public class ProjectissueDAO {
 
 	// 특정 프로젝트의 이슈 목록 조회
 	public List<ProjectissueObj> getIssuesByProjectId(int projectId) throws NamingException, SQLException {
-		String sql = "SELECT projectissueid, userid, projectid, title, description, createdat FROM projectissues WHERE projectid = ?";
+		String sql = "SELECT projectissueid, userid, projectid, title, description, issuelevel, createdat FROM projectissues WHERE projectid = ?";
 		List<ProjectissueObj> issues = new ArrayList<>();
 
 		try (Connection conn = ConnectionPool.get(); PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -38,7 +39,8 @@ public class ProjectissueDAO {
 						rs.getString("userid"), 
 						rs.getInt("projectid"), 
 						rs.getString("title"), 
-						rs.getString("description"), 
+						rs.getString("description"),
+						rs.getInt("issuelevel"),  
 						rs.getTimestamp("createdat") // Timestamp로 처리
 					); 
 					issues.add(issue);
@@ -53,13 +55,14 @@ public class ProjectissueDAO {
 	}
 
 	// 이슈 수정
-	public void updateIssue(int projectIssueId, String title, String description) throws NamingException, SQLException {
-		String sql = "UPDATE projectissues SET title = ?, description = ? WHERE projectissueid = ?";
+	public void updateIssue(int projectIssueId, String title, String description, int issuelevel) throws NamingException, SQLException {
+		String sql = "UPDATE projectissues SET title = ?, description = ?, issuelevel = ? WHERE projectissueid = ?";
 
 		try (Connection conn = ConnectionPool.get(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 			stmt.setString(1, title); // 제목
 			stmt.setString(2, description); // 설명
-			stmt.setInt(3, projectIssueId); // 이슈 ID
+			stmt.setInt(3, issuelevel);
+			stmt.setInt(4, projectIssueId); // 이슈 ID
 			stmt.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace(); // 예외 처리 강화
