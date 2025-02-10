@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="application/json; charset=UTF-8" pageEncoding="UTF-8" %>
+%@ page language="java" contentType="application/json; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.sql.*, org.json.simple.JSONObject" %>
 
 <%
@@ -22,7 +22,7 @@
 
     try {
         Class.forName("oracle.jdbc.driver.OracleDriver");
-        conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/XE", "park", "1111");
+        conn = DriverManager.getConnection("jdbc:oracle:thin:@oracle11g:1521/XE", "park", "1111");
 
         // ✅ 중복 신청 확인
         String checkSql = "SELECT COUNT(*) FROM TEAM_REQUESTS WHERE USER_ID = ? AND TEAM_ID = ? AND STATUS = 'PENDING'";

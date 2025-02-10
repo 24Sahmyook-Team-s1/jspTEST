@@ -26,7 +26,7 @@
             </ul>
         </div>
 
-        <!-- 📌 메인 컨텐츠 -->
+        <!-- 📌 메인 콘텐츠 -->
         <div class="main-content">
             <h2>팀 페이지</h2>
             <p>이곳에서 팀을 관리하고 참여할 수 있습니다.</p>
@@ -64,15 +64,26 @@
             </div>
         </div>
     </div>
-<!-- 📌 작업 상태 변경 모달 -->
-<div id="taskModal" class="modal">
-    <div class="modal-content">
-        <h3 id="modalTitle">작업 상태 변경</h3>
-        <button id="moveTask" class="modal-btn">진행 중으로 이동</button>
-        <button id="deleteTask" class="modal-btn delete">삭제</button>
-        <button id="closeModal" class="modal-btn close">닫기</button>
+
+    <!-- 📌 할 일 추가 모달 -->
+    <div id="addTaskModal" class="modal">
+        <div class="modal-content">
+            <h3>새로운 할 일 추가</h3>
+            <input type="text" id="newTaskInput" placeholder="할 일을 입력하세요">
+            <button id="saveTaskBtn" class="modal-btn">추가</button>
+            <button class="modal-btn close" id="closeAddTaskModal">닫기</button>
+        </div>
     </div>
-</div>
+
+    <!-- 📌 작업 상태 변경 모달 -->
+    <div id="taskModal" class="modal">
+        <div class="modal-content">
+            <h3 id="modalTitle">작업 상태 변경</h3>
+            <button id="moveTask" class="modal-btn">진행 중으로 이동</button>
+            <button id="deleteTask" class="modal-btn delete">삭제</button>
+            <button id="closeModal" class="modal-btn close">닫기</button>
+        </div>
+    </div>
 
     <!-- 📌 프로필 메뉴 -->
     <div class="profile-container">
@@ -91,7 +102,6 @@
     </div>
 </body>
 </html>
-
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     // 📌 사이드바 클릭 이벤트 (대시보드, 팀 페이지, 간트 차트 등 클릭 가능)
@@ -125,22 +135,35 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    // 📌 할 일 추가 및 상태 변경 기능
+    // 📌 할 일 추가 모달
     const addTaskButton = document.getElementById("addTaskBtn");
+    const addTaskModal = document.getElementById("addTaskModal");
+    const saveTaskButton = document.getElementById("saveTaskBtn");
+    const closeAddTaskModal = document.getElementById("closeAddTaskModal");
+    const newTaskInput = document.getElementById("newTaskInput");
     const todoList = document.getElementById("todoList");
-    const inProgressList = document.getElementById("inProgressList");
-    const completedList = document.getElementById("completedList");
 
     addTaskButton.addEventListener("click", function () {
-        const newTaskText = prompt("새로운 할 일을 입력하세요:");
+        addTaskModal.style.display = "block";
+        newTaskInput.value = ""; // 입력 필드 초기화
+    });
+
+    saveTaskButton.addEventListener("click", function () {
+        const newTaskText = newTaskInput.value.trim();
         if (newTaskText) {
             const newTask = createTaskItem(newTaskText);
             todoList.appendChild(newTask);
             addActivityLog(`📝 할 일 추가됨: ${newTaskText}`);
             updateChart();
+            addTaskModal.style.display = "none";
         }
     });
 
+    closeAddTaskModal.addEventListener("click", function () {
+        addTaskModal.style.display = "none";
+    });
+
+    // 📌 할 일 항목 생성 및 클릭 시 모달 열기
     function createTaskItem(text) {
         const task = document.createElement("div");
         task.classList.add("task-item");
@@ -151,13 +174,17 @@ document.addEventListener("DOMContentLoaded", function () {
         return task;
     }
 
-    function openTaskModal(task, text) {
-        const modal = document.getElementById("taskModal");
-        const modalTitle = document.getElementById("modalTitle");
-        const moveButton = document.getElementById("moveTask");
-        const deleteButton = document.getElementById("deleteTask");
+    // 📌 작업 상태 변경 모달
+    const taskModal = document.getElementById("taskModal");
+    const modalTitle = document.getElementById("modalTitle");
+    const moveButton = document.getElementById("moveTask");
+    const deleteButton = document.getElementById("deleteTask");
+    const closeButton = document.getElementById("closeModal");
+    const inProgressList = document.getElementById("inProgressList");
+    const completedList = document.getElementById("completedList");
 
-        modal.style.display = "block";
+    function openTaskModal(task, text) {
+        taskModal.style.display = "block";
         modalTitle.textContent = `작업: ${text}`;
 
         const parentList = task.parentElement;
@@ -180,15 +207,24 @@ document.addEventListener("DOMContentLoaded", function () {
         };
     }
 
+    moveButton.addEventListener("click", function () {
+        closeModal();
+    });
+
+    closeButton.addEventListener("click", function () {
+        closeModal();
+    });
+
+    function closeModal() {
+        taskModal.style.display = "none";
+    }
+
+    // 📌 작업 이동 함수
     function moveTask(task, targetList, message) {
         targetList.appendChild(task);
         addActivityLog(`${message}: ${task.textContent}`);
         updateChart();
         closeModal();
-    }
-
-    function closeModal() {
-        document.getElementById("taskModal").style.display = "none";
     }
 
     // 📌 활동 로그 추가
@@ -200,7 +236,7 @@ document.addEventListener("DOMContentLoaded", function () {
         logContainer.prepend(log);
     }
 
-    // 📌 차트 업데이트
+    // 📌 차트 초기화 및 업데이트
     const ctx = document.getElementById("statusPieChart").getContext("2d");
     const statusPieChart = new Chart(ctx, {
         type: "doughnut",
@@ -223,7 +259,6 @@ document.addEventListener("DOMContentLoaded", function () {
         ];
         statusPieChart.update();
     }
-
-    document.getElementById("closeModal").addEventListener("click", closeModal);
 });
+
 </script>

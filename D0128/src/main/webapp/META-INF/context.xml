@@ -5,7 +5,7 @@
         type="javax.sql.DataSource"
         driverClassName="oracle.jdbc.OracleDriver"
         url="jdbc:oracle:thin:@oracle11g:1521:xe"
-        username="moleproject"
+        username="park"
         password="1111"
         maxTotal="20"
         maxIdle="5"

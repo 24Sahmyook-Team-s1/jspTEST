@@ -17,7 +17,7 @@ if (request.getMethod().equalsIgnoreCase("POST")) {
 	boolean code = false;
 
 	try {
-		code = dao.exists(projectname);
+		code = dao.isProjectExists(projectname);
 	} catch (NamingException | SQLException e) {
 		e.printStackTrace();
 	}
