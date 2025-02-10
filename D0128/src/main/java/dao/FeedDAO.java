@@ -13,7 +13,7 @@ import util.*;
 
 public class FeedDAO {
 
-	public boolean insert(String jsonstr) throws NamingException, SQLException, ParseException {
+    public boolean insert(String jsonstr) throws NamingException, SQLException, ParseException {
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -67,7 +67,7 @@ public class FeedDAO {
         }
     }
 
-	public String getList() throws NamingException, SQLException {
+    public String getList() throws NamingException, SQLException {
         Connection conn = ConnectionPool.get();
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -89,23 +89,21 @@ public class FeedDAO {
             if (conn != null) conn.close();
         }
     }
-	
+
     public String getGroup(String frids, String maxNo) throws NamingException, SQLException {
         Connection conn = ConnectionPool.get();
         PreparedStatement stmt = null;
         ResultSet rs = null;
         try {
-            // IN 연산자의 문자열을 작은따옴표로 변경
             String formattedFrids = frids.replace("\"", "'");
 
-            // Oracle에서는 ROWNUM을 사용하여 제한
             String sql = "SELECT jsonstr FROM (SELECT jsonstr FROM feed WHERE id IN(" + formattedFrids + ")";
             
             if (maxNo != null) {
                 sql += " AND no < " + maxNo;
             }
 
-            sql += " ORDER BY no DESC) WHERE ROWNUM <= 3"; // ROWNUM을 사용하여 3개 제한
+            sql += " ORDER BY no DESC) WHERE ROWNUM <= 3";
 
             stmt = conn.prepareStatement(sql);
             rs = stmt.executeQuery();
@@ -125,4 +123,24 @@ public class FeedDAO {
         }
     }
 
+    // 📌 프로젝트 스케줄 업데이트 메서드 추가
+    public void updateProjectSchedule(int projectId, String mon, String tue, String wed, String thu, String fri) throws NamingException, SQLException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        try {
+            conn = ConnectionPool.get();
+            String sql = "UPDATE Projects SET ScheduleMonday = ?, ScheduleTuesday = ?, ScheduleWednesday = ?, ScheduleThursday = ?, ScheduleFriday = ? WHERE ProjectID = ?";
+            stmt = conn.prepareStatement(sql);
+            stmt.setString(1, mon);
+            stmt.setString(2, tue);
+            stmt.setString(3, wed);
+            stmt.setString(4, thu);
+            stmt.setString(5, fri);
+            stmt.setInt(6, projectId);
+            stmt.executeUpdate();
+        } finally {
+            if (stmt != null) stmt.close();
+            if (conn != null) conn.close();
+        }
+    }
 }
