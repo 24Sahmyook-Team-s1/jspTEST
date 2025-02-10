@@ -142,6 +142,13 @@
     </div>
 
     <script>
+        // 📌 사이드바 클릭 이벤트 (대시보드, 팀 페이지, 간트 차트 등 클릭 가능)
+        document.querySelectorAll('.sidebar-link').forEach(link => {
+            link.addEventListener('click', function () {
+                const targetPage = this.getAttribute('data-link');
+                window.location.href = targetPage;
+            });
+        });
     // 📌 프로필 버튼 클릭 시 메뉴 표시
     const profileBtn = document.getElementById("profileBtn");
     const profileMenu = document.getElementById("profileMenu");
