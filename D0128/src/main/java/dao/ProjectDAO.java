@@ -131,14 +131,7 @@ public class ProjectDAO {
 			conn = ConnectionPool.get();
 			stmt = conn.prepareStatement(sql);
 			stmt.setString(1, projectName);
-			rs = stmt.executeQuery();
-//			if (rs.next()) {
-//				return "{\"projectID\": \"" + rs.getString("projectID") + "\", " + "\"projectName\": \""
-//						+ rs.getString("projectName") + "\", " + "\"createDat\": \"" + rs.getTimestamp("createDat")
-//						+ "\", " + "\"projectLeader\": \"" + rs.getString("projectLeader") + "\"}";
-//			}
-//			return "{}";
-			
+			rs = stmt.executeQuery();			
 			int count = 0;
 			while (rs.next()) {
 				if (count++ > 0)
