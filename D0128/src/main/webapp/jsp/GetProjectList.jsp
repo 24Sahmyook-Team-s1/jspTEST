@@ -12,8 +12,11 @@
     JSONArray projectList = new JSONArray();
 
 
+
     projectList =projectdao.getProjectsByUserId(uid);
+
     
     out.print(projectList.toJSONString());
 
 %>
+
