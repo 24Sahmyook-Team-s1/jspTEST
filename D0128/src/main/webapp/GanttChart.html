@@ -49,6 +49,23 @@
         </div>
     </div>
 
+
+    <!-- 📌 스케줄 수정 모달 -->
+    <div class="modal" id="scheduleModal">
+        <div class="modal-content">
+            <h3>프로젝트 스케줄 수정</h3>
+            <form id="scheduleForm">
+                <input type="hidden" id="projectId" name="projectId">
+                <label><input type="checkbox" name="monday"> 월요일</label>
+                <label><input type="checkbox" name="tuesday"> 화요일</label>
+                <label><input type="checkbox" name="wednesday"> 수요일</label>
+                <label><input type="checkbox" name="thursday"> 목요일</label>
+                <label><input type="checkbox" name="friday"> 금요일</label>
+                <button type="submit">저장</button>
+                <button type="button" class="close">닫기</button>
+            </form>
+        </div>
+    </div>
     <!-- 📌 프로필 메뉴 (오른쪽 하단 위치) -->
     <div class="profile-container">
         <img src="public/logo-transparent.png" alt="MOLE PMS Logo" class="profile-btn" id="profileBtn">
@@ -105,27 +122,51 @@
             });
         }
 
-        // 📌 간트 차트 렌더링 함수
+     // 📌 간트 차트 렌더링 및 클릭 이벤트
         function renderGanttChart(projects) {
-            const ganttBody = $("#ganttBody");
-            ganttBody.empty();
-
+            const ganttBody = $("#ganttBody").empty();
             projects.forEach(project => {
                 const row = `
-                    <div class="gantt-row">
+                    <div class="gantt-row" data-id="${project.id}">
                         <div class="project-name">${project.name}</div>
                         <div class="gantt-progress">
-                            <div class="${project.schedule[0] ? 'active' : ''}"></div>
-                            <div class="${project.schedule[4] ? 'active' : ''}"></div>
-                            <div class="${project.schedule[1] ? 'active' : ''}"></div>
-                            <div class="${project.schedule[2] ? 'active' : ''}"></div>
-                            <div class="${project.schedule[3] ? 'active' : ''}"></div>
+                            <div class="${project.ScheduleMonday === 'Y' ? 'active' : ''}"></div>
+                            <div class="${project.ScheduleTuesday === 'Y' ? 'active' : ''}"></div>
+                            <div class="${project.ScheduleWednesday === 'Y' ? 'active' : ''}"></div>
+                            <div class="${project.ScheduleThursday === 'Y' ? 'active' : ''}"></div>
+                            <div class="${project.ScheduleFriday === 'Y' ? 'active' : ''}"></div>
                         </div>
                     </div>
                 `;
                 ganttBody.append(row);
             });
+
+            // 📌 프로젝트 클릭 시 모달 열기
+            $(".gantt-row").on("click", function () {
+                const projectId = $(this).data("id");
+                $("#projectId").val(projectId);
+                $("#scheduleModal").show();
+            });
         }
+
+        // 📌 스케줄 저장
+        $("#scheduleForm").on("submit", function (e) {
+            e.preventDefault();
+            const formData = $(this).serialize();
+
+            $.post("jsp/UpdateProjectSchedule.jsp", formData, function (response) {
+                alert("스케줄이 저장되었습니다.");
+                $("#scheduleModal").hide();
+                loadGanttChart();  // 데이터 새로 불러오기
+            }).fail(function () {
+                alert("스케줄 저장 중 오류가 발생했습니다.");
+            });
+        });
+
+        // 📌 모달 닫기
+        $(".close").on("click", function () {
+            $("#scheduleModal").hide();
+        });
     });
     </script>
 

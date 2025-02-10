@@ -306,3 +306,119 @@ h1 {
         right: 10px;
     }
 }
+
+/* 모달 배경 스타일 */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* 어두운 배경 */
+    align-items: center;
+    justify-content: center;
+}
+
+/* 모달 콘텐츠 스타일 */
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 12px;
+    width: 400px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+/* 모달 제목 스타일 */
+.modal-content h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #333;
+}
+
+/* 입력 필드 스타일 */
+.modal-content input, .modal-content select {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+
+/* 버튼 기본 스타일 */
+.modal-content button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* 이슈 추가 버튼 */
+.modal-content .add-btn {
+    background-color: #28a745;
+    color: white;
+}
+
+.modal-content .add-btn:hover {
+    background-color: #218838;
+}
+
+/* 이슈 삭제 버튼 */
+.modal-content .delete-btn {
+    background-color: #dc3545;
+    color: white;
+}
+
+.modal-content .delete-btn:hover {
+    background-color: #c82333;
+}
+
+/* 이슈 업데이트 버튼 */
+.modal-content .update-btn {
+    background-color: #ffc107;
+    color: black;
+}
+
+.modal-content .update-btn:hover {
+    background-color: #e0a800;
+}
+
+/* 닫기 버튼 */
+.modal-content .close {
+    background-color: #6c757d;
+    color: white;
+}
+
+.modal-content .close:hover {
+    background-color: #5a6268;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 768px) {
+    .modal-content {
+        width: 90%;
+        padding: 15px;
+    }
+
+    .modal-content h2 {
+        font-size: 20px;
+    }
+
+    .modal-content input, .modal-content select {
+        padding: 10px;
+    }
+
+    .modal-content button {
+        padding: 10px;
+        font-size: 14px;
+    }
+}
+
