@@ -3,7 +3,7 @@
 <%@ page import="dao.ProjectDAO" %>
 
 <%
-    response.setContentType("application/json;charset=UTF-8");
+	response.setContentType("application/json;charset=UTF-8");
     ProjectDAO projectDAO = new ProjectDAO();
     JSONArray projects = projectDAO.getAllProjects();
     out.print(projects.toJSONString());
