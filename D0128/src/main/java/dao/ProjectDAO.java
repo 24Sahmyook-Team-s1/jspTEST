@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
+import dao.TeamDAO;
 
 import javax.naming.NamingException;
 
@@ -63,7 +64,7 @@ public class ProjectDAO {
         JSONObject project = null;
 
         try {
-            String sql = "SELECT ProjectID, ProjectName, TO_CHAR(CreatedAt, 'YYYY-MM-DD') AS CreatedAt, ProjectLeader FROM projects WHERE ProjectID = ?";
+            String sql = "SELECT ProjectID, ProjectName, TO_CHAR(CreatedAt, 'YYYY-MM-DD') AS CreatedAt, AdminUserId FROM projects WHERE ProjectID = ?";
             conn = ConnectionPool.get();
             stmt = conn.prepareStatement(sql);
             stmt.setInt(1, projectID);
@@ -74,7 +75,7 @@ public class ProjectDAO {
                 project.put("id", rs.getInt("ProjectID"));
                 project.put("name", rs.getString("ProjectName"));
                 project.put("created_at", rs.getString("CreatedAt"));
-                project.put("projectLeader", rs.getString("ProjectLeader"));
+                project.put("adminuserid", rs.getString("AdminUserId"));
             }
         } finally {
             if (rs != null) rs.close();
@@ -129,7 +130,7 @@ public class ProjectDAO {
         try {
             conn = ConnectionPool.get();
             // 사용자가 속한 프로젝트 ID 조회
-            String sql = "SELECT ProjectID teamMembers WHERE ProjectUserID = ?";
+            String sql = "SELECT ProjectID from teamMembers WHERE UserID = ?";
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, userId);
             rs = pstmt.executeQuery();
@@ -192,38 +193,58 @@ public class ProjectDAO {
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
+        boolean isSuccess = false;
+        TeamDAO teamdao = new TeamDAO();
 
         try {
             conn = ConnectionPool.get();
 
-            // AdminUserID가 User2 테이블에 존재하는지 확인
+            // 1️⃣ AdminUserID가 User2 테이블에 존재하는지 확인
             String checkUserSql = "SELECT USERID FROM User2 WHERE USERID = ?";
             stmt = conn.prepareStatement(checkUserSql);
             stmt.setString(1, adminUserID);
             rs = stmt.executeQuery();
 
             if (!rs.next()) {
-                System.out.println("AdminUserID not found: " + adminUserID);
+                System.out.println("❌ AdminUserID not found: " + adminUserID);
                 return false;
             }
             rs.close();
             stmt.close();
 
-            // Projects 테이블에 삽입
+            // 2️⃣ Projects 테이블에 프로젝트 추가
             String insertProjectSql = "INSERT INTO Projects (ProjectName, AdminUserID, CreatedAt) VALUES (?, ?, SYSDATE)";
-            stmt = conn.prepareStatement(insertProjectSql);
+            stmt = conn.prepareStatement(insertProjectSql, new String[]{"ProjectID"});
             stmt.setString(1, name);
             stmt.setString(2, adminUserID);
 
             int result = stmt.executeUpdate();
-            return result == 1;
+            if (result == 1) {
+                // 3️⃣ 생성된 프로젝트 ID 가져오기
+                rs = stmt.getGeneratedKeys();
+                int projectId = -1;
+                if (rs.next()) {
+                    projectId = rs.getInt(1);
+                }
+
+                // 4️⃣ 프로젝트 생성이 성공하면 팀 멤버 추가
+                if (projectId != -1) {
+                    isSuccess = teamdao.addTeamMember(projectId, adminUserID);
+                    if (!isSuccess) {
+                        System.out.println("❌ 팀 멤버 추가 실패");
+                    }
+                }
+            }
 
         } finally {
             if (rs != null) rs.close();
             if (stmt != null) stmt.close();
             if (conn != null) conn.close();
         }
+
+        return isSuccess; // 프로젝트 생성 및 팀 멤버 추가 성공 여부 반환
     }
+
 
     // 모든 프로젝트 리스트 조회
     public JSONArray getAllProjects() throws NamingException, SQLException {
