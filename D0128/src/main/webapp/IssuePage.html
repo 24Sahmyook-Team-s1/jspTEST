@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MOLE - 이슈 관리</title>
     <link rel="stylesheet" href="css/IssuePage.css">
+    <script src="js/jquery-3.6.0.min.js"></script>	
+    <script src="js/core.js"></script>
 </head>
 <body>
 
@@ -104,6 +106,7 @@ document.addEventListener("DOMContentLoaded", function () {
             window.location.href = targetPage;
         });
     });
+    
 });
 
 // 📌 프로필 버튼 클릭 시 메뉴 표시
@@ -121,22 +124,56 @@ document.addEventListener("click", function (event) {
     }
 });
 
-// 📌 프로필 메뉴 클릭 시 페이지 이동
-document.querySelectorAll('.profile-menu li').forEach(item => {
-    item.addEventListener('click', function () {
-        const targetPage = this.getAttribute('data-link');
-        window.location.href = targetPage;
-    });
-});
-//이슈 추가, 삭제, 업데이트 버튼 이벤트 핸들러 (기능 추가 가능)
-document.querySelector('.add-btn').addEventListener('click', function() {
-    alert('이슈 추가 기능을 구현하세요.');
-});
-document.querySelector('.delete-btn').addEventListener('click', function() {
-    alert('이슈 삭제 기능을 구현하세요.');
-});
-document.querySelector('.update-btn').addEventListener('click', function() {
-    alert('이슈 업데이트 기능을 구현하세요.');
+
+$(document).ready(function () {
+    loadIssues(); 
+    
+    function loadIssues() {
+        $.ajax({
+            url: "jsp/projectIssueList.jsp",
+            type: "POST", // GET → POST 변경
+            data: { projectid: 1 }, // POST로 projectid 전달
+            dataType: "json",
+            success: function (issues) {
+                console.log("✅ Loaded issues:", issues);
+                DisplayIssues(issues);
+            },
+            error: function (xhr, status, error) {
+                console.error("❌ AJAX 오류 발생:", error);
+            },
+        });
+    }
+
+    function DisplayIssues(issues) {
+		console.log("display");
+        let hazardList = $("#hazardList");
+        let issueList = $("#issueList");
+        let solvedList = $("#solvedList");
+
+        hazardList.empty();
+        issueList.empty();
+        solvedList.empty();
+
+        issues.forEach(issue => {
+			console.log(issue, " ", issue.level);
+            if (issue.level === "0") {
+                hazardList.append(getIssues(issue));
+            } else if (issue.level === "1") {
+                issueList.append(getIssues(issue));
+            } else if (issue.level === "2") {
+                solvedList.append(getIssues(issue));
+            }
+        });
+    }
+    
+    function getIssues(issue) {
+        return `
+            <div class="issue-item">
+                    <span>${issue.title}</span> - 
+                    <span>${issue.description}</span>
+            </div>
+        `;
+    }
 });
 
 </script>
