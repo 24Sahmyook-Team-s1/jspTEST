@@ -38,6 +38,37 @@
 4. EC2 서버에서 Docker hub에 Docker Image 를 Pull 후 컨테이너 생성
 5. Github Action 에서 SSH 커넥션을 이용하여 자동으로 Tomcat서버를 종료 후 재실행
 
+# 서버 구조
+
+AWS EC2 Instance 2개 
+- Oracle 11g Server Docker 1개
+- Deploy용 Tomcat 9 Server Docker 1개
+
+```mermaid
+
+architecture-beta
+	group Application(cloud)[Application]
+		service GH(disk)[Github] in Application
+		service GHA(server)[Github Action] in Application
+		service DH(cloud)[Docker Hub] in Application
+		service EC1(server)[AWS EC2 Instance 1] in Application
+
+		DH:L -- R:GHA
+		GH:T -- B:GHA
+		EC1:T -- B:DH
+
+		service EC2(server)[AWS EC2 Instance 2] in Application
+		service ORCL(database)[Oracle 11g Database] in Application
+		service MolePMS(internet)[MolePMS] in Application
+		junction JC in Application
+
+
+
+		EC1:R -- L:JC
+		EC2:L -- R:JC
+		ORCL:B -- T:EC2
+		JC:B -- T:MolePMS
+```
 
 
 # Commit Type
