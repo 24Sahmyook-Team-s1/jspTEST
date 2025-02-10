@@ -165,7 +165,7 @@ public class ProjectDAO {
         try {
             conn = ConnectionPool.get();
             // 사용자가 속한 프로젝트 ID 조회
-            String sql = "SELECT ProjectID FROM Projects WHERE ProjectTeamID IN (SELECT ProjectTeamID FROM projectMembers WHERE ProjectUserID = ?)";
+            String sql = "SELECT ProjectID teamMembers WHERE ProjectUserID = ?";
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, userId);
             rs = pstmt.executeQuery();
