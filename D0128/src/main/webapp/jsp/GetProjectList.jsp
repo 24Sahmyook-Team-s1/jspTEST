@@ -3,16 +3,8 @@
 <%@ page import="dao.ProjectDAO" %>
 
 <%
-
-    request.setCharacterEncoding("UTF-8");
-    String uid = (String) session.getAttribute("id");
-	ProjectDAO projectdao = new ProjectDAO();
-    JSONArray projectList = new JSONArray();
-
-
-
-    projectList =projectdao.getProjectsByUserId(uid);
-
-    
-    out.print(projectList.toJSONString());
+    response.setContentType("application/json;charset=UTF-8");
+    ProjectDAO projectDAO = new ProjectDAO();
+    JSONArray projects = projectDAO.getAllProjects();
+    out.print(projects.toJSONString());
 %>
