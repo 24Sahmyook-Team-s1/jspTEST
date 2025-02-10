@@ -7,12 +7,14 @@
 <%
 
     request.setCharacterEncoding("UTF-8");
-
+    String uid = (String) session.getAttribute("id");
 	ProjectDAO projectdao = new ProjectDAO();
     JSONArray projectList = new JSONArray();
 
 
-    projectList =projectdao.getAllProjects();
+
+    projectList =projectdao.getProjectsByUserId(uid);
+
     
     out.print(projectList.toJSONString());
 
