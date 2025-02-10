@@ -11,7 +11,7 @@
 
     try {
         // ProjectDAO를 통해 사용자가 속한 프로젝트 목록 조회
-        projectList = projectDAO.getProjectsByUserId(userId);
+        projectList = projectDAO.getProjectIdsByUserId(userId);
     } catch (Exception e) {
         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         JSONObject errorResponse = new JSONObject();

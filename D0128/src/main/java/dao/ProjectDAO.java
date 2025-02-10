@@ -100,7 +100,7 @@ public class ProjectDAO {
         JSONObject project = null;
 
         try {
-            String sql = "SELECT ProjectID, ProjectName, TO_CHAR(CreatedAt, 'YYYY-MM-DD') AS CreatedAt, ProjectLeader FROM projects WHERE ProjectID = ?";
+            String sql = "SELECT ProjectID, ProjectName, TO_CHAR(CreatedAt, 'YYYY-MM-DD') AS CreatedAt, adminuserid FROM projects WHERE ProjectID = ?";
             conn = ConnectionPool.get();
             stmt = conn.prepareStatement(sql);
             stmt.setInt(1, projectID);
@@ -111,7 +111,7 @@ public class ProjectDAO {
                 project.put("id", rs.getInt("ProjectID"));
                 project.put("name", rs.getString("ProjectName"));
                 project.put("created_at", rs.getString("CreatedAt"));
-                project.put("projectLeader", rs.getString("ProjectLeader"));
+                project.put("adminuserid", rs.getString("adminuserid"));
             }
         } finally {
             if (rs != null) rs.close();
@@ -156,8 +156,8 @@ public class ProjectDAO {
 		return jsonResult.toString(); // JSON 문자열 반환
 	}
     
-    // 사용자 id로 참여하고 있는 프로젝트 조회
-    public JSONArray getProjectsByUserId(String userId) throws NamingException, SQLException {
+    // 사용자 id로 참여하고 있는 프로젝트 id 모두 조회
+    public JSONArray getProjectIdsByUserId(String userId) throws NamingException, SQLException {
         JSONArray projectList = new JSONArray();
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -166,7 +166,7 @@ public class ProjectDAO {
         try {
             conn = ConnectionPool.get();
             // 사용자가 속한 프로젝트 ID 조회
-            String sql = "SELECT ProjectID FROM Projects WHERE ProjectTeamID IN (SELECT ProjectTeamID FROM projectMembers WHERE ProjectUserID = ?)";
+            String sql = "SELECT ProjectID FROM teamMembers WHERE UserID = ?";
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, userId);
             rs = pstmt.executeQuery();
