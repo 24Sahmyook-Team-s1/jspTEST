@@ -9,12 +9,12 @@
 <body>
 
     <!-- 상단바 -->
-   <div class="header">
-      <h2>MOLE</h2>
+    <div class="header">
+        <h2>MOLE</h2>
     </div>
 
     <div class="container">
-      <!-- 📌 왼쪽 사이드바 -->
+        <!-- 사이드바 -->
         <div class="sidebar">
             <ul>
                 <li class="sidebar-link" data-link="MainPage.html">대시보드</li>
@@ -27,14 +27,14 @@
 
         <!-- 메인 컨텐츠 -->
         <div class="main-content">
-          <h1>
-			    <span>위험 관리</span>
-			    <div class="issue-buttons">
-			        <button class="add-btn">이슈 추가</button>
-			        <button class="delete-btn">이슈 삭제</button>
-			        <button class="update-btn">이슈 업데이트</button>
-			    </div>
-			</h1>
+            <h1>
+                <span>위험 관리</span>
+                <div class="issue-buttons">
+                    <button class="add-btn">이슈 추가</button>
+                    <button class="delete-btn">이슈 삭제</button>
+                    <button class="update-btn">이슈 업데이트</button>
+                </div>
+            </h1>
 
             <div class="issue-container">
                 <!-- HAZARD -->
@@ -44,9 +44,7 @@
                         <span>Name</span>
                         <span>Issue Description</span>
                     </div>
-                    <div class="issue-list" id="hazardList">
-                        <!-- 이슈 항목 추가 영역 -->
-                    </div>
+                    <div class="issue-list" id="hazardList"></div>
                 </div>
 
                 <!-- ISSUE -->
@@ -56,9 +54,7 @@
                         <span>Name</span>
                         <span>Issue Description</span>
                     </div>
-                    <div class="issue-list" id="issueList">
-                        <!-- 이슈 항목 추가 영역 -->
-                    </div>
+                    <div class="issue-list" id="issueList"></div>
                 </div>
 
                 <!-- SOLVED -->
@@ -68,14 +64,13 @@
                         <span>Name</span>
                         <span>Issue Description</span>
                     </div>
-                    <div class="issue-list" id="solvedList">
-                        <!-- 이슈 항목 추가 영역 -->
-                    </div>
+                    <div class="issue-list" id="solvedList"></div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- 📌 프로필 메뉴 -->
+
+    <!-- 프로필 메뉴 -->
     <div class="profile-container">
         <img src="public/logo-transparent.png" alt="MOLE PMS Logo" class="profile-btn" id="profileBtn">
         <div class="profile-menu" id="profileMenu">
@@ -90,53 +85,173 @@
             </ul>
         </div>
     </div>
-    
 
-</body>
-</html>
+    <!-- 이슈 추가 모달 -->
+    <div class="modal" id="addIssueModal">
+        <div class="modal-content">
+            <h2>이슈 추가</h2>
+            <form id="addIssueForm">
+                <label for="addUser">작성자 코드</label>
+                <input type="text" id="addUser" name="projectuserid" required>
+                <label for="addProjectId">프로젝트 코드</label>
+                <input type="text" id="addProjectId" name="projectid" required>
+                <label for="addCategory">카테고리</label>
+                <select id="addCategory" name="category" required>
+                    <option value="HAZARD">HAZARD</option>
+                    <option value="ISSUE">ISSUE</option>
+                    <option value="SOLVED">SOLVED</option>
+                </select>
+                <label for="addTitle">제목</label>
+                <input type="text" id="addTitle" name="title" required>
+                <label for="addDescription">본문</label>
+                <input type="text" id="addDescription" name="description" required>
+                <button type="submit" class="add-btn">추가</button>
+                <button type="button" class="close">닫기</button>
+            </form>
+        </div>
+    </div>
 
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    // 사이드바 클릭 시 페이지 이동
-    document.querySelectorAll('.sidebar-link').forEach(link => {
-        link.addEventListener('click', function () {
+    <!-- 이슈 삭제 모달 -->
+    <div class="modal" id="deleteIssueModal">
+        <div class="modal-content">
+            <h2>이슈 삭제</h2>
+            <form id="deleteIssueForm">
+                <label for="deleteId">이슈 ID</label>
+                <input type="text" id="deleteId" name="projectissueid" required>
+                <button type="submit" class="delete-btn">삭제</button>
+                <button type="button" class="close">닫기</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 이슈 업데이트 모달 -->
+    <div class="modal" id="updateIssueModal">
+        <div class="modal-content">
+            <h2>이슈 업데이트</h2>
+            <form id="updateIssueForm">
+                <label for="updateId">이슈 ID</label>
+                <input type="text" id="updateId" name="projectissueid" required>
+                <label for="updateTitle">제목</label>
+                <input type="text" id="updateTitle" name="title" required>
+                <label for="updateDescription">본문</label>
+                <input type="text" id="updateDescription" name="description" required>
+                <button type="submit" class="update-btn">업데이트</button>
+                <button type="button" class="close">닫기</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // 📌 사이드바 클릭 이벤트 (대시보드, 팀 페이지, 간트 차트 등 클릭 가능)
+        document.querySelectorAll('.sidebar-link').forEach(link => {
+            link.addEventListener('click', function () {
+                const targetPage = this.getAttribute('data-link');
+                window.location.href = targetPage;
+            });
+        });
+    // 📌 프로필 버튼 클릭 시 메뉴 표시
+    const profileBtn = document.getElementById("profileBtn");
+    const profileMenu = document.getElementById("profileMenu");
+
+    profileBtn.addEventListener("click", function (event) {
+        event.stopPropagation();
+        profileMenu.classList.toggle("active");
+    });
+
+    document.addEventListener("click", function (event) {
+        if (!profileBtn.contains(event.target) && !profileMenu.contains(event.target)) {
+            profileMenu.classList.remove("active");
+        }
+    });
+
+    // 📌 프로필 메뉴 클릭 시 페이지 이동
+    document.querySelectorAll('.profile-menu li').forEach(item => {
+        item.addEventListener('click', function () {
             const targetPage = this.getAttribute('data-link');
             window.location.href = targetPage;
         });
     });
-});
 
-// 📌 프로필 버튼 클릭 시 메뉴 표시
-const profileBtn = document.getElementById("profileBtn");
-const profileMenu = document.getElementById("profileMenu");
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelector('.add-btn').addEventListener('click', () => openModal('addIssueModal'));
+            document.querySelector('.delete-btn').addEventListener('click', () => openModal('deleteIssueModal'));
+            document.querySelector('.update-btn').addEventListener('click', () => openModal('updateIssueModal'));
 
-profileBtn.addEventListener("click", function (event) {
-    event.stopPropagation();
-    profileMenu.classList.toggle("active");
-});
+            document.querySelectorAll('.close').forEach(closeBtn => {
+                closeBtn.addEventListener('click', () => closeModal(closeBtn.closest('.modal')));
+            });
 
-document.addEventListener("click", function (event) {
-    if (!profileBtn.contains(event.target) && !profileMenu.contains(event.target)) {
-        profileMenu.classList.remove("active");
-    }
-});
+            window.addEventListener('click', function (event) {
+                if (event.target.classList.contains('modal')) {
+                    closeModal(event.target);
+                }
+            });
 
-// 📌 프로필 메뉴 클릭 시 페이지 이동
-document.querySelectorAll('.profile-menu li').forEach(item => {
-    item.addEventListener('click', function () {
-        const targetPage = this.getAttribute('data-link');
-        window.location.href = targetPage;
-    });
-});
-//이슈 추가, 삭제, 업데이트 버튼 이벤트 핸들러 (기능 추가 가능)
-document.querySelector('.add-btn').addEventListener('click', function() {
-    alert('이슈 추가 기능을 구현하세요.');
-});
-document.querySelector('.delete-btn').addEventListener('click', function() {
-    alert('이슈 삭제 기능을 구현하세요.');
-});
-document.querySelector('.update-btn').addEventListener('click', function() {
-    alert('이슈 업데이트 기능을 구현하세요.');
-});
+            document.getElementById('addIssueForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+                submitForm('jsp/projectIssueAdd.jsp', new FormData(this));
+            });
 
-</script>
+            document.getElementById('deleteIssueForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+                submitForm('jsp/projectIssueDelete.jsp', new FormData(this));
+            });
+
+            document.getElementById('updateIssueForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+                submitForm('jsp/projectIssueUpdate.jsp', new FormData(this));
+            });
+        });
+
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+
+        function closeModal(modal) {
+            modal.style.display = 'none';
+        }
+
+        function submitForm(url, formData) {
+            fetch(url, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                alert('작업이 성공적으로 완료되었습니다.');
+                closeModal(document.querySelector('.modal[style*="block"]'));
+                fetchIssues();
+            })
+            .catch(error => {
+                console.error('에러 발생:', error);
+                alert('작업 중 오류가 발생했습니다.');
+            });
+        }
+        document.getElementById('addIssueForm').addEventListener('submit', function (e) {
+            e.preventDefault(); // 기본 폼 제출 방지
+
+            const formData = new FormData(this);
+
+            // 디버깅용: 전송되는 데이터 콘솔 출력
+            console.log("Sending Data:");
+            for (let [key, value] of formData.entries()) {
+                console.log(`${key}: ${value}`);
+            }
+
+            fetch('jsp/projectIssueAdd.jsp', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                alert('이슈가 성공적으로 추가되었습니다.');
+                closeModal(document.getElementById('addIssueModal'));
+            })
+            .catch(error => {
+                console.error('에러 발생:', error);
+            });
+        });
+
+    </script>
+</body>
+</html>

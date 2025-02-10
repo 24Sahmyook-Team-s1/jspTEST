@@ -15,7 +15,7 @@
     <div class="ongoing-projects">
       <div class="ongoing-header">
         <h2>On Going</h2>
-         <button id="addProjectBtn" class="add-project-btn">프로젝트 추가</button>
+        <button id="addProjectBtn" class="add-project-btn">프로젝트 추가</button>
       </div>
       <div class="scroll-container">
         <div class="project-list-wrapper">
@@ -34,7 +34,6 @@
             <div class="issue">issue: something on svelte</div>
             <div class="issue">issue: something on svelte</div>
             <div class="issue">issue: something on svelte</div>
-
           </div>
         </div>
       </div>
@@ -50,7 +49,6 @@
               <div>수</div>
               <div>목</div>
               <div>금</div>
-
             </div>
           </div>
           <div class="gantt-body" id="ganttBody">
@@ -61,214 +59,143 @@
     </div>
 
     <div class="profile-container">
-	    <img src="public/logo-transparent.png" alt="MOLE PMS Logo" class="profile-btn" id="profileBtn">
-	    <div class="profile-menu" id="profileMenu">
-	        <ul>
-				<li data-link="MainPage.html">홈</li>
-				<li data-link="TeamPage.html">팀 페이지</li> <!-- ✅ 팀 페이지 추가 -->
-				<li data-link="FindTeam.html">팀 찾기</li>
-				<li data-link="CreateTeam.html">팀 만들기</li>
-	            <li data-link="TeamManage.html">팀 관리</li>
-	            <li data-link="ProfilePage.html">프로필</li>
-				<li data-link="SettingsPage.html">설정</li> </ul>
-	    </div>
-	</div>
-	
-	<!-- 프로젝트 추가 모달 창 -->
-    <div id="projectModal" class="modal">
-        <div class="modal-content">
-            <img src="public/logo-transparent.png" alt="MOLE Logo" class="modal-logo">
-            <h2>새로운 프로젝트</h2>
-
-            <label for="projectName">프로젝트 이름</label>
-            <input type="text" id="projectName" placeholder="프로젝트 이름을 입력">
-
-            <label for="projectDesc">프로젝트 설명</label>
-            <input type="text" id="projectDesc" placeholder="프로젝트 설명을 입력">
-
-            <label for="projectOwner">프로젝트 소유자</label>
-            <input type="text" id="projectOwner" placeholder="현재 프로젝트를 만드는 유저명">
-
-            <button id="createProjectBtn">프로젝트 만들기</button>
-        </div>
+      <img src="public/logo-transparent.png" alt="MOLE PMS Logo" class="profile-btn" id="profileBtn">
+      <div class="profile-menu" id="profileMenu">
+        <ul>
+          <li data-link="MainPage.html">홈</li>
+          <li data-link="TeamPage.html">팀 페이지</li>
+          <li data-link="FindTeam.html">팀 찾기</li>
+          <li data-link="CreateTeam.html">팀 만들기</li>
+          <li data-link="TeamManage.html">팀 관리</li>
+          <li data-link="ProfilePage.html">프로필</li>
+          <li data-link="SettingsPage.html">설정</li>
+        </ul>
+      </div>
     </div>
-  </body>
-</html>
-<script>
 
-document.addEventListener("DOMContentLoaded", function () {
-    const profileBtn = document.getElementById("profileBtn");
-    const profileMenu = document.getElementById("profileMenu");
+    <!-- 프로젝트 추가 모달 창 -->
+    <div id="projectModal" class="modal">
+      <div class="modal-content">
+        <img src="public/logo-transparent.png" alt="MOLE Logo" class="modal-logo">
+        <h2>새로운 프로젝트</h2>
 
-    profileBtn.addEventListener("click", function () {
-        profileMenu.classList.toggle("active"); // 메뉴 토글
-    });
+        <label for="projectName">프로젝트 이름</label>
+        <input type="text" id="projectName" placeholder="프로젝트 이름을 입력">
 
-    document.addEventListener("click", function (event) {
-        if (!profileBtn.contains(event.target) && !profileMenu.contains(event.target)) {
-            profileMenu.classList.remove("active"); // 메뉴 외부 클릭 시 닫기
-        }
-    });
+        <label for="projectOwner">프로젝트 소유자</label>
+        <input type="text" id="projectOwner" placeholder="현재 프로젝트를 만드는 유저명">
 
-    // ✅ 페이지 이동 함수
-    window.goToPage = function (page) {
-        window.location.href = page;
-    };
-});
-$(document).ready(function () {
-    loadProjects(); // 페이지 로드 시 기본 프로젝트 목록 불러오기
+        <button id="createProjectBtn">프로젝트 만들기</button>
+      </div>
+    </div>
 
+    <script>
+    $(document).ready(function () {
+      loadProjects(); 
 
-    const projectWrapper = $(".project-list-wrapper");
-    const loadMoreBtn = $("#loadMoreBtn");
+      const projectWrapper = $(".project-list-wrapper");
 
-    let loadedCount = 4; // 초기 표시 개수
-    let allProjects = []; // 전체 프로젝트 저장
-
-    // ✅ 프로젝트 데이터를 불러와서 On Going과 Gantt Chart에 반영
-    function loadProjects() {
+      function loadProjects() {
         $.ajax({
-            url: "jsp/GetProjectList.jsp",
-            type: "GET",
-            dataType: "json",
-            success: function (projects) {
-                console.log("✅ 프로젝트 데이터 수신:", projects);
-                allProjects = projects; // 전체 프로젝트 저장
-                showProjects(loadedCount);
-            },
-            error: function (xhr, status, error) {
-                console.error("❌ AJAX 오류 발생:", error);
-            },
+          url: "jsp/GetProjectList.jsp",
+          type: "GET",
+          dataType: "json",
+          success: function (projects) {
+            console.log("✅ 프로젝트 데이터 수신:", projects);
+            showProjects(projects);
+          },
+          error: function (xhr, status, error) {
+            console.error("❌ AJAX 오류 발생:", error);
+          },
         });
-    }
+      }
 
-    // ✅ On Going 프로젝트 목록 표시
-    function showProjects(count) {
+      function showProjects(projects) {
         let projectContainer = $("#projectList");
-        projectContainer.empty(); // 기존 리스트 초기화
+        projectContainer.empty();
 
-        let displayProjects = allProjects.slice(0, count); // 현재 표시할 프로젝트만 가져오기
-
-        if (displayProjects.length > 0) {
-            displayProjects.forEach(project => {
-                projectContainer.append(getProjectCode(project));
-            });
+        if (projects.length > 0) {
+          projects.forEach(project => {
+            projectContainer.append(getProjectCode(project));
+          });
         } else {
-            projectContainer.append("<p>No On Going Projects</p>");
+          projectContainer.append("<p>No On Going Projects</p>");
         }
 
-        updateGanttChart(displayProjects); // ✅ 간트차트도 같이 업데이트
+        updateGanttChart(projects);
+      }
 
-        if (count >= allProjects.length) {
-            loadMoreBtn.hide();
-        }
-    }
-
-    // ✅ 간트 차트 업데이트 함수
-    function updateGanttChart(projects) {
+      function updateGanttChart(projects) {
         let ganttBody = $("#ganttBody");
         ganttBody.empty();
 
         projects.forEach(project => {
-            let row = `<div class="gantt-row">
-                <div class="project-name">${project.name}</div>
-                <div class="gantt-progress">
-                    <div class="${project.schedule[0] ? 'active' : ''}"></div>
-                    <div class="${project.schedule[1] ? 'active' : ''}"></div>
-                    <div class="${project.schedule[2] ? 'active' : ''}"></div>
-                    <div class="${project.schedule[3] ? 'active' : ''}"></div>
-                    <div class="${project.schedule[4] ? 'active' : ''}"></div>
-                </div>
-            </div>`;
-            ganttBody.append(row);
-        });
-    }
-
-    loadMoreBtn.on("click", function () {
-        loadedCount += 2;
-        if (loadedCount > allProjects.length) {
-            loadedCount = allProjects.length;
-        }
-        showProjects(loadedCount);
-    });
-
-    function getProjectCode(project) {
-        return `
-            <div class="project">
-                <h3>${project.name}</h3>
-                <p>📅 Created At: ${project.created_at}</p>
+          let row = `<div class="gantt-row">
+            <div class="project-name">${project.name}</div>
+            <div class="gantt-progress">
+              <div class="${project.schedule[0] ? 'active' : ''}"></div>
+              <div class="${project.schedule[1] ? 'active' : ''}"></div>
+              <div class="${project.schedule[2] ? 'active' : ''}"></div>
+              <div class="${project.schedule[3] ? 'active' : ''}"></div>
+              <div class="${project.schedule[4] ? 'active' : ''}"></div>
             </div>
+          </div>`;
+          ganttBody.append(row);
+        });
+      }
+
+      function getProjectCode(project) {
+        return `
+          <div class="project">
+            <h3>${project.name}</h3>
+            <p>📅 Created At: ${project.createdAt}</p>
+          </div>
         `;
-    }
-});
-// 📌 프로필 메뉴 클릭 시 페이지 이동
-document.querySelectorAll('.profile-menu li').forEach(item => {
-    item.addEventListener('click', function () {
-        const targetPage = this.getAttribute('data-link');
-        window.location.href = targetPage;
+      }
 
-    });
-  });
+      $("#addProjectBtn").on("click", function () {
+        $("#projectModal").show();
+      });
 
-$(document).ready(function () {
-    const addProjectBtn = $("#addProjectBtn");
-    const projectModal = $("#projectModal");
-    const createProjectBtn = $("#createProjectBtn");
-
-    // 프로젝트 추가 버튼 클릭 시 모달 열기
-    addProjectBtn.on("click", function () {
-        projectModal.show();
-    });
-
-    // 모달 외부 클릭 시 닫기
-    $(window).on("click", function (event) {
-        if ($(event.target).is(projectModal)) {
-            projectModal.hide();
+      $(window).on("click", function (event) {
+        if ($(event.target).is("#projectModal")) {
+          $("#projectModal").hide();
         }
-    });
+      });
 
- // 📌 프로젝트 생성 로직 (날짜 및 이모지 추가)
-    createProjectBtn.on("click", function () {
+      $("#createProjectBtn").on("click", function () {
         const projectName = $("#projectName").val();
-        const projectDesc = $("#projectDesc").val();
         const projectOwner = $("#projectOwner").val();
 
-        if (projectName && projectDesc && projectOwner) {
-            const today = new Date().toISOString().split('T')[0];  // YYYY-MM-DD 형식의 날짜 가져오기
-            addProjectToPage(projectName, projectDesc, today);
-            projectModal.hide();
-            clearInputs();
+        if (projectName && projectOwner) {
+          $.ajax({
+            url: "jsp/AddProject.jsp",
+            type: "POST",
+            data: {
+              projectName: projectName,
+              adminUserID: projectOwner
+            },
+            success: function(response) {
+              alert("프로젝트가 성공적으로 추가되었습니다!");
+              location.reload();
+            },
+            error: function(xhr, status, error) {
+              console.error("프로젝트 추가 실패:", error);
+              alert("프로젝트 추가에 실패했습니다. 다시 시도해주세요.");
+            }
+          });
+          $("#projectModal").hide();
+          clearInputs();
         } else {
-            alert("모든 필드를 입력해주세요!");
+          alert("모든 필드를 입력해주세요!");
         }
-    });
+      });
 
-    // 📌 On Going과 Gantt Chart에 프로젝트 추가 (날짜 포함)
-    function addProjectToPage(name, desc, date) {
-        $("#projectList").append(`
-            <div class="project">
-                <h3>${name}</h3>
-                <p>📅 Created At: ${date}</p>
-            </div>
-        `);
-
-        $("#ganttBody").append(`
-            <div class="gantt-row">
-                <div class="project-name">${name}</div>
-                <div class="gantt-progress">
-                    <div></div><div></div><div></div><div></div><div></div>
-                </div>
-            </div>
-        `);
-    }
-
-
-    // 입력 필드 초기화
-    function clearInputs() {
+      function clearInputs() {
         $("#projectName").val('');
-        $("#projectDesc").val('');
         $("#projectOwner").val('');
-    }
-});
-
-</script>
+      }
+    });
+    </script>
+  </body>
+</html>

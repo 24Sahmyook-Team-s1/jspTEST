@@ -11,7 +11,7 @@ if (request.getMethod().equalsIgnoreCase("POST")) {
 	request.setCharacterEncoding("utf-8");
 
 	String projectId = request.getParameter("projectId");
-	String userId = request.getParameter("userId");
+	String userId = request.getParameter("user2");
 
 	ProjectMemberDAO dao = new ProjectMemberDAO();
 	boolean code = false;
@@ -49,7 +49,7 @@ if (request.getMethod().equalsIgnoreCase("POST")) {
 		<label for="projectId">프로젝트 ID:</label> <input type="text"
 			id="projectId" name="projectId" required><br>
 		<br> <label for="userId">등록할 멤버 ID:</label> <input type="text"
-			id="leaderId" name="userId" required><br>
+			id="leaderId" name="user2" required><br>
 		<br>
 
 		<button type="submit">멤버 추가</button>
