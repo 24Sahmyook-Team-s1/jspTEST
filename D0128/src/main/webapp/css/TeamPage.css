@@ -26,7 +26,7 @@ body, html {
     color: black;
 }
 
-/* 🌟 전체 컨테이너 */
+/* 🌟 전체 콘텐어 */
 .container {
     display: flex;
     width: 90%;
@@ -70,13 +70,13 @@ body, html {
 }
 
 /* 메뉴별 아이콘 지정 */
-.sidebar li:nth-child(1)::before { content: '📊'; }  /* 대시보드 */
+.sidebar li:nth-child(1)::before { content: '📊'; }  /* 대쉘보드 */
 .sidebar li:nth-child(2)::before { content: '📁'; }  /* 팀 페이지 */
-.sidebar li:nth-child(3)::before { content: '📅'; }  /* 간트 차트 */
+.sidebar li:nth-child(3)::before { content: '📅'; }  /* 간트 체트 */
 .sidebar li:nth-child(4)::before { content: '🐞'; }  /* 이슈 */
 .sidebar li:nth-child(5)::before { content: '👥'; }  /* 팀 보드 */
 
-/* 📌 호버 효과 */
+/* 📌 호박 효과 */
 .sidebar li:hover {
     background-color: #007bff;
     color: white;
@@ -97,7 +97,7 @@ body, html {
     }
 }
 
-/* 🌟 메인 컨텐츠 */
+/* 🌟 메인 콘텐츠 */
 .main-content {
     flex: 1;
     padding: 20px;
@@ -115,14 +115,13 @@ body, html {
     margin-bottom: 40px;
 }
 
-
 .status-chart, .recent-activities {
     flex: 1;
     padding: 20px;
     background: #fff;
     border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin-bottom: 40px; /* ✅ 상하 간격 추가 */
+    margin-bottom: 40px;
 }
 
 .status-chart h2,
@@ -131,19 +130,21 @@ body, html {
     font-weight: 700;
 }
 
-/* 📌 원형 그래프 */
+/* 📈 원형 그래프 */
 #statusPieChart {
     max-width: 250px;
     margin: 0 auto;
 }
 
-/* 📌 최근 활동 로그 */
+/* 📈 최근 활동 로그 */
 .activity-log {
     background: #fff;
     padding: 10px;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     max-width: 100%;
+    max-height: 200px; /* 고정 크기 설정 */
+    overflow-y: auto;  /* 스크롤 방지 */
     word-break: break-word;
     line-height: 1.5;
     font-size: 14px;
@@ -158,13 +159,13 @@ body, html {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-/* 📌 할 일 관리 */
+/* 📈 할 일 관리 */
 .tasks-container {
     display: flex;
     justify-content: space-between;
     width: 100%;
-    gap: 40px;  /* ✅ 좌우 간격 조정 */
-    margin-bottom: 40px; /* ✅ 아래 여백 추가 */
+    gap: 40px;
+    margin-bottom: 40px;
 }
 
 .task-box {
@@ -173,7 +174,7 @@ body, html {
     background: #fff;
     border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin-bottom: 40px; /* ✅ 상하 간격 추가 */
+    margin-bottom: 40px;
 }
 
 .task-box h3 {
@@ -181,7 +182,7 @@ body, html {
     font-weight: 700;
 }
 
-/* 📌 할 일 리스트 */
+/* 📈 할 일 리스트 */
 .task-list {
     display: flex;
     flex-direction: column;
@@ -237,7 +238,7 @@ body, html {
     background-color: #0056b3;
 }
 
-/* 📌 프로필 버튼 */
+/* 📈 프로필 버튼 */
 .profile-container {
     position: fixed;
     bottom: 20px;
@@ -313,7 +314,7 @@ body, html {
     }
 }
 
-/* 📌 모달 창 */
+/* 📈 모달 창 */
 .modal {
     display: none;
     position: fixed;
@@ -326,7 +327,7 @@ body, html {
     z-index: 1000;
 }
 
-/* 📌 모달 콘텐츠 */
+/* 📈 모달 컨트페인츠 */
 .modal-content {
     background: #fff;
     padding: 20px;
@@ -337,7 +338,17 @@ body, html {
     position: relative;
 }
 
-/* 📌 모달 버튼 */
+/* 📈 모달 입력 필드 */
+.modal-content input[type="text"] {
+    width: 80%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+/* 📈 모달 버튼 */
 .modal-btn {
     display: block;
     width: 100%;
@@ -355,27 +366,26 @@ body, html {
     opacity: 0.8;
 }
 
-/* 📌 삭제 버튼 */
+/* 📈 삭제 버튼 */
 .delete {
     background: #FF4444;
     color: white;
 }
 
-/* 📌 닫기 버튼 */
+/* 📈 닫기 버튼 */
 .close {
     background: #ccc;
 }
 
-/* 📌 간트 차트 스타일 */
+/* 📈 간트 체트 스타일 */
 .gantt-chart-container {
     background: #fff;
-    padding: 20px;  /* ✅ 메인 콘텐츠와 동일하게 맞춤 */
+    padding: 20px;
     border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: calc(100% - 40px);  /* ✅ 패딩 고려해서 너비 조정 */
-    box-sizing: border-box;  /* ✅ 패딩 포함하여 크기 계산 */
+    width: calc(100% - 40px);
+    box-sizing: border-box;
 }
-
 
 .gantt-header {
     display: flex;
@@ -411,7 +421,7 @@ body, html {
     background-color: #4CAF50;
 }
 
-/* 간트 차트 행 스타일 */
+/* 간트 체트 행 스타일 */
 .gantt-row {
     display: flex;
     align-items: center;
@@ -428,3 +438,53 @@ body, html {
     display: flex;
     width: 70%;
 }
+
+/* 📈 할 일 추가 모달 */
+#addTaskModal {
+    display: none;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.4);
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+}
+
+#addTaskModal .modal-content {
+    background: #fff;
+    padding: 20px;
+	border-radius: 10px; 
+	text-align: center; 
+	width: 300px; 
+	margin: auto; 
+	position: relative; 
+	}
+
+/* 📌 모달 입력 필드 */ 
+#addTaskModal .modal-content input[type="text"] { width: 80%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; }
+
+/* 📌 모달 버튼 */ 
+#addTaskModal .modal-btn {
+	display: block; 
+	width: 100%; 
+	padding: 10px; 
+	margin-top: 10px; 
+	border: none; 
+	border-radius: 5px; 
+	font-size: 14px; 
+	font-weight: bold; 
+	cursor: pointer; 
+	transition: 0.3s; 
+	}
+	
+
+#addTaskModal .modal-btn:hover {
+	opacity: 0.8; 
+	}
+
+/* 📌 닫기 버튼 */ #addTaskModal .close { 
+	background: #ccc; 
+	color: black; 
+	}

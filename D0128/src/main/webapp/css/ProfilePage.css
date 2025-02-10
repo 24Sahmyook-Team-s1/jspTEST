@@ -1,0 +1,158 @@
+/* 기본 스타일 */
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #E3F5FC;
+    color: black;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* 🌟 헤더 스타일 */
+.header {
+    width: 100%;
+    height: 80px;
+    background-color: #F2F5F7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: bold;
+    color: black;
+}
+
+/* 전체 레이아웃 */
+.profile-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 90%;
+    max-width: 1200px;
+    margin-top: 50px;
+    gap: 20px;
+}
+
+/* 프로필 정보 - 박스 확장 */
+.profile-info {
+    display: flex;  /* 프로필 사진과 소개글 나란히 배치 */
+    width: 100%;
+    background: #b8e6f8;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    position: relative;
+    gap: 20px;
+}
+
+/* 프로필 왼쪽 섹션 (사진, 이름, 이메일) */
+.profile-left {
+    width: 250px;
+    text-align: center;
+}
+
+/* 프로필 사진 */
+.profile-picture {
+    width: 150px;
+    height: 150px;
+    background-image: url('public/logo-transparent.png');
+    background-size: cover;
+    background-position: center;
+    border-radius: 50%;
+    margin: 0 auto 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* 프로필 수정 버튼 */
+.edit-profile-btn {
+    padding: 12px 25px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.edit-profile-btn:hover {
+    background-color: #45A049;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
+}
+
+/* 소개글 오른쪽 섹션 */
+.profile-bio {
+    flex: 1;  /* 남은 공간 전체 차지 */
+    background: #FFF;
+    border-radius: 15px;
+    padding: 20px;
+    color: #333;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    min-height: 200px;
+}
+
+/* 소개글이 없을 때 */
+.profile-bio.empty {
+    color: #bbb;
+    font-style: italic;
+}
+
+/* 소개글 입력 섹션 */
+.sections-row {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+}
+
+/* 소개글 작성 및 Pinned 섹션 */
+.bio-section, .pinned-section {
+    background: #FFF;
+    color: #333;
+    padding: 20px;
+    border-radius: 15px;
+    width: 50%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    min-height: 200px;
+}
+
+/* Pinned 섹션 */
+.pinned-section h3 {
+    display: flex;
+    justify-content: space-between;
+    font-size: 20px;
+}
+
+.customize {
+    font-size: 14px;
+    color: #8A9DF0;
+    cursor: pointer;
+}
+
+.pinned-projects {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.pinned-project {
+    background: #F0F0F0;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: bold;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.pinned-project:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}

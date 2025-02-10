@@ -19,7 +19,7 @@
 	
 	    try {
 	        // 프로젝트 목록을 JSON 형식으로 가져오기
-	        jsonResult = projectDAO.get(projectname);
+	        jsonResult = projectDAO.getProjectByprojectname(projectname);
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	    }
