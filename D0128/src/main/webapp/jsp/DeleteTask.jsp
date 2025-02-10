@@ -1,20 +1,16 @@
-<%@ page language="java" contentType="application/json; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page language="java" contentType="application/json;charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="dao.ScheduleDAO" %>
 <%@ page import="org.json.simple.JSONObject" %>
 
 <%
     request.setCharacterEncoding("UTF-8");
 
-    String taskName = request.getParameter("taskName");
-    String startDate = request.getParameter("startDate");
-    String endDate = request.getParameter("endDate");
-    int projectId = Integer.parseInt(request.getParameter("projectId"));
-
+    int scheduleId = Integer.parseInt(request.getParameter("scheduleId"));
     JSONObject jsonResponse = new JSONObject();
     ScheduleDAO scheduleDAO = new ScheduleDAO();
 
     try {
-        boolean result = scheduleDAO.addTask(taskName, startDate, endDate, projectId);
+        boolean result = scheduleDAO.deleteTask(scheduleId);
         jsonResponse.put("success", result);
     } catch (Exception e) {
         jsonResponse.put("success", false);

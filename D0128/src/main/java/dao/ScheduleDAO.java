@@ -4,8 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.List;
 import javax.naming.NamingException;
 import util.ConnectionPool;
 import org.json.simple.JSONArray;
@@ -36,7 +34,7 @@ public class ScheduleDAO {
     }
 
     // 모든 할 일 가져오기
-    public JSONArray getAllTasks(int projectId) throws NamingException, SQLException {
+    public JSONArray getAllTasks() throws NamingException, SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -44,9 +42,8 @@ public class ScheduleDAO {
 
         try {
             conn = ConnectionPool.get();
-            String sql = "SELECT ScheduleID, Task_Name, Start_Date, End_Date FROM Schedule WHERE ProjectID = ? ORDER BY Start_Date ASC";
+            String sql = "SELECT ScheduleID, Task_Name, Start_Date, End_Date FROM Schedule ORDER BY Start_Date ASC";
             stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, projectId);
             rs = stmt.executeQuery();
 
             while (rs.next()) {
@@ -55,6 +52,7 @@ public class ScheduleDAO {
                 task.put("taskName", rs.getString("Task_Name"));
                 task.put("startDate", rs.getDate("Start_Date").toString());
                 task.put("endDate", rs.getDate("End_Date").toString());
+                task.put("status", "todo"); // 기본 상태
                 tasks.add(task);
             }
         } finally {
@@ -64,26 +62,6 @@ public class ScheduleDAO {
         }
 
         return tasks;
-    }
-
-    // 작업 상태 업데이트
-    public boolean updateTaskStatus(int scheduleId, String newStatus) throws NamingException, SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-
-        try {
-            conn = ConnectionPool.get();
-            String sql = "UPDATE Schedule SET Status = ? WHERE ScheduleID = ?";
-            stmt = conn.prepareStatement(sql);
-            stmt.setString(1, newStatus);
-            stmt.setInt(2, scheduleId);
-
-            int result = stmt.executeUpdate();
-            return result == 1;
-        } finally {
-            if (stmt != null) stmt.close();
-            if (conn != null) conn.close();
-        }
     }
 
     // 작업 삭제

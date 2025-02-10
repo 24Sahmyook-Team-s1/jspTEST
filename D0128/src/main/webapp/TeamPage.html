@@ -6,17 +6,17 @@
     <title>MOLE - 팀 페이지</title>
     <link rel="stylesheet" href="css/TeamPage.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="js/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 
-    <!-- 📌 상단바 -->
+    <!-- 상단바 -->
     <div class="header">
         <h1>MOLE</h1>
     </div>
 
     <div class="container">
-        <!-- 📌 왼쪽 사이드바 -->
+        <!-- 왼쪽 사이드바 -->
         <div class="sidebar">
             <ul>
                 <li class="sidebar-link" data-link="MainPage.html">대시보드</li>
@@ -27,12 +27,12 @@
             </ul>
         </div>
 
-        <!-- 📌 메인 콘텐츠 -->
+        <!-- 메인 콘텐츠 -->
         <div class="main-content">
             <h2>팀 페이지</h2>
             <p>이곳에서 팀을 관리하고 참여할 수 있습니다.</p>
 
-            <!-- 📌 상태 개요 및 최근 활동 -->
+            <!-- 상태 개요 및 최근 활동 -->
             <div class="overview">
                 <div class="status-chart">
                     <h2>상태 개요</h2>
@@ -47,7 +47,7 @@
                 </div>
             </div>
 
-            <!-- 📌 할 일 관리 -->
+            <!-- 할 일 관리 -->
             <div class="tasks-container">
                 <div class="task-box" id="todo">
                     <h3>할 일</h3>
@@ -66,26 +66,20 @@
         </div>
     </div>
 
-   <!-- 📌 할 일 추가 모달 -->
-<div id="addTaskModal" class="modal">
-    <div class="modal-content">
-        <h3>새로운 할 일 추가</h3>
-        <input type="text" id="newTaskInput" placeholder="할 일을 입력하세요">
-
-        <!-- ✅ 프로젝트 ID 입력 필드 추가 -->
-        <input type="number" id="projectIdInput" placeholder="프로젝트 ID 입력">
-
-        <!-- 시작 날짜와 종료 날짜 입력 필드 추가 (필요시) -->
-        <input type="date" id="startDateInput">
-        <input type="date" id="endDateInput">
-
-        <button id="saveTaskBtn" class="modal-btn">추가</button>
-        <button class="modal-btn close" id="closeAddTaskModal">닫기</button>
+    <!-- 할 일 추가 모달 -->
+    <div id="addTaskModal" class="modal">
+        <div class="modal-content">
+            <h3>새로운 할 일 추가</h3>
+            <input type="text" id="newTaskInput" placeholder="할 일을 입력하세요">
+            <input type="date" id="startDateInput" placeholder="시작일">
+            <input type="date" id="endDateInput" placeholder="종료일">
+            <input type="number" id="projectIdInput" placeholder="프로젝트 ID">
+            <button id="saveTaskBtn" class="modal-btn">추가</button>
+            <button class="modal-btn close" id="closeAddTaskModal">닫기</button>
+        </div>
     </div>
-</div>
 
-
-    <!-- 📌 작업 상태 변경 모달 -->
+    <!-- 작업 상태 변경 모달 -->
     <div id="taskModal" class="modal">
         <div class="modal-content">
             <h3 id="modalTitle">작업 상태 변경</h3>
@@ -95,280 +89,134 @@
         </div>
     </div>
 
-    <!-- 📌 프로필 메뉴 -->
-    <div class="profile-container">
-        <img src="public/logo-transparent.png" alt="MOLE PMS Logo" class="profile-btn" id="profileBtn">
-        <div class="profile-menu" id="profileMenu">
-            <ul>
-                <li data-link="MainPage.html">홈</li>
-                <li data-link="TeamPage.html">팀 페이지</li>
-                <li data-link="FindTeam.html">팀 찾기</li>
-                <li data-link="CreateTeam.html">팀 만들기</li>
-                <li data-link="TeamManage.html">팀 관리</li>
-                <li data-link="ProfilePage.html">프로필</li>
-                <li data-link="SettingsPage.html">설정</li>
-            </ul>
-        </div>
-    </div>
-
 </body>
 </html>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-    // 1. 사이드바 클릭 시 페이지 이동
-    document.querySelectorAll('.sidebar-link').forEach(link => {
-        link.addEventListener('click', function () {
-            const targetPage = this.getAttribute('data-link');
-            window.location.href = targetPage;
-        });
-    });
+$(document).ready(function () {
+    let tasks = []; // 할 일 목록 상태 관리
 
-    // 2. 프로필 메뉴 토글
-    const profileBtn = document.getElementById("profileBtn");
-    const profileMenu = document.getElementById("profileMenu");
+    loadTasks(); // 페이지 로드 시 할 일 불러오기
 
-    profileBtn.addEventListener("click", function (event) {
-        event.stopPropagation();
-        profileMenu.classList.toggle("active");
-    });
-
-    document.addEventListener("click", function (event) {
-        if (!profileBtn.contains(event.target) && !profileMenu.contains(event.target)) {
-            profileMenu.classList.remove("active");
-        }
-    });
-
-    document.querySelectorAll('.profile-menu li').forEach(item => {
-        item.addEventListener('click', function () {
-            const targetPage = this.getAttribute('data-link');
-            window.location.href = targetPage;
-        });
-    });
-
-    // 3. 할 일 추가 모달 관련
-    const addTaskButton = document.getElementById("addTaskBtn");
-    const addTaskModal = document.getElementById("addTaskModal");
-    const saveTaskButton = document.getElementById("saveTaskBtn");
-    const closeAddTaskModal = document.getElementById("closeAddTaskModal");
-    const newTaskInput = document.getElementById("newTaskInput");
-    const todoList = document.getElementById("todoList");
-
-    addTaskButton.addEventListener("click", function () {
-        addTaskModal.style.display = "block";
-        newTaskInput.value = ""; 
-    });
-
-    closeAddTaskModal.addEventListener("click", function () {
-        addTaskModal.style.display = "none";
-    });
-
-    // 4. 할 일 저장 (DB 저장 포함)
-    saveTaskButton.addEventListener("click", function () {
-    const newTaskText = newTaskInput.value.trim();
-    const projectId = document.getElementById("projectIdInput").value.trim();
-    const startDate = document.getElementById("startDateInput").value;
-    const endDate = document.getElementById("endDateInput").value;
-
-    if (newTaskText && projectId) {
-        $.ajax({
-            url: "jsp/AddTask.jsp",
-            type: "POST",
-            data: {
-                taskName: newTaskText,
-                projectId: projectId,
-                startDate: startDate,
-                endDate: endDate
-            },
-            success: function (response) {
-                const res = JSON.parse(response);
-                if (res.success) {
-                    const newTask = createTaskItem(newTaskText, res.taskId);  // taskId 받아오기
-                    todoList.appendChild(newTask);
-                    addActivityLog(`📝 할 일 추가됨: ${newTaskText}`);
-                    updateChart();
-                    addTaskModal.style.display = "none";
-                } else {
-                    alert("할 일 추가 실패: " + res.error);
-                }
-            },
-            error: function () {
-                alert("서버 오류 발생");
-            }
-        });
-    } else {
-        alert("할 일과 프로젝트 ID를 입력하세요!");
-    }
-});
-
-
-    // 5. DB에서 할 일 불러오기
+    // 할 일 목록 로드 (DB에서 가져오기)
     function loadTasks() {
         $.ajax({
             url: "jsp/GetTasks.jsp",
             type: "GET",
             dataType: "json",
-            success: function(tasks) {
-                displayTasks(tasks);  
-                updateChart(tasks);   
+            success: function (data) {
+                tasks = data;         // DB에서 가져온 데이터를 tasks 배열에 저장
+                displayTasks();       // 화면에 할 일 표시
+                updateChart();        // 차트 업데이트
             },
-            error: function() {
-                alert("할 일 불러오기 실패");
+            error: function () {
+                console.error("할 일 불러오기 실패");
             }
         });
     }
 
-    // 6. 할 일 목록 표시
-    function displayTasks(tasks) {
-        $("#todoList").empty();
-        $("#inProgressList").empty();
-        $("#completedList").empty();
+    // 할 일을 화면에 표시
+    function displayTasks() {
+        $("#todoList, #inProgressList, #completedList").empty();
 
         tasks.forEach(task => {
-            const taskElement = createTaskItem(task.name, task.id);
-            $("#todoList").append(taskElement);  // 기본적으로 '할 일'에 추가 (상태에 따라 변경 가능)
+            const taskElement = $(`<div class="task-item" data-id="${task.scheduleId}">${task.taskName}</div>`);
+
+            // 작업 클릭 시 상태 변경 모달 열기
+            taskElement.on("click", function () {
+                openTaskModal(task);
+            });
+
+            // 상태에 따라 리스트에 추가
+            if (task.status === "todo") {
+                $("#todoList").append(taskElement);
+            } else if (task.status === "inProgress") {
+                $("#inProgressList").append(taskElement);
+            } else if (task.status === "completed") {
+                $("#completedList").append(taskElement);
+            }
+        });
+
+        updateChart(); // 상태 표시 후 차트 업데이트
+    }
+
+    // 작업 상태 변경 모달
+    function openTaskModal(task) {
+        $("#modalTitle").text(`작업: ${task.taskName}`);
+        $("#taskModal").show();
+
+        // 상태 변경 버튼 클릭 시
+        $("#moveTask").off().on("click", function () {
+            if (task.status === "todo") {
+                task.status = "inProgress";
+            } else if (task.status === "inProgress") {
+                task.status = "completed";
+            }
+
+            addActivityLog(`🔄 상태 변경됨: ${task.taskName} → ${task.status === "inProgress" ? "진행 중" : "완료"}`);
+            displayTasks();  // 리스트 갱신
+            updateChart();   // 차트 즉시 업데이트
+            $("#taskModal").hide();
+        });
+
+        // 작업 삭제 버튼 클릭 시
+        $("#deleteTask").off().on("click", function () {
+            $.ajax({
+                url: "jsp/DeleteTask.jsp",
+                type: "POST",
+                data: { scheduleId: task.scheduleId },
+                success: function (response) {
+                    if (response.success) {
+                        addActivityLog(`❌ 삭제됨: ${task.taskName}`);
+                        loadTasks();  // 삭제 후 다시 로드
+                        $("#taskModal").hide();
+                    } else {
+                        alert("작업 삭제 실패: " + response.error);
+                    }
+                },
+                error: function () {
+                    alert("작업 삭제 실패.");
+                }
+            });
         });
     }
 
-    // 7. 원형 그래프 업데이트
-    function updateChart(tasks) {
-        const todoCount = tasks.length;  // 전체 할 일 개수
-        const inProgressCount = 0;       // 진행 중 할 일 개수 (추가 구현 가능)
-        const completedCount = 0;        // 완료된 할 일 개수 (추가 구현 가능)
+    // 원형 차트 업데이트
+    function updateChart() {
+        const todoCount = tasks.filter(task => task.status === "todo").length;
+        const inProgressCount = tasks.filter(task => task.status === "inProgress").length;
+        const completedCount = tasks.filter(task => task.status === "completed").length;
 
         const ctx = document.getElementById("statusPieChart").getContext("2d");
-        const statusPieChart = new Chart(ctx, {
+
+        // 차트 중복 생성을 방지하기 위해 이전 차트 제거
+        if (window.statusPieChart) {
+            window.statusPieChart.destroy();
+        }
+
+        window.statusPieChart = new Chart(ctx, {
             type: "doughnut",
             data: {
                 labels: ["할 일", "진행 중", "완료"],
                 datasets: [{
                     data: [todoCount, inProgressCount, completedCount],
-                    backgroundColor: ["#FF6384", "#FFD700", "#4CAF50"],
+                    backgroundColor: ["#FF6384", "#FFD700", "#4CAF50"]
                 }]
             }
         });
     }
 
-    // 8. 할 일 클릭 시 작업 상태 변경 모달 열기
-    function createTaskItem(text, taskId) {
-        const task = document.createElement("div");
-        task.classList.add("task-item");
-        task.textContent = text;
-
-        task.addEventListener("click", function () {
-            openTaskModal(task, text, taskId);
-        });
-
-        return task;
-    }
-
-    // 9. 작업 상태 변경 모달
-    const taskModal = document.getElementById("taskModal");
-    const modalTitle = document.getElementById("modalTitle");
-    const moveButton = document.getElementById("moveTask");
-    const deleteButton = document.getElementById("deleteTask");
-    const closeButton = document.getElementById("closeModal");
-    const inProgressList = document.getElementById("inProgressList");
-    const completedList = document.getElementById("completedList");
-
-    function openTaskModal(task, text, taskId) {
-        taskModal.style.display = "block";
-        modalTitle.textContent = `작업: ${text}`;
-
-        const parentList = task.parentElement;
-
-        if (parentList.id === "todoList") {
-            moveButton.textContent = "진행 중으로 이동";
-            moveButton.onclick = () => moveTask(task, inProgressList, "⏳ 진행 중", taskId);
-        } else if (parentList.id === "inProgressList") {
-            moveButton.textContent = "완료로 이동";
-            moveButton.onclick = () => moveTask(task, completedList, "✅ 완료됨", taskId);
-        } else {
-            moveButton.style.display = "none";
-        }
-
-        deleteButton.onclick = () => {
-            deleteTask(taskId);  // DB에서 삭제
-            task.remove();
-            addActivityLog(`❌ 삭제됨: ${text}`);
-            updateChart([]);
-            closeModal();
-        };
-    }
-
-    moveButton.addEventListener("click", function () {
-        closeModal();
-    });
-
-    closeButton.addEventListener("click", function () {
-        closeModal();
-    });
-
-    function closeModal() {
-        taskModal.style.display = "none";
-    }
-
-    // 10. 작업 이동 (DB 상태 업데이트)
-    function moveTask(task, targetList, message, taskId) {
-        targetList.appendChild(task);
-        addActivityLog(`${message}: ${task.textContent}`);
-        updateTaskStatus(taskId, message);  // DB 상태 업데이트
-        updateChart([]);
-        closeModal();
-    }
-
-    // 11. DB에서 작업 상태 업데이트
-    function updateTaskStatus(taskId, status) {
-        $.ajax({
-            url: "jsp/UpdateTaskStatus.jsp",
-            type: "POST",
-            data: {
-                taskId: taskId,
-                status: status
-            },
-            success: function(response) {
-                const res = JSON.parse(response);
-                if (!res.success) {
-                    alert("상태 업데이트 실패: " + res.error);
-                }
-            },
-            error: function() {
-                alert("서버 오류 발생");
-            }
-        });
-    }
-
-    // 12. DB에서 작업 삭제
-    function deleteTask(taskId) {
-        $.ajax({
-            url: "jsp/DeleteTask.jsp",
-            type: "POST",
-            data: { taskId: taskId },
-            success: function(response) {
-                const res = JSON.parse(response);
-                if (!res.success) {
-                    alert("삭제 실패: " + res.error);
-                }
-            },
-            error: function() {
-                alert("서버 오류 발생");
-            }
-        });
-    }
-
-    // 13. 활동 로그 추가
+    // 최근 활동 로그 추가
     function addActivityLog(message) {
-        const logContainer = document.getElementById("activityLog");
         const time = new Date().toLocaleString();
-        const log = document.createElement("p");
-        log.textContent = `[${time}] ${message}`;
-        logContainer.prepend(log);
+        const logEntry = `<p>[${time}] ${message}</p>`;
+        $("#activityLog").prepend(logEntry);
     }
 
-    // 페이지 로드 시 할 일 불러오기
-    loadTasks();
+    // 모달 닫기
+    $("#closeAddTaskModal, #closeModal").on("click", function () {
+        $(".modal").hide();
+    });
 });
+
 </script>
