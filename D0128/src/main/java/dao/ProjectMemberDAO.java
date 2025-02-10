@@ -5,15 +5,15 @@ import javax.naming.NamingException;
 import util.ConnectionPool;
 
 public class ProjectMemberDAO {
-	public boolean insert(String projectId, String projectUserId) throws NamingException, SQLException {
+	public boolean insert(String projectId, String userid) throws NamingException, SQLException {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		try {
-			String sql = "INSERT INTO projectmembers(projectId, projectUserId) VALUES(?, ?)";
+			String sql = "INSERT INTO teammembers(projectId, userid) VALUES(?, ?)";
 			conn = ConnectionPool.get();
 			stmt = conn.prepareStatement(sql);
 			stmt.setString(1, projectId);
-			stmt.setString(2, projectUserId);
+			stmt.setString(2, userid);
 			int count = stmt.executeUpdate();
 			return (count == 1);
 		} finally {
@@ -24,16 +24,16 @@ public class ProjectMemberDAO {
 		}
 	}
 
-	public boolean exists(String projectID, String projectUserID) throws NamingException, SQLException {
+	public boolean exists(String projectID, String userid) throws NamingException, SQLException {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		try {
-			String sql = "SELECT * FROM projectMembers WHERE projectId= ? and projectUserId = ?";
+			String sql = "SELECT * FROM teammembers WHERE projectId= ? and userid = ?";
 			conn = ConnectionPool.get();
 			stmt = conn.prepareStatement(sql);
 			stmt.setString(1, projectID);
-			stmt.setString(2, projectUserID);
+			stmt.setString(2, userid);
 			rs = stmt.executeQuery();
 			return rs.next();
 		} finally {
@@ -47,15 +47,15 @@ public class ProjectMemberDAO {
 	}
 
 	// 멤버 비할당
-	public boolean delete(String projectID, String projectUserID) throws NamingException, SQLException {
+	public boolean delete(String projectID, String userid) throws NamingException, SQLException {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		try {
-			String sql = "DELETE FROM projectMembers WHERE projectID = ? and projectUserID = ?";
+			String sql = "DELETE FROM teammembers WHERE projectID = ? and userid = ?";
 			conn = ConnectionPool.get();
 			stmt = conn.prepareStatement(sql);
 			stmt.setString(1, projectID);
-			stmt.setString(2, projectUserID);
+			stmt.setString(2, userid);
 			int count = stmt.executeUpdate();
 			return (count == 1);
 		} finally {
@@ -73,7 +73,7 @@ public class ProjectMemberDAO {
 		StringBuilder jsonResult = new StringBuilder("[");
 
 		try {
-			String sql = "SELECT ProjectID, ProjectUserId FROM ProjectMembers WHERE ProjectID = ?";
+			String sql = "SELECT ProjectID, userid FROM teammembers WHERE ProjectID = ?";
 			conn = ConnectionPool.get(); // 커넥션 풀에서 커넥션 획득
 			stmt = conn.prepareStatement(sql);
 			stmt.setString(1, projectID);
@@ -84,7 +84,7 @@ public class ProjectMemberDAO {
 				if (count++ > 0)
 					jsonResult.append(", "); // 첫 번째 항목이 아닐 경우 쉼표 추가
 				jsonResult.append("{").append("\"project\": ").append(rs.getInt("ProjectID")).append(", ")
-						.append("\"user\": \"").append(rs.getString("ProjectUserID")).append("\"")
+						.append("\"user\": \"").append(rs.getString("userid")).append("\"")
 																											// 추가
 						.append("}");
 			}
@@ -108,7 +108,7 @@ public class ProjectMemberDAO {
 		ResultSet rs = null;
 		StringBuilder jsonResult = new StringBuilder("[");
 		try {
-			String sql = "SELECT ProjectID, ProjectUserId FROM ProjectMembers WHERE ProjectID = ? and ProjectUserID = ?";
+			String sql = "SELECT ProjectID, userid FROM teammembers WHERE ProjectID = ? and userid = ?";
 			conn = ConnectionPool.get(); // 커넥션 풀에서 커넥션 획득
 			stmt = conn.prepareStatement(sql);
 			stmt.setString(1, projectID);
@@ -120,7 +120,7 @@ public class ProjectMemberDAO {
 				if (count++ > 0)
 					jsonResult.append(", "); // 첫 번째 항목이 아닐 경우 쉼표 추가
 				jsonResult.append("{").append("\"project\": ").append(rs.getInt("ProjectID")).append(", ")
-						.append("\"user\": \"").append(rs.getString("ProjectUserID")).append("\"")
+						.append("\"user\": \"").append(rs.getString("userid")).append("\"")
 																											// 추가
 						.append("}");
 			}

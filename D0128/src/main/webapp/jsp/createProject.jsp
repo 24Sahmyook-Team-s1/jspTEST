@@ -17,7 +17,7 @@ if (request.getMethod().equalsIgnoreCase("POST")) {
 	boolean code = false;
 
 	try {
-		code = dao.insert(projectname, leader);
+		code = dao.addProject(projectname, leader);
 	} catch (NamingException | SQLException e) {
 		e.printStackTrace();
 	}

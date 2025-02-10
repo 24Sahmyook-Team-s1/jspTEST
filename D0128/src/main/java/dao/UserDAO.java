@@ -14,7 +14,7 @@ public class UserDAO {
         Connection conn = null;
         PreparedStatement stmt = null;
         try {
-            String sql = "INSERT INTO user2(id, jsonstr) VALUES(?, ?)";
+            String sql = "INSERT INTO user2(userid, jsonstr) VALUES(?, ?)";
             conn = ConnectionPool.get();
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, uid);
@@ -33,7 +33,7 @@ public class UserDAO {
         PreparedStatement stmt = null;
         ResultSet rs = null;
         try {
-            String sql = "SELECT id FROM user2 WHERE id = ?";
+            String sql = "SELECT userid FROM user2 WHERE userid = ?";
             conn = ConnectionPool.get();
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, uid);
@@ -50,7 +50,7 @@ public class UserDAO {
         Connection conn = null;
         PreparedStatement stmt = null;
         try {
-            String sql = "DELETE FROM user2 WHERE id = ?";
+            String sql = "DELETE FROM user2 WHERE userid = ?";
             conn = ConnectionPool.get();
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, uid);
@@ -67,7 +67,7 @@ public class UserDAO {
         PreparedStatement stmt = null;
         ResultSet rs = null;
         try {
-            String sql = "SELECT jsonstr FROM user2 WHERE id = ?";
+            String sql = "SELECT jsonstr FROM user2 WHERE userid = ?";
             conn = ConnectionPool.get();
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, uid);
@@ -119,7 +119,7 @@ public class UserDAO {
         PreparedStatement stmt = null;
         ResultSet rs = null;
         try {
-            String sql = "SELECT jsonstr FROM user2 WHERE id = ?";
+            String sql = "SELECT jsonstr FROM user2 WHERE userid = ?";
             conn = ConnectionPool.get();
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, uid);
@@ -137,7 +137,7 @@ public class UserDAO {
         Connection conn = null;
         PreparedStatement stmt = null;
         try {
-            String sql = "UPDATE user2 SET jsonstr = ? WHERE id = ?";
+            String sql = "UPDATE user2 SET jsonstr = ? WHERE userid = ?";
             conn = ConnectionPool.get();
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, jsonstr);
@@ -168,7 +168,7 @@ public class UserDAO {
             stmt.setString(1, "%\"name\":\"" + name + "\"%");
             // 기존에는 email을 "%\"email\":\"" + email + "\"%"로 검색했지만,
             // 데이터베이스에는 이메일 정보가 "id" 키에 저장되어 있으므로 아래와 같이 수정합니다.
-            stmt.setString(2, "%\"id\":\"" + email + "\"%");
+            stmt.setString(2, "%\"userid\":\"" + email + "\"%");
             
             System.out.println("Executing SQL: " + stmt.toString());
             rs = stmt.executeQuery();

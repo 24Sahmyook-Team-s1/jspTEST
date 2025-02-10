@@ -8,12 +8,12 @@ import util.ConnectionPool;
 
 public class ProjectissueDAO {
 	// 프로젝트 이슈 추가
-	public void addIssue(String projectUserId, int projectId, String title, String description)
+	public void addIssue(String userid, int projectId, String title, String description)
 			throws NamingException, SQLException {
-		String sql = "INSERT INTO projectissues (projectissueid, projectuserid, projectid, title, description, createdat) VALUES (2, ?, ?, ?, ?, SYSDATE)";
+		String sql = "INSERT INTO projectissues (projectissueid, userid, projectid, title, description, createdat) VALUES (2, ?, ?, ?, ?, SYSDATE)";
 
 		try (Connection conn = ConnectionPool.get(); PreparedStatement stmt = conn.prepareStatement(sql)) {
-			stmt.setString(1, projectUserId); // 사용자 ID
+			stmt.setString(1, userid); // 사용자 ID
 			stmt.setInt(2, projectId); // 프로젝트 ID
 			stmt.setString(3, title); // 제목
 			stmt.setString(4, description); // 설명
@@ -26,7 +26,7 @@ public class ProjectissueDAO {
 
 	// 특정 프로젝트의 이슈 목록 조회
 	public List<ProjectissueObj> getIssuesByProjectId(int projectId) throws NamingException, SQLException {
-		String sql = "SELECT projectissueid, projectuserid, projectid, title, description, createdat FROM projectissues WHERE projectid = ?";
+		String sql = "SELECT projectissueid, userid, projectid, title, description, createdat FROM projectissues WHERE projectid = ?";
 		List<ProjectissueObj> issues = new ArrayList<>();
 
 		try (Connection conn = ConnectionPool.get(); PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -35,7 +35,7 @@ public class ProjectissueDAO {
 				while (rs.next()) {
 					ProjectissueObj issue = new ProjectissueObj(
 						rs.getInt("projectissueid"), 
-						rs.getString("projectuserid"), 
+						rs.getString("userid"), 
 						rs.getInt("projectid"), 
 						rs.getString("title"), 
 						rs.getString("description"), 

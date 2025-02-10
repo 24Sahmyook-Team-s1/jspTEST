@@ -8,11 +8,6 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
-	<classpathentry kind="lib" path="C:/Users/pmsoo/Downloads/commons-fileupload-1.4.jar"/>
-	<classpathentry kind="lib" path="C:/Users/pmsoo/Downloads/mysql-connector-java-8.0.22.jar"/>
-	<classpathentry kind="lib" path="C:/Users/pmsoo/Downloads/commons-io-2.8.0.jar"/>
-	<classpathentry kind="lib" path="C:/Users/pmsoo/Downloads/json-simple-1.1.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/pmsoo/Downloads/ojdbc11.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>
