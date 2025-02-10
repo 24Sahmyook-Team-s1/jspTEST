@@ -3,11 +3,8 @@
 <%@ page import="java.sql.*"%>
 <%@ page import="javax.naming.*"%>
 <%@ page import="org.json.simple.JSONArray, org.json.simple.JSONObject" %>
-<<<<<<< HEAD
 <%@ page import="dao.ProjectDAO" %>
-=======
-<%@ page import="util.ConnectionPool" %>
->>>>>>> refs/remotes/origin/park
+
 <%
 
     request.setCharacterEncoding("UTF-8");

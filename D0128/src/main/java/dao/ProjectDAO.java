@@ -9,15 +9,15 @@ import org.json.simple.JSONObject;
 public class ProjectDAO {
 
     // 프로젝트 추가
-    public boolean addProject(String projectName, String projectLeader) throws NamingException, SQLException {
+    public boolean addProject(String projectName, String adminuserid) throws NamingException, SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
         try {
-            String sql = "INSERT INTO projects (ProjectName, CreatedAt, ProjectLeader) VALUES (?, SYSDATE, ?)";
+            String sql = "INSERT INTO projects (ProjectName, CreatedAt, ADMINUSERID) VALUES (?, SYSDATE, ?)";
             conn = ConnectionPool.get();
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, projectName);
-            stmt.setString(2, projectLeader);
+            stmt.setString(2, adminuserid);
             int count = stmt.executeUpdate();
             return (count == 1);
         } finally {
@@ -127,7 +127,7 @@ public class ProjectDAO {
 		ResultSet rs = null;
 		StringBuilder jsonResult = new StringBuilder("[");
 		try {
-			String sql = "SELECT projectID, projectName, createDat, projectLeader FROM projects WHERE projectName = ?";
+			String sql = "SELECT projectID, projectName, createDat, adminuserid FROM projects WHERE projectName = ?";
 			conn = ConnectionPool.get();
 			stmt = conn.prepareStatement(sql);
 			stmt.setString(1, projectName);
@@ -146,7 +146,7 @@ public class ProjectDAO {
 				jsonResult.append("{").append("\"no\": ").append(rs.getInt("ProjectID")).append(", ")
 						.append("\"name\": \"").append(rs.getString("ProjectName")).append("\", ")
 						.append("\"created_at\": \"").append(rs.getString("CreatedAt")).append("\", ")
-						.append("\"projectLeader\": \"").append(rs.getString("ProjectLeader")).append("\"") // 프로젝트 리더
+						.append("\"adminuserid\": \"").append(rs.getString("adminuserid")).append("\"") // 프로젝트 리더
 																											// 추가
 						.append("}");
 			}
@@ -172,7 +172,7 @@ public class ProjectDAO {
         try {
             conn = ConnectionPool.get();
             // 사용자가 속한 프로젝트 ID 조회
-            String sql = "SELECT ProjectID FROM Projects WHERE ProjectTeamID IN (SELECT ProjectTeamID FROM TeamMembers WHERE ProjectUserID = ?)";
+            String sql = "SELECT ProjectID FROM Projects WHERE ProjectTeamID IN (SELECT ProjectTeamID FROM projectMembers WHERE ProjectUserID = ?)";
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, userId);
             rs = pstmt.executeQuery();

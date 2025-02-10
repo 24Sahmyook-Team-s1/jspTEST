@@ -10,108 +10,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import util.ConnectionPool;
 
-public class TeamDAO {
-	
-	// 팀 목록 불러오는 메소드
-	public JSONArray getTeamList() throws NamingException,  SQLException {
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        JSONArray teamList = new JSONArray();
-
-        try {
-            conn = ConnectionPool.get(); // ConnectionPool을 통해 연결 받기
-            
-            String sql = "SELECT PROJECTTEAMID, TEAMNAME, TO_CHAR(CREATEDAT, 'YYYY-MM-DD') AS CREATEDAT FROM PROJECTTEAMS ORDER BY CREATEDAT DESC";
-            pstmt = conn.prepareStatement(sql);
-            rs = pstmt.executeQuery();
-
-            while (rs.next()) {
-                JSONObject team = new JSONObject();
-                team.put("id", rs.getInt("PROJECTTEAMID"));
-                team.put("name", rs.getString("TEAMNAME"));
-                team.put("created_at", rs.getString("CREATEDAT"));
-                teamList.add(team);
-            }
-
-        } finally {
-            if (rs != null) rs.close();
-            if (pstmt != null) pstmt.close();
-            if (conn != null) conn.close();
-        }
-
-        return teamList;
-    }
-	
-	// 팀 이름 중복 체크 메서드
-    public boolean isTeamNameExists(String teamName) throws NamingException, SQLException {
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-
-        try {
-            conn = ConnectionPool.get(); // ConnectionPool을 통해 연결 받기
-            String sql = "SELECT COUNT(*) FROM PROJECTTEAMS WHERE TEAMNAME = ?";
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, teamName);
-            rs = pstmt.executeQuery();
-
-            if (rs.next()) {
-                return rs.getInt(1) > 0; // 팀 이름이 존재하면 true 반환
-            }
-        } finally {
-            if (rs != null) rs.close();
-            if (pstmt != null) pstmt.close();
-            if (conn != null) conn.close();
-        }
-        return false; // 예외 발생 시 false 반환
-    }
-
-    // 팀 생성 메서드
-    public JSONObject createTeam(String teamName, String adminId) throws NamingException, SQLException {
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        JSONObject responseJson = new JSONObject();
-
-        try {
-            conn = ConnectionPool.get(); // ConnectionPool을 통해 연결 받기
-
-            String sql = "INSERT INTO PROJECTTEAMS (TEAMNAME, CREATEDAT, ADMINUSERID) VALUES (?, SYSDATE, ?)";
-            pstmt = conn.prepareStatement(sql, new String[]{"PROJECTTEAMID"});
-            pstmt.setString(1, teamName);
-            pstmt.setString(2, adminId);
-            
-            int rows = pstmt.executeUpdate();
-            rs = pstmt.getGeneratedKeys(); // 생성된 TeamID 가져오기
-
-            int teamId = -1;
-            if (rs.next()) {
-                teamId = rs.getInt(1); // 방금 생성된 TeamID 저장
-            }
-
-            if (rows > 0 && teamId != -1) {
-                responseJson.put("status", "success");
-                responseJson.put("message", "팀이 성공적으로 생성되었습니다!");
-                responseJson.put("teamId", teamId); // 생성된 팀 ID 반환
-            } else {
-                responseJson.put("status", "error");
-                responseJson.put("message", "팀 생성 실패.");
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            responseJson.put("status", "error");
-            responseJson.put("message", "서버 오류 발생: " + e.getMessage());
-        } finally {
-            if (rs != null) rs.close();
-            if (pstmt != null) pstmt.close();
-            if (conn != null) conn.close();
-        }
-
-        return responseJson;
-    }
-    
+public class TeamDAO {    
     
     public boolean isTeamLeader(String userId) throws NamingException, SQLException {
     	Connection conn = null;
@@ -126,7 +25,7 @@ public class TeamDAO {
         try {
             conn = ConnectionPool.get();
 
-            String sql = "SELECT COUNT(*) FROM PROJECTTEAMS WHERE ADMINUSERID = ?";
+            String sql = "SELECT COUNT(*) FROM PROJECTS WHERE ADMINUSERID = ?";
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, userId);
             rs = pstmt.executeQuery();
