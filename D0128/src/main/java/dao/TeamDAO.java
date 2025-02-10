@@ -51,7 +51,7 @@ public class TeamDAO {
             conn = ConnectionPool.get();
             
             // ✅ 요청 상태를 "APPROVED"로 변경
-            String updateSql = "UPDATE TEAM_REQUESTS SET STATUS = 'APPROVED' WHERE REQUEST_ID = ?";
+            String updateSql = "UPDATE TEAM_REQUESTS SET STATUS = 'APPROVED' WHERE REQUESTID = ?";
             stmt = conn.prepareStatement(updateSql);
             stmt.setInt(1, requestId);
             int updatedRows = stmt.executeUpdate();
@@ -59,7 +59,7 @@ public class TeamDAO {
 
             if (updatedRows > 0) {
                 // ✅ 승인된 요청을 TEAM_MEMBERS 테이블에 추가
-                String insertSql = "INSERT INTO TEAMMEMBERS (PROJECTTEAMID, USERID, JOINED_AT) VALUES (?, ?, SYSDATE)";
+                String insertSql = "INSERT INTO TEAMMEMBERS (PROJECTID, USERID, JOINED_AT) VALUES (?, ?, SYSDATE)";
                 stmt = conn.prepareStatement(insertSql);
                 stmt.setInt(1, teamId);
                 stmt.setString(2, userId);
@@ -83,7 +83,7 @@ public class TeamDAO {
 
         try {
             conn = ConnectionPool.get();
-            String sql = "UPDATE TEAM_REQUESTS SET STATUS = 'REJECTED' WHERE REQUEST_ID = ?";
+            String sql = "UPDATE TEAM_REQUESTS SET STATUS = 'REJECTED' WHERE REQUESTID = ?";
             pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, requestId);
             int updatedRows = pstmt.executeUpdate();
@@ -109,9 +109,9 @@ public class TeamDAO {
             conn = ConnectionPool.get();
             
             // ✅ 관리자의 팀에 대한 참여 요청 조회
-            String sql = "SELECT r.REQUESTID, r.USERID, r.REQUEST_DATE " +
-                         "FROM TEAM_JOIN_REQUESTS r " +
-                         "JOIN PROJECTTEAMS t ON r.TEAMID = t.PROJECTTEAMID " +
+            String sql = "SELECT r.REQUESTID, r.USERID, r.REQUESTDATE " +
+                         "FROM TEAM_REQUESTS r " +
+                         "JOIN PROJECTS t ON r.PROJECTID = t.PROJECTID " +
                          "WHERE t.ADMINUSERID = ? AND r.STATUS = 'PENDING'";
 
             stmt = conn.prepareStatement(sql);
@@ -143,7 +143,7 @@ public class TeamDAO {
             conn = ConnectionPool.get();
             
             // ✅ 관리자의 팀에 대한 참여 요청 조회
-            String sql = "SELECT r.REQUEST_ID, r.USER_ID, r.TEAM_ID, r.REQUEST_DATE " +
+            String sql = "SELECT r.REQUESTID, r.USERID, r.PROJECTID, r.REQUESTDATE " +
                          "FROM TEAM_REQUESTS r " +
                          //"JOIN PROJECTTEAMS t ON r.TEAMID = t.PROJECTTEAMID " +
                          "WHERE r.STATUS = 'PENDING'";
@@ -153,10 +153,10 @@ public class TeamDAO {
 
             while (rs.next()) {
                 JSONObject requestData = new JSONObject();
-                requestData.put("requestId", rs.getInt("REQUEST_ID"));
-                requestData.put("userId", rs.getString("USER_ID"));
-                requestData.put("teamId", rs.getString("TEAM_ID"));
-                requestData.put("requestDate", rs.getString("REQUEST_DATE"));
+                requestData.put("requestId", rs.getInt("REQUESTID"));
+                requestData.put("userId", rs.getString("USERID"));
+                requestData.put("projectId", rs.getString("PROJECTID"));
+                requestData.put("requestDate", rs.getString("REQUESTDATE"));
                 requestList.add(requestData);
             }
         } finally {
