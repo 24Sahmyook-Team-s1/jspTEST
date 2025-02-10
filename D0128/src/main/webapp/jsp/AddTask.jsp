@@ -14,7 +14,8 @@
     ScheduleDAO scheduleDAO = new ScheduleDAO();
 
     try {
-        boolean result = scheduleDAO.addTask(taskName, startDate, endDate, projectId);
+        // 기본 상태 'todo'로 설정하여 작업 추가
+        boolean result = scheduleDAO.addTask(taskName, startDate, endDate, projectId, "todo");
         jsonResponse.put("success", result);
     } catch (Exception e) {
         jsonResponse.put("success", false);
