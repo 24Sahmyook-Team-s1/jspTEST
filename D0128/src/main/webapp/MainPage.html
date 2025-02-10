@@ -90,9 +90,29 @@
     </div>
 
     <script>
+    
     $(document).ready(function () {
       loadProjects(); 
+		
+      $(".sidebar-link, .profile-menu li").on("click", function () {
+          const targetPage = $(this).data("link");
+          window.location.href = targetPage;
+      });
 
+      // 📌 프로필 버튼 클릭 시 메뉴 토글
+      const profileBtn = $("#profileBtn");
+      const profileMenu = $("#profileMenu");
+
+      profileBtn.on("click", function (event) {
+          event.stopPropagation();
+          profileMenu.toggleClass("active");
+      });
+
+      $(document).on("click", function (event) {
+          if (!profileBtn.is(event.target) && !profileMenu.is(event.target) && profileMenu.has(event.target).length === 0) {
+              profileMenu.removeClass("active");
+          }
+      });
       const projectWrapper = $(".project-list-wrapper");
 
       function loadProjects() {
