@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>스케줄 관리</title>
+    <script>
+        // 스케줄 목록을 가져오는 함수
+        function fetchSchedules() {
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", "jsp/Schedule_get.jsp", true);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    const schedules = JSON.parse(xhr.responseText);
+                    displaySchedules(schedules);
+                }
+            };
+            xhr.send();
+        }
+
+        // 스케줄 목록을 테이블에 출력하는 함수
+        function displaySchedules(schedules) {
+            const tableBody = document.getElementById("schedule-table-body");
+            tableBody.innerHTML = ""; // 기존 내용을 지우기
+
+            if (schedules.length === 0) {
+                tableBody.innerHTML = "<tr><td colspan='6'>등록된 스케줄이 없습니다.</td></tr>";
+                return;
+            }
+
+            schedules.forEach(schedule => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${schedule.scheduleId}</td>
+                    <td>${schedule.task_name}</td>
+                    <td>${schedule.start_date}</td>
+                    <td>${schedule.end_date}</td>
+                    <td>${schedule.projectId}</td>
+                    <td>
+                        <button onclick="showUpdateForm(${schedule.scheduleId}, '${schedule.task_name}', '${schedule.start_date}', '${schedule.end_date}', ${schedule.projectId})">수정</button>
+                        <button onclick="deleteSchedule(${schedule.scheduleId})">삭제</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // 스케줄 추가하는 함수
+        function addSchedule() {
+            const taskName = document.getElementById("task_name").value;
+            const startDate = document.getElementById("start_date").value;
+            const endDate = document.getElementById("end_date").value;
+            const projectId = document.getElementById("projectId").value;
+
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", "jsp/Schedule_add.jsp?action=add", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    fetchSchedules(); // 스케줄 목록을 새로 고침
+                }
+            };
+            xhr.send(`task_name=${encodeURIComponent(taskName)}&start_date=${encodeURIComponent(startDate)}&end_date=${encodeURIComponent(endDate)}&projectId=${encodeURIComponent(projectId)}`);
+        }
+
+        // 스케줄 삭제하는 함수
+        function deleteSchedule(scheduleId) {
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", "jsp/Schedule_delete.jsp?action=delete", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    fetchSchedules(); // 스케줄 목록을 새로 고침
+                }
+            };
+            xhr.send(`scheduleId=${scheduleId}`);
+        }
+
+        // 수정 폼을 표시하는 함수
+        function showUpdateForm(scheduleId, taskName, startDate, endDate, projectId) {
+            document.getElementById("update_schedule_id").value = scheduleId;
+            document.getElementById("update_task_name").value = taskName;
+            document.getElementById("update_start_date").value = startDate;
+            document.getElementById("update_end_date").value = endDate;
+            document.getElementById("update_projectId").value = projectId; // 기존 프로젝트 ID 설정
+            document.getElementById("update_form").style.display = "block";
+        }
+
+        // 스케줄 업데이트하는 함수
+        function updateSchedule() {
+            const scheduleId = document.getElementById("update_schedule_id").value;
+            const taskName = document.getElementById("update_task_name").value;
+            const startDate = document.getElementById("update_start_date").value;
+            const endDate = document.getElementById("update_end_date").value;
+            const projectId = document.getElementById("update_projectId").value; // 수정할 프로젝트 ID
+
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", "jsp/Schedule_update.jsp?action=update", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    fetchSchedules(); // 스케줄 목록을 새로 고침
+                    document.getElementById("update_form").style.display = "none"; // 수정 폼 숨기기
+                }
+            };
+            xhr.send(`scheduleId=${scheduleId}&task_name=${encodeURIComponent(taskName)}&start_date=${encodeURIComponent(startDate)}&end_date=${encodeURIComponent(endDate)}&projectId=${encodeURIComponent(projectId)}`);
+        }
+
+        // 프로젝트 목록을 가져오는 함수
+        function fetchProjects() {
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", "jsp/GetProjectList.jsp", true);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    const projects = JSON.parse(xhr.responseText);
+                    displayProjects(projects);
+                }
+            };
+            xhr.send();
+        }
+
+        // 드롭다운에 프로젝트를 표시하는 함수
+        function displayProjects(projects) {
+            const projectSelect = document.getElementById("projectId");
+            projectSelect.innerHTML = ""; // 기존 내용을 지우기
+
+            projects.forEach(project => {
+                const option = document.createElement("option");
+                option.value = project.id; // 프로젝트 ID
+                option.textContent = project.name; // 사용자에게 보여줄 프로젝트 이름
+                projectSelect.appendChild(option);
+            });
+        }
+
+        // 페이지 로드 시 스케줄과 프로젝트 가져오기
+        window.onload = function() {
+            fetchSchedules();
+            fetchProjects(); // 프로젝트 목록 가져오기
+        };
+    </script>
+</head>
+<body>
+    <h1>스케줄 추가</h1>
+    <input type="text" id="task_name" placeholder="작업 이름" required />
+    <input type="date" id="start_date" required />
+    <input type="date" id="end_date" required />
+    
+    <select id="projectId" required>
+        <option value="">프로젝트 선택</option>
+        <!-- 프로젝트 목록이 동적으로 추가됩니다. -->
+    </select>
+
+    <button onclick="addSchedule()">추가</button>
+
+    <h1>스케줄 목록</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>스케줄 ID</th>
+                <th>작업 이름</th>
+                <th>시작일</th>
+                <th>종료일</th>
+                <th>프로젝트 ID</th>
+                <th>작업</th>
+            </tr>
+        </thead>
+        <tbody id="schedule-table-body">
+            <!-- 스케줄 데이터가 동적으로 추가됩니다. -->
+        </tbody>
+    </table>
+
+    <div id="update_form" style="display: none;">
+        <h2>스케줄 수정</h2>
+        <input type="hidden" id="update_schedule_id" />
+        <input type="text" id="update_task_name" placeholder="작업 이름" required />
+        <input type="date" id="update_start_date" required />
+        <input type="date" id="update_end_date" required />
+        
+        <select id="update_projectId" required>
+            <option value="">프로젝트 선택</option>
+            <!-- 수정할 프로젝트 목록이 여기에 추가될 수 있습니다. -->
+        </select>
+
+        <button onclick="updateSchedule()">수정</button>
+    </div>
+</body>
+</html>
