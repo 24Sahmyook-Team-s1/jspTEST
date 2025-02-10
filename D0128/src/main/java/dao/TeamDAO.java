@@ -11,6 +11,37 @@ import org.json.simple.parser.ParseException;
 import util.ConnectionPool;
 
 public class TeamDAO {    
+	
+	public JSONArray getteamlist() throws NamingException, SQLException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        JSONArray requestList = new JSONArray();
+
+        try {
+            conn = ConnectionPool.get();
+            
+            // ✅ 관리자의 팀에 대한 참여 요청 조회
+            String sql = "SELECT USER_ID, joined_DATE " +
+                         "FROM teammembers  ";
+
+            stmt = conn.prepareStatement(sql);
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                JSONObject requestData = new JSONObject();
+                requestData.put("userId", rs.getString("USER_ID"));
+                requestData.put("requestDate", rs.getString("joined_DATE"));
+                requestList.add(requestData);
+            }
+        } finally {
+            if (rs != null) rs.close();
+            if (stmt != null) stmt.close();
+            if (conn != null) conn.close();
+        }
+
+        return requestList;
+    }
     
     public boolean isTeamLeader(String userId) throws NamingException, SQLException {
     	Connection conn = null;

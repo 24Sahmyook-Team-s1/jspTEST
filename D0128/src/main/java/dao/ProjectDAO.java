@@ -155,8 +155,8 @@ public class ProjectDAO {
 		return jsonResult.toString(); // JSON 문자열 반환
 	}
     
-    // 사용자 id로 참여하고 있는 프로젝트 조회
-    public JSONArray getProjectsByUserId(String userId) throws NamingException, SQLException {
+    // 사용자 id로 참여하고 있는 프로젝트 id
+    public JSONArray getProjectIdByUserId(String userId) throws NamingException, SQLException {
         JSONArray projectList = new JSONArray();
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -165,7 +165,7 @@ public class ProjectDAO {
         try {
             conn = ConnectionPool.get();
             // 사용자가 속한 프로젝트 ID 조회
-            String sql = "SELECT ProjectID FROM Projects WHERE ProjectTeamID IN (SELECT ProjectTeamID FROM projectMembers WHERE ProjectUserID = ?)";
+            String sql = "SELECT ProjectID FROM teamMembers WHERE UserID = ?";
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, userId);
             rs = pstmt.executeQuery();
