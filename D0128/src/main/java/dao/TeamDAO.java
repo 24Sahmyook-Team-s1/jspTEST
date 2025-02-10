@@ -12,7 +12,7 @@ import util.ConnectionPool;
 
 public class TeamDAO {    
 	
-	public JSONArray getteamlist() throws NamingException, SQLException {
+	public JSONArray getTeamList() throws NamingException, SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
