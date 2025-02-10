@@ -1,6 +1,8 @@
 package dao;
 
 import java.sql.*;
+import java.util.Calendar;
+
 import javax.naming.NamingException;
 import util.ConnectionPool;
 import org.json.simple.JSONArray;
@@ -8,7 +10,6 @@ import org.json.simple.JSONObject;
 
 public class ProjectDAO {
 
-    // 프로젝트 추가
     public boolean addProject(String projectName, String adminuserid) throws NamingException, SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -155,8 +156,8 @@ public class ProjectDAO {
 		return jsonResult.toString(); // JSON 문자열 반환
 	}
     
-    // 사용자 id로 참여하고 있는 프로젝트 id
-    public JSONArray getProjectIdByUserId(String userId) throws NamingException, SQLException {
+    // 사용자 id로 참여하고 있는 프로젝트 조회
+    public JSONArray getProjectsByUserId(String userId) throws NamingException, SQLException {
         JSONArray projectList = new JSONArray();
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -165,7 +166,7 @@ public class ProjectDAO {
         try {
             conn = ConnectionPool.get();
             // 사용자가 속한 프로젝트 ID 조회
-            String sql = "SELECT ProjectID FROM teamMembers WHERE UserID = ?";
+            String sql = "SELECT ProjectID FROM Projects WHERE ProjectTeamID IN (SELECT ProjectTeamID FROM projectMembers WHERE ProjectUserID = ?)";
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, userId);
             rs = pstmt.executeQuery();
@@ -223,4 +224,52 @@ public class ProjectDAO {
             if (conn != null) conn.close();
         }
     }
+
+    // 프로젝트 ID로 Schedule 테이블의 스케줄 조회
+    private JSONArray getScheduleByProjectId(int projectId, Connection conn) throws SQLException {
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        JSONArray scheduleArray = new JSONArray();
+
+        try {
+            String sql = "SELECT START_DATE, END_DATE FROM Schedule WHERE ProjectID = ?";
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, projectId);
+            rs = stmt.executeQuery();
+
+            boolean[] weeklySchedule = new boolean[5]; // 월~금 초기화
+
+            while (rs.next()) {
+                Date startDate = rs.getDate("START_DATE");
+                Date endDate = rs.getDate("END_DATE");
+
+                // 날짜 범위에 따라 주간 스케줄 업데이트
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(startDate);
+
+                while (!calendar.getTime().after(endDate)) {
+                    int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+
+                    if (dayOfWeek >= Calendar.MONDAY && dayOfWeek <= Calendar.FRIDAY) {
+                        weeklySchedule[dayOfWeek - Calendar.MONDAY] = true;
+                    }
+
+                    calendar.add(Calendar.DATE, 1);
+                }
+            }
+
+            // 스케줄을 JSON 배열로 변환
+            for (boolean dayActive : weeklySchedule) {
+                scheduleArray.add(dayActive);
+            }
+
+        } finally {
+            if (rs != null) rs.close();
+            if (stmt != null) stmt.close();
+        }
+
+        return scheduleArray;
+    }
+    
+    
 }
