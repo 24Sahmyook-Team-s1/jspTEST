@@ -12,6 +12,11 @@ public class ProjectissueDAO {
 			throws NamingException, SQLException {
 		String sql = "INSERT INTO projectissues (projectissueid, userid, projectid, title, description, issuelevel, createdat) VALUES (2, ?, ?, ?, ?, ?, SYSDATE)";
 
+		
+		userid = userid.trim();
+        title = title.trim();
+        description = description.trim();
+        
 		try (Connection conn = ConnectionPool.get(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 			stmt.setString(1, userid); // 사용자 ID
 			stmt.setInt(2, projectId); // 프로젝트 ID
@@ -25,34 +30,6 @@ public class ProjectissueDAO {
 		}
 	}
 
-	// 특정 프로젝트의 이슈 목록 조회
-//	public List<ProjectissueObj> getIssuesByProjectId(int projectId) throws NamingException, SQLException {
-//		String sql = "SELECT projectissueid, userid, projectid, title, description, issuelevel, createdat FROM projectissues WHERE projectid = ?";
-//		List<ProjectissueObj> issues = new ArrayList<>();
-//
-//		try (Connection conn = ConnectionPool.get(); PreparedStatement stmt = conn.prepareStatement(sql)) {
-//			stmt.setInt(1, projectId); // 프로젝트 ID
-//			try (ResultSet rs = stmt.executeQuery()) {
-//				while (rs.next()) {
-//					ProjectissueObj issue = new ProjectissueObj(
-//						rs.getInt("projectissueid"), 
-//						rs.getString("userid"), 
-//						rs.getInt("projectid"), 
-//						rs.getString("title"), 
-//						rs.getString("description"),
-//						rs.getInt("issuelevel"),  
-//						rs.getTimestamp("createdat") // Timestamp로 처리
-//					); 
-//					issues.add(issue);
-//				}
-//			}
-//		} catch (SQLException e) {
-//			e.printStackTrace(); // 예외 처리 강화
-//			throw e; // 예외를 다시 던져서 호출자에게 알림
-//		}
-//
-//		return issues; // 이슈 목록 반환
-//	}
 	
 	public String getIssuesByProjectIdJSON(int projectId) throws Exception {
 		Connection conn = null;
@@ -66,18 +43,6 @@ public class ProjectissueDAO {
             stmt = conn.prepareStatement(sql);
             stmt.setInt(1, projectId); // 프로젝트 ID
             rs = stmt.executeQuery();
-
-//            while (rs.next()) {
-//                JSONObject project = new JSONObject();
-//            	project.put("issueid", rs.getInt("projectissueid"));
-//                project.put("userid", rs.getString("userid"));
-//                project.put("projectid", rs.getInt("projectid")); 
-//                project.put("title", rs.getString("title"));
-//                project.put("description", rs.getString("description"));
-//                project.put("level", rs.getInt("issuelevel"));
-//                project.put("createdat", rs.getTimestamp("createdat"));
-//                jsonResult.add(project); 
-//            }
             
             int count = 0;
 			while (rs.next()) {
@@ -133,4 +98,3 @@ public class ProjectissueDAO {
 	}
 
 }
-
