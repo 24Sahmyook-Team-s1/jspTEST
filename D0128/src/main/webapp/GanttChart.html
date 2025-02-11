@@ -109,7 +109,7 @@
 
         function loadGanttChart() {
             $.ajax({
-                url: "jsp/GetProjectList.jsp",
+                url: "jsp/GetTasks.jsp",
                 type: "GET",
                 dataType: "json",
                 success: function (projects) {
@@ -128,7 +128,7 @@
             projects.forEach(project => {
                 const row = `
                     <div class="gantt-row" data-id="${project.id}">
-                        <div class="project-name">${project.name}</div>
+                        <div class="project-name">${project.taskName}</div>
                         <div class="gantt-progress">
                             <div class="${project.ScheduleMonday === 'Y' ? 'active' : ''}"></div>
                             <div class="${project.ScheduleTuesday === 'Y' ? 'active' : ''}"></div>
