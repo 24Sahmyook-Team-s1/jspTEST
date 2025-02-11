@@ -108,7 +108,7 @@
 <script>
 $(document).ready(function () {
 	const urlParams = new URLSearchParams(window.location.search);
-    const projectId = urlParams.get('projectid');
+    let projectId = urlParams.get('projectid');
     let userId;
     
     $.ajax({
@@ -134,7 +134,7 @@ $(document).ready(function () {
 	
     // 📌 사이드바 및 프로필 메뉴 클릭 시 페이지 이동
     $(".sidebar-link, .profile-menu li").on("click", function () {
-        const targetPage = $(this).data("link");
+        const targetPage = $(this).data("link") + `?projectid=${projectId}`;
         window.location.href = targetPage;
     });
 
