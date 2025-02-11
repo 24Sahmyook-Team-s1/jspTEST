@@ -179,10 +179,24 @@
 
 
       // 추가 작업 필요
-      function goToTeamPage(projectId) {
-    	    // 팀 페이지 URL을 생성 (예: "TeamPage.html?id=123")
-    	    window.location.href = `TeamPage.html?projectid=${projectId}&userId=${userId}`;
-    	}
+     function goToTeamPage(projectId) {
+    	$.ajax({
+        	url: "jsp/enterteamwindow.jsp",
+        	type: "POST",
+        	data: { userId: userId, projectId: projectId },
+        	success: function(response) {
+            	if (response.trim() === "OK") {
+                	window.location.href = "TeamPage.html";  // ✅ URL에서 ID 제거 (세션 사용)
+            	} else {
+                	alert("세션 저장 중 오류가 발생했습니다.");
+            	}
+        	},
+        	error: function(xhr, status, error) {
+            	console.error("세션 설정 오류:", error);
+        	}
+    	});
+	}
+
       function getProjectCode(project) {
         return `
          <div class="project" id="project-${project.id}">

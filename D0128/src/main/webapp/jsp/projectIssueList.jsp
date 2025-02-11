@@ -20,7 +20,7 @@
     ProjectissueDAO DAO = new ProjectissueDAO();
 	if (request.getMethod().equalsIgnoreCase("POST")) {
 	
-		int projectid = 1;//request.getParameter("projectid");
+		int projectid = Integer.parseInt(request.getParameter("projectid").trim());
 	
 	    // JSON 결과를 저장할 변수
 	

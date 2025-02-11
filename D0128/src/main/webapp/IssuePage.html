@@ -199,16 +199,56 @@
                 }
             });
         });
+        let projectId;
+        let userId;
 
         // 이슈 데이터 로드
         $(document).ready(function () {
-            loadIssues();
+            
+            $.ajax({
+                url: "jsp/session.jsp",
+                type: "GET",
+                success: function(response) {
+                    if (response.includes("로그인하지 않았습니다.")) {
+                        alert("로그인이 필요합니다.");
+                        window.location.href = "index.html"; // 로그인 페이지로 이동
+                    }
+                    else{
+                    	userId = response; // 세션에서 사용자 ID를 가져오는 부분
+                    	console.log("유저 id: " + userId);
+                    	$.ajax({
+                            url: "jsp/projectsession.jsp",
+                            type: "GET",
+                            success: function(response) {
+                                if (response.includes("error")) {
+                                    alert("프로젝트를 다시골라 주세요.");
+                                    window.location.href = "MainPage.html"; // 메인 페이지로 이동
+                                }
+                                else{
+                                	projectId = response; // 세션에서 사용자 ID를 가져오는 부분
+                                    console.log("프로젝트 id: " + projectId);
+                                    loadIssues();
+                                    console.log("페이지 로드 + 유저 id, 프로젝트 id 완료");
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                console.error("세션 확인 중 오류 발생:", error);
+                            }
+                        });
+                        console.log("페이지 로드 + 유저 id, 프로젝트 id 완료");
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("세션 확인 중 오류 발생:", error);
+                }
+            });
 
             function loadIssues() {
+            	console.log(projectId);
                 $.ajax({
                     url: "jsp/projectIssueList.jsp",
                     type: "POST",
-                    data: { projectid: 1 },
+                    data: { projectid: projectId },
                     dataType: "json",
                     success: function (issues) {
                         console.log("✅ Loaded issues:", issues);

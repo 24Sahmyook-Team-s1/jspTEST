@@ -106,10 +106,10 @@
     </div>
 
 <script>
+let projectId;
+let userId;
+
 $(document).ready(function () {
-	const urlParams = new URLSearchParams(window.location.search);
-    let projectId = urlParams.get('projectid');
-    let userId;
     
     $.ajax({
         url: "jsp/session.jsp",
@@ -122,8 +122,25 @@ $(document).ready(function () {
             else{
             	userId = response; // 세션에서 사용자 ID를 가져오는 부분
             	console.log("유저 id: " + userId);
-                console.log("프로젝트 id: " + projectId);
-                loadTasks(userId, projectId); // 페이지 로드 시 할 일 불러오기
+            	$.ajax({
+                    url: "jsp/projectsession.jsp",
+                    type: "GET",
+                    success: function(response) {
+                        if (response.includes("error")) {
+                            alert("프로젝트를 다시골라 주세요.");
+                            window.location.href = "MainPage.html"; // 메인 페이지로 이동
+                        }
+                        else{
+                        	projectId = response; // 세션에서 사용자 ID를 가져오는 부분
+                            console.log("프로젝트 id: " + projectId);
+                            loadTasks();
+                            console.log("페이지 로드 + 유저 id, 프로젝트 id 완료");
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("세션 확인 중 오류 발생:", error);
+                    }
+                });
                 console.log("페이지 로드 + 유저 id, 프로젝트 id 완료");
             }
         },
@@ -134,7 +151,7 @@ $(document).ready(function () {
 	
     // 📌 사이드바 및 프로필 메뉴 클릭 시 페이지 이동
     $(".sidebar-link, .profile-menu li").on("click", function () {
-        const targetPage = $(this).data("link") + `?projectid=${projectId}`;
+        const targetPage = $(this).data("link");
         window.location.href = targetPage;
     });
 
