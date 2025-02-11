@@ -16,9 +16,6 @@ import org.json.simple.JSONObject;
 import util.ConnectionPool;
 
 public class ProjectDAO {
-
-   
-
     // 프로젝트 이름으로 존재 여부 확인
     public boolean isProjectExists(String projectName) throws NamingException, SQLException {
         Connection conn = null;
@@ -327,4 +324,6 @@ public class ProjectDAO {
 
         return scheduleArray;
     }
+
 }
+
