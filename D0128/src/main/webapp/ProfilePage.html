@@ -95,7 +95,7 @@
                 profileMenu.removeClass("active");
             }
         });
-        // 세션 확인
+    	// 세션 확인
         $.ajax({
             url: "jsp/session.jsp",
             type: "GET",
@@ -104,7 +104,9 @@
                     alert("로그인이 필요합니다.");
                     window.location.href = "index.html";
                 } else {
-                    userId = response.trim();
+                    // userId에서 "현재 로그인한 사용자 ID:" 부분 제거
+                    userId = response.replace("현재 로그인한 사용자 ID:", "").trim();  
+                    console.log("✅ 로그인된 사용자 ID:", userId);  // 디버깅 로그
                     loadUserProfile();
                     loadUserBio();
                     loadUserProjects();
@@ -114,37 +116,6 @@
                 console.error("세션 확인 중 오류 발생:", error);
             }
         });
-        $("#renameProjectBtn").click(function () {
-            const projectId = $("#projectSelect").val();
-            const newProjectName = $("#newProjectName").val().trim();
-
-            if (newProjectName) {
-                console.log("프로젝트 이름 변경 요청:", { projectId: projectId, newName: newProjectName });  // 디버깅 로그
-
-                $.ajax({
-                    url: "jsp/RenameProject.jsp",
-                    type: "POST",
-                    data: { projectId: projectId, newName: newProjectName },
-                    success: function (response) {
-                        console.log("서버 응답:", response);  // 서버 응답 확인
-                        if (response.status === "success") {
-                            alert("프로젝트 이름이 변경되었습니다.");
-                            loadUserProjects();
-                            $("#projectModal").hide();
-                        } else {
-                            alert("프로젝트 이름 변경 실패: " + response.message);
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        console.error("프로젝트 이름 변경 중 오류 발생:", error);
-                        alert("프로젝트 이름 변경 중 오류가 발생했습니다.");
-                    }
-                });
-            } else {
-                alert("새 이름을 입력하세요.");
-            }
-        });
-
 
         // 프로필 수정
         $(".edit-profile-btn").click(function () {
@@ -227,17 +198,19 @@
             type: "POST",
             data: { userId: userId, bio: bio, append: append },
             success: function (response) {
+                console.log("📤 BIO 저장 응답:", response); // 디버깅 로그
                 if (response.status === "success") {
-                    console.log("소개글 저장 성공.");
+                    console.log("✅ 소개글 저장 성공.");
                 } else {
-                    console.error("소개글 저장 실패:", response.message);
+                    console.error("❌ 소개글 저장 실패:", response.message);
                 }
             },
             error: function (xhr, status, error) {
-                console.error("소개글 저장 중 오류:", error);
+                console.error("❌ 소개글 저장 중 오류:", error);
             }
         });
     }
+
 
     function loadUserProfile() {
         $.ajax({
@@ -260,6 +233,7 @@
             type: "GET",
             data: { userId: userId },
             success: function (response) {
+                console.log("📥 BIO 불러오기 응답:", response); // 디버깅 로그
                 if (response.status === "success" && response.bio) {
                     $("#bioPreview").removeClass('empty').text(response.bio);
                 } else {
@@ -267,7 +241,7 @@
                 }
             },
             error: function (xhr, status, error) {
-                console.error("소개글 불러오기 중 오류 발생:", error);
+                console.error("❌ 소개글 불러오기 중 오류 발생:", error);
             }
         });
     }
