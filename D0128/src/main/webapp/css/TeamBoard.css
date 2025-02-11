@@ -95,6 +95,7 @@ body, html {
         border-radius: 0;
     }
 }
+
 /* 메인 콘텐츠 */
 .main-content {
     flex: 1;
@@ -109,20 +110,7 @@ body, html {
     margin-bottom: 20px;
 }
 
-.write-post-btn {
-    padding: 10px 20px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.write-post-btn:hover {
-    background-color: #45a049;
-}
-
-.board-container .post {
+#postList .post {
     background: #f9f9f9;
     padding: 20px;
     margin-bottom: 15px;
@@ -130,21 +118,29 @@ body, html {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.post-title {
+.post h3 {
     font-weight: bold;
     margin-bottom: 10px;
     font-size: 20px;
 }
 
-.post-content {
+.post p {
     margin-bottom: 10px;
     color: #555;
 }
 
-.post-meta {
-    font-size: 12px;
+.post small {
+    display: block;
+    margin-top: 5px;
     color: gray;
-    text-align: right;
+}
+
+/* 게시글 이미지 스타일 */
+.post-image {
+    max-width: 100%;
+    height: auto;
+    margin-top: 10px;
+    border-radius: 8px;
 }
 
 /* 프로필 버튼 */
@@ -173,6 +169,10 @@ body, html {
     display: none;
 }
 
+.profile-menu.active {
+    display: block;
+}
+
 .profile-menu ul {
     list-style: none;
     padding: 10px;
@@ -188,13 +188,8 @@ body, html {
     background: #f0f0f0;
 }
 
-.profile-menu.active {
-    display: block;
-}
-
 /* 모달 스타일 */
 .modal {
-    display: none;
     position: fixed;
     top: 0;
     left: 0;
@@ -208,63 +203,34 @@ body, html {
 
 .modal-content {
     background: white;
-    width: 50%; /* 모달 너비를 더 넓게 */
-    max-width: 600px;
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    text-align: center;
-}
-
-.modal-content h2 {
-    margin-bottom: 20px;
-    font-size: 24px;
+    width: 400px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 .modal-content input[type="text"],
-.modal-content textarea {
+.modal-content textarea,
+.modal-content input[type="file"] {
     width: 100%;
-    padding: 15px;
-    margin-bottom: 20px;
-    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 8px;
     border: 1px solid #ccc;
-    font-size: 16px;
+    font-size: 14px;
 }
+
 .modal-content button {
-    padding: 12px 25px;
-    font-size: 16px;
+    padding: 10px 20px;
+    font-size: 14px;
     border: none;
-    border-radius: 10px;
+    border-radius: 8px;
     cursor: pointer;
     background-color: #4CAF50;
     color: white;
-    transition: background-color 0.3s ease;
+    margin-right: 10px;
 }
+
 .modal-content button:hover {
-    background-color: #45A049;
-}
-
-#submitPost {
-    padding: 12px 20px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-#submitPost:hover {
     background-color: #45a049;
-}
-
-.close-btn {
-    padding: 12px 20px;
-    background-color: #ccc;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-.close-btn:hover {
-    background-color: #bbb;
 }
