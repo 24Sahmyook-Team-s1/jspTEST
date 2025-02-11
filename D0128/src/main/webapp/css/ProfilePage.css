@@ -83,6 +83,28 @@ body {
     transform: translateY(-2px);
 }
 
+/* ✅ 추가 입력 버튼 스타일 */
+.append-bio-btn {
+    padding: 12px 25px;
+    background-color: #FF9800;  /* 주황색으로 변경 */
+    color: white;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    margin-left: 10px;  /* 프로필 수정 버튼과의 간격 */
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.append-bio-btn:hover {
+    background-color: #F57C00;  /* 진한 주황색 */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
+}
+
+
 /* 소개글 오른쪽 섹션 */
 .profile-bio {
     flex: 1;  /* 남은 공간 전체 차지 */
@@ -230,5 +252,64 @@ body {
         bottom: 10px;
         right: 10px;
     }
+}
+
+/* 모달 스타일 */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    width: 400px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.modal-content h2 {
+    margin-bottom: 20px;
+}
+
+.modal-content input, .modal-content select {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+.modal-content button {
+    padding: 10px 20px;
+    margin: 10px 5px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+#renameProjectBtn {
+    background-color: #4CAF50;
+    color: white;
+}
+
+#deleteProjectBtn {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.close-btn {
+    background-color: #95a5a6;
+    color: white;
 }
 
