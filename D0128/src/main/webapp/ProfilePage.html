@@ -177,7 +177,7 @@
         $("#deleteProjectBtn").click(function () {
             const projectId = $("#projectSelect").val();
             $.ajax({
-                url: "jsp/DeleteProject.jsp",
+                url: "jsp/deleteProject.jsp",
                 type: "POST",
                 data: { projectId: projectId },
                 success: function () {
