@@ -113,6 +113,8 @@
     </div>
 
     <script>
+        let projectId;
+        let userId;
         document.addEventListener("DOMContentLoaded", function () {
             document.querySelectorAll('.sidebar-link').forEach(link => {
                 link.addEventListener('click', function () {
@@ -187,7 +189,9 @@
                 data: {
                     title: issueTitle,
                     description: issueDescription,
-                    level: issueLevel
+                    level: issueLevel,
+                    userid: userId,
+                    projectid:projectId
                 },
                 success: function (response) {
                     alert("이슈가 성공적으로 추가되었습니다!");
@@ -199,9 +203,8 @@
                     alert("이슈 추가에 실패했습니다.");
                 }
             });
+
         });
-        let projectId;
-        let userId;
 
         // 이슈 데이터 로드
         $(document).ready(function () {
@@ -243,53 +246,53 @@
                     console.error("세션 확인 중 오류 발생:", error);
                 }
             });
-
-            function loadIssues() {
-            	console.log(projectId);
-                $.ajax({
-                    url: "jsp/projectIssueList.jsp",
-                    type: "POST",
-                    data: { projectid: projectId },
-                    dataType: "json",
-                    success: function (issues) {
-                        console.log("✅ Loaded issues:", issues);
-                        displayIssues(issues);
-                    },
-                    error: function (xhr, status, error) {
-                        console.error("❌ AJAX 오류 발생:", error);
-                    }
-                });
-            }
-
-            function displayIssues(issues) {
-                const hazardList = $("#hazardList");
-                const issueList = $("#issueList");
-                const solvedList = $("#solvedList");
-
-                hazardList.empty();
-                issueList.empty();
-                solvedList.empty();
-
-                issues.forEach(issue => {
-                    if (issue.level === "0") {
-                        hazardList.append(getIssues(issue));
-                    } else if (issue.level === "1") {
-                        issueList.append(getIssues(issue));
-                    } else if (issue.level === "2") {
-                        solvedList.append(getIssues(issue));
-                    }
-                });
-            }
-
-            function getIssues(issue) {
-                return `
-                    <div class="issue-item">
-                        <span>${issue.title}</span>
-                        <span>${issue.description}</span>
-                    </div>
-                `;
-            }
         });
+        
+        function loadIssues() {
+        	console.log(projectId);
+            $.ajax({
+                url: "jsp/projectIssueList.jsp",
+                type: "POST",
+                data: { projectid: projectId },
+                dataType: "json",
+                success: function (issues) {
+                    console.log("✅ Loaded issues:", issues);
+                    displayIssues(issues);
+                },
+                error: function (xhr, status, error) {
+                    console.error("❌ AJAX 오류 발생:", error);
+                }
+            });
+        }
+
+        function displayIssues(issues) {
+            const hazardList = $("#hazardList");
+            const issueList = $("#issueList");
+            const solvedList = $("#solvedList");
+
+            hazardList.empty();
+            issueList.empty();
+            solvedList.empty();
+
+            issues.forEach(issue => {
+                if (issue.level === "0") {
+                    hazardList.append(getIssues(issue));
+                } else if (issue.level === "1") {
+                    issueList.append(getIssues(issue));
+                } else if (issue.level === "2") {
+                    solvedList.append(getIssues(issue));
+                }
+            });
+        }
+
+        function getIssues(issue) {
+            return `
+                <div class="issue-item">
+                    <span>${issue.title}</span>
+                    <span>${issue.description}</span>
+                </div>
+            `;
+        }
     </script>
 
 </body>

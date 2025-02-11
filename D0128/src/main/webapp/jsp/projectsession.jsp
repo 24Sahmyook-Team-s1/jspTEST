@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%
-    String projectId = (String) session.getAttribute("projectId");
+    String projectId = (String) session.getAttribute("projectId").toString().trim();
 	
     if (projectId == null) {
         out.print("error");

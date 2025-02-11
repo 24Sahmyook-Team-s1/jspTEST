@@ -3,6 +3,7 @@
 
 <%
     String projectId = request.getParameter("projectId");
+    String newName = request.getParameter("newName");
     JSONObject result = new JSONObject();
 
     Connection conn = null;
@@ -12,13 +13,14 @@
         Class.forName("oracle.jdbc.driver.OracleDriver");
         conn = DriverManager.getConnection("jdbc:oracle:thin:@15.164.30.107:1521:xe", "park", "1111");
 
-        String sql = "DELETE FROM PROJECTS WHERE PROJECTID = ?";
+        String sql = "UPDATE PROJECTS SET PROJECTNAME = ? WHERE PROJECTID = ?";
         pstmt = conn.prepareStatement(sql);
-        pstmt.setString(1, projectId);
+        pstmt.setString(1, newName);
+        pstmt.setString(2, projectId);
 
-        int deletedRows = pstmt.executeUpdate();
+        int updatedRows = pstmt.executeUpdate();
 
-        if (deletedRows > 0) {
+        if (updatedRows > 0) {
             result.put("status", "success");
         } else {
             result.put("status", "fail");

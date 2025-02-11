@@ -6,7 +6,8 @@
     response.setContentType("application/json");
     response.setCharacterEncoding("UTF-8");
 
-    String userID = (String) session.getAttribute("id");
+    String userID = (String) session.getAttribute("id").toString().trim();
+    System.out.print(userID);
     PrintWriter writer = response.getWriter();
 
     if (userID == null) {
