@@ -90,6 +90,7 @@
     </div>
 
     <script>
+    let userId;
     
     $(document).ready(function () {
     	// 세션 확인 후 로그인 여부 체크
@@ -101,13 +102,15 @@
                     alert("로그인이 필요합니다.");
                     window.location.href = "index.html"; // 로그인 페이지로 이동
                 }
+                else{
+                	userId = response; // 세션에서 사용자 ID를 가져오는 부분
+                    loadProjects(); // 프로젝트 로드
+                }
             },
             error: function(xhr, status, error) {
                 console.error("세션 확인 중 오류 발생:", error);
             }
         });
-    	
-      loadProjects(); 
 		
       $(".sidebar-link, .profile-menu li").on("click", function () {
           const targetPage = $(this).data("link");
@@ -157,11 +160,17 @@
         projectContainer.empty();
 
         if (projects.length > 0) {
-          projects.forEach(project => {
-            projectContainer.append(getProjectCode(project));
-          });
+            projects.forEach(project => {
+                const projectCode = getProjectCode(project);
+                projectContainer.append(projectCode);
+                
+                // 클릭 이벤트 리스너 추가
+                $(`#project-${project.id}`).on("click", function() {
+                    goToTeamPage(project.id);
+                });
+            });
         } else {
-          projectContainer.append("<p>No On Going Projects</p>");
+            projectContainer.append("<p>No On Going Projects</p>");
         }
 
         updateGanttChart(projects);
@@ -174,7 +183,7 @@
     	}
       function getProjectCode(project) {
         return `
-         <div class="project" onclick="goToTeamPage(${project.id})">
+         <div class="project" id="project-${project.id}">
            <h3>${project.name}</h3>
            <p>📅 Created At: ${project.createdAt}</p>
          </div>
