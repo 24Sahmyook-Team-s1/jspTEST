@@ -12,6 +12,11 @@ public class ProjectissueDAO {
 			throws NamingException, SQLException {
 		String sql = "INSERT INTO projectissues (projectissueid, userid, projectid, title, description, issuelevel, createdat) VALUES (2, ?, ?, ?, ?, ?, SYSDATE)";
 
+		
+		userid = userid.trim();
+        title = title.trim();
+        description = description.trim();
+        
 		try (Connection conn = ConnectionPool.get(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 			stmt.setString(1, userid); // 사용자 ID
 			stmt.setInt(2, projectId); // 프로젝트 ID
