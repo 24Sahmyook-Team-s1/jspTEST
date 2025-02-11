@@ -1,56 +1,38 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="dao.ProjectDAO"%>
-<%@ page import="java.sql.SQLException"%>
-<%@ page import="javax.naming.NamingException"%>
+<%@ page language="java" contentType="application/json; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page import="java.sql.*, org.json.simple.JSONObject" %>
 
 <%
-request.setCharacterEncoding("utf-8");
-String message = "";
-if (request.getMethod().equalsIgnoreCase("POST")) {
-    request.setCharacterEncoding("utf-8");
+    String projectId = request.getParameter("projectId");
+    JSONObject result = new JSONObject();
 
-    // 프로젝트 ID를 int로 받음
-    int projectId = Integer.parseInt(request.getParameter("projectId"));
-
-    ProjectDAO dao = new ProjectDAO();
-    boolean code = false;
+    Connection conn = null;
+    PreparedStatement pstmt = null;
 
     try {
-        // ID를 기반으로 삭제 메서드 호출
-        code = dao.removeProjectById(projectId);
-    } catch (NamingException | SQLException e) {
-        e.printStackTrace();
+        Class.forName("oracle.jdbc.driver.OracleDriver");
+        conn = DriverManager.getConnection("jdbc:oracle:thin:@15.164.30.107:1521:xe", "park", "1111");
+
+        String sql = "DELETE FROM PROJECTS WHERE PROJECTID = ?";
+        pstmt = conn.prepareStatement(sql);
+        pstmt.setString(1, projectId);
+
+        int deletedRows = pstmt.executeUpdate();
+
+        if (deletedRows > 0) {
+            result.put("status", "success");
+        } else {
+            result.put("status", "fail");
+            result.put("message", "프로젝트를 찾을 수 없습니다.");
+        }
+
+    } catch (Exception e) {
+        result.put("status", "error");
+        result.put("message", e.getMessage());
+    } finally {
+        if (pstmt != null) pstmt.close();
+        if (conn != null) conn.close();
     }
 
-    if (code) {
-        message = "프로젝트를 삭제했습니다.";
-    } else {
-        message = "프로젝트가 없거나 삭제 중 오류가 발생했습니다.";
-    }
-}
+    response.setContentType("application/json;charset=UTF-8");
+    out.print(result.toJSONString());
 %>
-
-
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>프로젝트 삭제</title>
-</head>
-<body>
-    <h2>프로젝트 삭제</h2>
-    <%
-    if (!message.isEmpty()) {
-    %>
-    <p><%=message%></p>
-    <%
-    }
-    %>
-    <form method="post">
-        <label for="projectId">프로젝트 ID:</label> 
-        <input type="text" id="projectId" name="projectId" required>
-        <br><br>
-        <button type="submit">프로젝트 삭제</button>
-    </form>
-</body>
-</html>
