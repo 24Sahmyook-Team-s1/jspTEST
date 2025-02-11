@@ -1,134 +1,21 @@
 package dao;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Calendar;
+import dao.TeamDAO;
 
 import javax.naming.NamingException;
-import util.ConnectionPool;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import util.ConnectionPool;
+
 public class ProjectDAO {
-
-    // 프로젝트 추가
-    public boolean addProject(String name, String adminUserID) throws NamingException, SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-
-        try {
-            conn = ConnectionPool.get();
-
-            // AdminUserID가 User2 테이블에 존재하는지 확인
-            String checkUserSql = "SELECT USERID FROM User2 WHERE USERID = ?";
-            stmt = conn.prepareStatement(checkUserSql);
-            stmt.setString(1, adminUserID);
-            rs = stmt.executeQuery();
-
-            if (!rs.next()) {
-                System.out.println("AdminUserID not found: " + adminUserID);
-                return false;
-            }
-            rs.close();
-            stmt.close();
-
-            // Projects 테이블에 삽입
-            String insertProjectSql = "INSERT INTO Projects (ProjectName, AdminUserID, CreatedAt) VALUES (?, ?, SYSDATE)";
-            stmt = conn.prepareStatement(insertProjectSql);
-            stmt.setString(1, name);
-            stmt.setString(2, adminUserID);
-
-            int result = stmt.executeUpdate();
-            return result == 1;
-
-        } finally {
-            if (rs != null) rs.close();
-            if (stmt != null) stmt.close();
-            if (conn != null) conn.close();
-        }
-    }
-
-    // 모든 프로젝트 리스트 조회
-    public JSONArray getAllProjects() throws NamingException, SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-        JSONArray projectArray = new JSONArray();
-
-        try {
-            conn = ConnectionPool.get();
-            String sql = "SELECT ProjectID, ProjectName, AdminUserID, CreatedAt FROM Projects ORDER BY ProjectID DESC";
-            stmt = conn.prepareStatement(sql);
-            rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                JSONObject project = new JSONObject();
-                int projectId = rs.getInt("ProjectID");
-                project.put("id", projectId);
-                project.put("name", rs.getString("ProjectName"));
-                project.put("owner", rs.getString("AdminUserID"));
-                project.put("createdAt", rs.getDate("CreatedAt").toString());
-
-                // 간트차트용 스케줄 정보 가져오기
-                JSONArray schedule = getScheduleByProjectId(projectId, conn);
-                project.put("schedule", schedule);
-
-                projectArray.add(project);
-            }
-        } finally {
-            if (rs != null) rs.close();
-            if (stmt != null) stmt.close();
-            if (conn != null) conn.close();
-        }
-
-        return projectArray;
-    }
-
-    // 프로젝트 ID로 Schedule 테이블의 스케줄 조회
-    private JSONArray getScheduleByProjectId(int projectId, Connection conn) throws SQLException {
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-        JSONArray scheduleArray = new JSONArray();
-
-        try {
-            String sql = "SELECT START_DATE, END_DATE FROM Schedule WHERE ProjectID = ?";
-            stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, projectId);
-            rs = stmt.executeQuery();
-
-            boolean[] weeklySchedule = new boolean[5]; // 월~금 초기화
-
-            while (rs.next()) {
-                Date startDate = rs.getDate("START_DATE");
-                Date endDate = rs.getDate("END_DATE");
-
-                // 날짜 범위에 따라 주간 스케줄 업데이트
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(startDate);
-
-                while (!calendar.getTime().after(endDate)) {
-                    int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
-
-                    if (dayOfWeek >= Calendar.MONDAY && dayOfWeek <= Calendar.FRIDAY) {
-                        weeklySchedule[dayOfWeek - Calendar.MONDAY] = true;
-                    }
-
-                    calendar.add(Calendar.DATE, 1);
-                }
-            }
-
-            // 스케줄을 JSON 배열로 변환
-            for (boolean dayActive : weeklySchedule) {
-                scheduleArray.add(dayActive);
-            }
-
-        } finally {
-            if (rs != null) rs.close();
-            if (stmt != null) stmt.close();
-        }
-
-        return scheduleArray;
-    }
     // 프로젝트 이름으로 존재 여부 확인
     public boolean isProjectExists(String projectName) throws NamingException, SQLException {
         Connection conn = null;
@@ -174,7 +61,7 @@ public class ProjectDAO {
         JSONObject project = null;
 
         try {
-            String sql = "SELECT ProjectID, ProjectName, TO_CHAR(CreatedAt, 'YYYY-MM-DD') AS CreatedAt, ProjectLeader FROM projects WHERE ProjectID = ?";
+            String sql = "SELECT ProjectID, ProjectName, TO_CHAR(CreatedAt, 'YYYY-MM-DD') AS CreatedAt, AdminUserId FROM projects WHERE ProjectID = ?";
             conn = ConnectionPool.get();
             stmt = conn.prepareStatement(sql);
             stmt.setInt(1, projectID);
@@ -185,7 +72,7 @@ public class ProjectDAO {
                 project.put("id", rs.getInt("ProjectID"));
                 project.put("name", rs.getString("ProjectName"));
                 project.put("created_at", rs.getString("CreatedAt"));
-                project.put("projectLeader", rs.getString("ProjectLeader"));
+                project.put("adminuserid", rs.getString("AdminUserId"));
             }
         } finally {
             if (rs != null) rs.close();
@@ -240,7 +127,7 @@ public class ProjectDAO {
         try {
             conn = ConnectionPool.get();
             // 사용자가 속한 프로젝트 ID 조회
-            String sql = "SELECT ProjectID teamMembers WHERE ProjectUserID = ?";
+            String sql = "SELECT ProjectID from teamMembers WHERE UserID = ?";
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, userId);
             rs = pstmt.executeQuery();
@@ -298,6 +185,145 @@ public class ProjectDAO {
             if (conn != null) conn.close();
         }
     }
-   
-  
+    // 프로젝트 추가
+    public boolean addProject(String name, String adminUserID) throws NamingException, SQLException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        boolean isSuccess = false;
+        TeamDAO teamdao = new TeamDAO();
+
+        try {
+            conn = ConnectionPool.get();
+
+            // 1️⃣ AdminUserID가 User2 테이블에 존재하는지 확인
+            String checkUserSql = "SELECT USERID FROM User2 WHERE USERID = ?";
+            stmt = conn.prepareStatement(checkUserSql);
+            stmt.setString(1, adminUserID);
+            rs = stmt.executeQuery();
+
+            if (!rs.next()) {
+                System.out.println("❌ AdminUserID not found: " + adminUserID);
+                return false;
+            }
+            rs.close();
+            stmt.close();
+
+            // 2️⃣ Projects 테이블에 프로젝트 추가
+            String insertProjectSql = "INSERT INTO Projects (ProjectName, AdminUserID, CreatedAt) VALUES (?, ?, SYSDATE)";
+            stmt = conn.prepareStatement(insertProjectSql, new String[]{"ProjectID"});
+            stmt.setString(1, name);
+            stmt.setString(2, adminUserID);
+
+            int result = stmt.executeUpdate();
+            if (result == 1) {
+                // 3️⃣ 생성된 프로젝트 ID 가져오기
+                rs = stmt.getGeneratedKeys();
+                int projectId = -1;
+                if (rs.next()) {
+                    projectId = rs.getInt(1);
+                }
+
+                // 4️⃣ 프로젝트 생성이 성공하면 팀 멤버 추가
+                if (projectId != -1) {
+                    isSuccess = teamdao.addTeamMember(projectId, adminUserID);
+                    if (!isSuccess) {
+                        System.out.println("❌ 팀 멤버 추가 실패");
+                    }
+                }
+            }
+
+        } finally {
+            if (rs != null) rs.close();
+            if (stmt != null) stmt.close();
+            if (conn != null) conn.close();
+        }
+
+        return isSuccess; // 프로젝트 생성 및 팀 멤버 추가 성공 여부 반환
+    }
+
+
+    // 모든 프로젝트 리스트 조회
+    public JSONArray getAllProjects() throws NamingException, SQLException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        JSONArray projectArray = new JSONArray();
+
+        try {
+            conn = ConnectionPool.get();
+            String sql = "SELECT ProjectID, ProjectName, AdminUserID, CreatedAt FROM Projects ORDER BY ProjectID DESC";
+            stmt = conn.prepareStatement(sql);
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                JSONObject project = new JSONObject();
+                int projectId = rs.getInt("ProjectID");
+                project.put("id", projectId);
+                project.put("name", rs.getString("ProjectName"));
+                project.put("owner", rs.getString("AdminUserID"));
+                project.put("createdAt", rs.getDate("CreatedAt").toString());
+
+                // 간트차트용 스케줄 정보 가져오기
+	                JSONArray schedule = getScheduleByProjectId(projectId, conn);
+	                project.put("schedule", schedule);
+	
+	                projectArray.add(project);
+            }
+        } finally {
+            if (rs != null) rs.close();
+            if (stmt != null) stmt.close();
+            if (conn != null) conn.close();
+        }
+
+        return projectArray;
+    }
+
+    // 프로젝트 ID로 Schedule 테이블의 스케줄 조회
+    private JSONArray getScheduleByProjectId(int projectId, Connection conn) throws SQLException {
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        JSONArray scheduleArray = new JSONArray();
+
+        try {
+            String sql = "SELECT START_DATE, END_DATE FROM Schedule WHERE ProjectID = ?";
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, projectId);
+            rs = stmt.executeQuery();
+
+            boolean[] weeklySchedule = new boolean[5]; // 월~금 초기화
+
+            while (rs.next()) {
+                Date startDate = rs.getDate("START_DATE");
+                Date endDate = rs.getDate("END_DATE");
+
+                // 날짜 범위에 따라 주간 스케줄 업데이트
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(startDate);
+
+                while (!calendar.getTime().after(endDate)) {
+                    int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+
+                    if (dayOfWeek >= Calendar.MONDAY && dayOfWeek <= Calendar.FRIDAY) {
+                        weeklySchedule[dayOfWeek - Calendar.MONDAY] = true;
+                    }
+
+                    calendar.add(Calendar.DATE, 1);
+                }
+            }
+
+            // 스케줄을 JSON 배열로 변환
+            for (boolean dayActive : weeklySchedule) {
+                scheduleArray.add(dayActive);
+            }
+
+        } finally {
+            if (rs != null) rs.close();
+            if (stmt != null) stmt.close();
+        }
+
+        return scheduleArray;
+    }
+
 }
+

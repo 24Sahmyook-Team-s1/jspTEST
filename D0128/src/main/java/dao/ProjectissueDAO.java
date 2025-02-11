@@ -1,22 +1,23 @@
 package dao;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 import javax.naming.NamingException;
 import util.ConnectionPool;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 public class ProjectissueDAO {
 	// 프로젝트 이슈 추가
-	public void addIssue(String userid, int projectId, String title, String description)
+	public void addIssue(String userid, int projectId, String title, String description, int issuelevel)
 			throws NamingException, SQLException {
-		String sql = "INSERT INTO projectissues (projectissueid, userid, projectid, title, description, createdat) VALUES (2, ?, ?, ?, ?, SYSDATE)";
+		String sql = "INSERT INTO projectissues (projectissueid, userid, projectid, title, description, issuelevel, createdat) VALUES (2, ?, ?, ?, ?, ?, SYSDATE)";
 
 		try (Connection conn = ConnectionPool.get(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 			stmt.setString(1, userid); // 사용자 ID
 			stmt.setInt(2, projectId); // 프로젝트 ID
 			stmt.setString(3, title); // 제목
 			stmt.setString(4, description); // 설명
+			stmt.setInt(5, issuelevel);
 			stmt.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace(); // 예외 처리 강화
@@ -25,41 +26,92 @@ public class ProjectissueDAO {
 	}
 
 	// 특정 프로젝트의 이슈 목록 조회
-	public List<ProjectissueObj> getIssuesByProjectId(int projectId) throws NamingException, SQLException {
-		String sql = "SELECT projectissueid, userid, projectid, title, description, createdat FROM projectissues WHERE projectid = ?";
-		List<ProjectissueObj> issues = new ArrayList<>();
+//	public List<ProjectissueObj> getIssuesByProjectId(int projectId) throws NamingException, SQLException {
+//		String sql = "SELECT projectissueid, userid, projectid, title, description, issuelevel, createdat FROM projectissues WHERE projectid = ?";
+//		List<ProjectissueObj> issues = new ArrayList<>();
+//
+//		try (Connection conn = ConnectionPool.get(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+//			stmt.setInt(1, projectId); // 프로젝트 ID
+//			try (ResultSet rs = stmt.executeQuery()) {
+//				while (rs.next()) {
+//					ProjectissueObj issue = new ProjectissueObj(
+//						rs.getInt("projectissueid"), 
+//						rs.getString("userid"), 
+//						rs.getInt("projectid"), 
+//						rs.getString("title"), 
+//						rs.getString("description"),
+//						rs.getInt("issuelevel"),  
+//						rs.getTimestamp("createdat") // Timestamp로 처리
+//					); 
+//					issues.add(issue);
+//				}
+//			}
+//		} catch (SQLException e) {
+//			e.printStackTrace(); // 예외 처리 강화
+//			throw e; // 예외를 다시 던져서 호출자에게 알림
+//		}
+//
+//		return issues; // 이슈 목록 반환
+//	}
+	
+	public String getIssuesByProjectIdJSON(int projectId) throws Exception {
+		Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+		StringBuilder jsonResult = new StringBuilder("[");
 
-		try (Connection conn = ConnectionPool.get(); PreparedStatement stmt = conn.prepareStatement(sql)) {
-			stmt.setInt(1, projectId); // 프로젝트 ID
-			try (ResultSet rs = stmt.executeQuery()) {
-				while (rs.next()) {
-					ProjectissueObj issue = new ProjectissueObj(
-						rs.getInt("projectissueid"), 
-						rs.getString("userid"), 
-						rs.getInt("projectid"), 
-						rs.getString("title"), 
-						rs.getString("description"), 
-						rs.getTimestamp("createdat") // Timestamp로 처리
-					); 
-					issues.add(issue);
-				}
+        try {
+        	String sql = "SELECT projectissueid, userid, projectid, title, description, issuelevel, createdat FROM projectissues WHERE projectid = ?";
+    		conn = ConnectionPool.get();
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, projectId); // 프로젝트 ID
+            rs = stmt.executeQuery();
+
+//            while (rs.next()) {
+//                JSONObject project = new JSONObject();
+//            	project.put("issueid", rs.getInt("projectissueid"));
+//                project.put("userid", rs.getString("userid"));
+//                project.put("projectid", rs.getInt("projectid")); 
+//                project.put("title", rs.getString("title"));
+//                project.put("description", rs.getString("description"));
+//                project.put("level", rs.getInt("issuelevel"));
+//                project.put("createdat", rs.getTimestamp("createdat"));
+//                jsonResult.add(project); 
+//            }
+            
+            int count = 0;
+			while (rs.next()) {
+				if (count++ > 0)
+					jsonResult.append(", "); // 첫 번째 항목이 아닐 경우 쉼표 추가
+				jsonResult.append("{").append("\"issueid\": ").append(rs.getInt("Projectissueid")).append(", ")
+						.append("\"userid\": \"").append(rs.getString("userid")).append("\", ")
+						.append("\"projectid\": \"").append(rs.getInt("projectid")).append("\", ")
+						.append("\"title\": \"").append(rs.getString("title")).append("\", ")
+						.append("\"description\": \"").append(rs.getString("description")).append("\", ")
+						.append("\"level\": \"").append(rs.getInt("issuelevel")).append("\", ")
+						.append("\"createdat\": \"").append(rs.getTimestamp("createdat")).append("\"") 
+
+						.append("}");
 			}
-		} catch (SQLException e) {
-			e.printStackTrace(); // 예외 처리 강화
-			throw e; // 예외를 다시 던져서 호출자에게 알림
-		}
+			jsonResult.append("]");
+        } finally {
+            if (rs != null) rs.close();
+            if (stmt != null) stmt.close();
+            if (conn != null) conn.close();
+        }
 
-		return issues; // 이슈 목록 반환
+        return  jsonResult.toString(); // JSON 문자열 반환
 	}
 
 	// 이슈 수정
-	public void updateIssue(int projectIssueId, String title, String description) throws NamingException, SQLException {
-		String sql = "UPDATE projectissues SET title = ?, description = ? WHERE projectissueid = ?";
+	public void updateIssue(int projectIssueId, String title, String description, int issuelevel) throws NamingException, SQLException {
+		String sql = "UPDATE projectissues SET title = ?, description = ?, issuelevel = ? WHERE projectissueid = ?";
 
 		try (Connection conn = ConnectionPool.get(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 			stmt.setString(1, title); // 제목
 			stmt.setString(2, description); // 설명
-			stmt.setInt(3, projectIssueId); // 이슈 ID
+			stmt.setInt(3, issuelevel);
+			stmt.setInt(4, projectIssueId); // 이슈 ID
 			stmt.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace(); // 예외 처리 강화

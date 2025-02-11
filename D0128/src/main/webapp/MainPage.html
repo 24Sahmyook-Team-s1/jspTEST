@@ -92,6 +92,21 @@
     <script>
     
     $(document).ready(function () {
+    	// 세션 확인 후 로그인 여부 체크
+        $.ajax({
+            url: "jsp/session.jsp",
+            type: "GET",
+            success: function(response) {
+                if (response.includes("로그인하지 않았습니다.")) {
+                    alert("로그인이 필요합니다.");
+                    window.location.href = "index.html"; // 로그인 페이지로 이동
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("세션 확인 중 오류 발생:", error);
+            }
+        });
+    	
       loadProjects(); 
 		
       $(".sidebar-link, .profile-menu li").on("click", function () {
@@ -113,23 +128,30 @@
               profileMenu.removeClass("active");
           }
       });
+      
+      
       const projectWrapper = $(".project-list-wrapper");
 
       function loadProjects() {
-        $.ajax({
-          url: "jsp/GetProjectList.jsp",
-          type: "GET",
-          dataType: "json",
-          success: function (projects) {
-            console.log("✅ 프로젝트 데이터 수신:", projects);
-            showProjects(projects);
-          },
-          error: function (xhr, status, error) {
-            console.error("❌ AJAX 오류 발생:", error);
-          },
-        });
-      }
-
+    	    $.ajax({
+    	        url: "jsp/GetUserProjects.jsp",
+    	        type: "GET",
+    	        dataType: "json",
+    	        success: function (projects) {
+    	            console.log("✅ 사용자 프로젝트 데이터 수신:", projects);
+    	            showProjects(projects);
+    	        },
+    	        error: function (xhr, status, error) {
+    	            if (xhr.status === 401) {
+    	                alert("로그인이 필요합니다.");
+    	                window.location.href = "index.html";
+    	            } else {
+    	                console.error("❌ AJAX 오류 발생:", error);
+    	            }
+    	        },
+    	    });
+    	}
+      
       function showProjects(projects) {
         let projectContainer = $("#projectList");
         projectContainer.empty();
@@ -145,34 +167,44 @@
         updateGanttChart(projects);
       }
 
-      function updateGanttChart(projects) {
-        let ganttBody = $("#ganttBody");
-        ganttBody.empty();
-
-        projects.forEach(project => {
-          let row = `<div class="gantt-row">
-            <div class="project-name">${project.name}</div>
-            <div class="gantt-progress">
-              <div class="${project.schedule[0] ? 'active' : ''}"></div>
-              <div class="${project.schedule[1] ? 'active' : ''}"></div>
-              <div class="${project.schedule[2] ? 'active' : ''}"></div>
-              <div class="${project.schedule[3] ? 'active' : ''}"></div>
-              <div class="${project.schedule[4] ? 'active' : ''}"></div>
-            </div>
-          </div>`;
-          ganttBody.append(row);
-        });
-      }
-
+      // 추가 작업 필요
+      function goToTeamPage(projectId) {
+    	    // 팀 페이지 URL을 생성 (예: "TeamPage.html?id=123")
+    	    window.location.href = `TeamPage.html?projectid=${projectId}&userId=${userId}`;
+    	}
       function getProjectCode(project) {
         return `
-          <div class="project">
-            <h3>${project.name}</h3>
-            <p>📅 Created At: ${project.createdAt}</p>
-          </div>
+         <div class="project" onclick="goToTeamPage(${project.id})">
+           <h3>${project.name}</h3>
+           <p>📅 Created At: ${project.createdAt}</p>
+         </div>
         `;
       }
+      
+      function clearInputs() {
+          $("#projectName").val('');
+          $("#projectOwner").val('');
+        }
 
+      function updateGanttChart(projects) {
+          let ganttBody = $("#ganttBody");
+          ganttBody.empty();
+
+          projects.forEach(project => {
+            let row = `<div class="gantt-row">
+              <div class="project-name">${project.name}</div>
+              <div class="gantt-progress">
+                <div class="${project.schedule[0] ? 'active' : ''}"></div>
+                <div class="${project.schedule[1] ? 'active' : ''}"></div>
+                <div class="${project.schedule[2] ? 'active' : ''}"></div>
+                <div class="${project.schedule[3] ? 'active' : ''}"></div>
+                <div class="${project.schedule[4] ? 'active' : ''}"></div>
+              </div>
+            </div>`;
+            ganttBody.append(row);
+          });
+        }
+      
       $("#addProjectBtn").on("click", function () {
         $("#projectModal").show();
       });
@@ -186,7 +218,9 @@
       $("#createProjectBtn").on("click", function () {
         const projectName = $("#projectName").val();
         const projectOwner = $("#projectOwner").val();
-
+		
+        console.log("프로젝트 소유자:", projectOwner);
+        
         if (projectName && projectOwner) {
           $.ajax({
             url: "jsp/AddProject.jsp",
@@ -211,10 +245,6 @@
         }
       });
 
-      function clearInputs() {
-        $("#projectName").val('');
-        $("#projectOwner").val('');
-      }
     });
     </script>
   </body>

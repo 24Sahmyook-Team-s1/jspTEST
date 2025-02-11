@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MOLE - Project Setting</title>
+    <link rel="stylesheet" href="css/TeamPage.css">
+    <script src="js/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+    <!-- 📌 상단바 -->
+    <div class="header">
+        <h1>MOLE</h1>
+    </div>
+    
+	<div class="main-content">
+	</div>
+	
+    <!-- 📌 프로필 메뉴 (오른쪽 하단 위치) -->
+    <div class="profile-container">
+        <img src="public/logo-transparent.png" alt="MOLE PMS Logo" class="profile-btn" id="profileBtn">
+        <div class="profile-menu" id="profileMenu">
+            <ul>
+				<li data-link="MainPage.html">홈</li>
+                <li data-link="TeamPage.html">팀 페이지</li> <!-- ✅ 팀 페이지 추가 -->
+                <li data-link="FindTeam.html">팀 찾기</li>
+                <li data-link="CreateTeam.html">팀 만들기</li>
+                <li data-link="TeamManage.html">팀 관리</li>
+                <li data-link="ProfilePage.html">프로필</li>
+                <li data-link="SettingsPage.html">설정</li> </ul>
+        </div>
+    </div>
+</body>
+</html>
+
+    <script>
+    $(document).ready(function () {
+        // 📌 사이드바 및 프로필 메뉴 클릭 시 페이지 이동
+        $(".sidebar-link, .profile-menu li").on("click", function () {
+            const targetPage = $(this).data("link");
+            window.location.href = targetPage;
+        });
+
+        // 📌 프로필 버튼 클릭 시 메뉴 토글
+        const profileBtn = $("#profileBtn");
+        const profileMenu = $("#profileMenu");
+
+        profileBtn.on("click", function (event) {
+            event.stopPropagation();
+            profileMenu.toggleClass("active");
+        });
+
+        $(document).on("click", function (event) {
+            if (!profileBtn.is(event.target) && !profileMenu.is(event.target) && profileMenu.has(event.target).length === 0) {
+                profileMenu.removeClass("active");
+            }
+        });
+        })
+        </script>

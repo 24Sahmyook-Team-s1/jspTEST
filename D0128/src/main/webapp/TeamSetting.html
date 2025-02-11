@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MOLE - 팀 보드</title>
+    <link rel="stylesheet" href="css/TeamBoard.css">
+    <script src="js/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <!-- 해담바 -->
+    <div class="header">
+        <h1>MOLE</h1>
+    </div>
+
+    <div class="container">
+        <!-- 사이드바 -->
+        <div class="sidebar">
+            <ul>
+                <li class="sidebar-link" data-link="MainPage.html">해시보드</li>
+                <li class="sidebar-link" data-link="TeamPage.html">팀 페이지</li>
+                <li class="sidebar-link" data-link="GanttChart.html">간트 채트</li>
+                <li class="sidebar-link" data-link="IssuePage.html">이슈</li>
+                <li class="sidebar-link active" data-link="TeamBoard.html">팀 보드</li>
+                <li class="sidebar-link active" data-link="TeamSetting.html">팀 세팅</li>
+            </ul>
+        </div>
+
+        <!-- 메인 컨텐츠 -->
+        <div class="main-content">
+            <div class="team-doc-container" id="teamDocContainer">
+                <!-- JavaScript로 동적으로 추가될 것입니다. -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 프로필 메뉴 -->
+    <div class="profile-container">
+        <img src="public/logo-transparent.png" alt="MOLE PMS Logo" class="profile-btn" id="profileBtn">
+        <div class="profile-menu" id="profileMenu">
+            <ul>
+                <li data-link="MainPage.html">홈</li>
+                <li data-link="TeamPage.html">팀 페이지</li>
+                <li data-link="FindTeam.html">팀 찾기</li>
+                <li data-link="CreateTeam.html">팀 만들기</li>
+                <li data-link="TeamManage.html">팀 관리</li>
+                <li data-link="ProfilePage.html">프로필</li>
+                <li data-link="SettingsPage.html">설정</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // 사이드바 클릭 이벤트
+        document.querySelectorAll('.sidebar-link').forEach(link => {
+            link.addEventListener('click', function () {
+                const targetPage = this.getAttribute('data-link');
+                window.location.href = targetPage;
+            });
+        });
+
+        // 프로필 메뉴 클릭
+        const profileBtn = document.getElementById("profileBtn");
+        const profileMenu = document.getElementById("profileMenu");
+
+        profileBtn.addEventListener("click", function (event) {
+            event.stopPropagation();
+            profileMenu.classList.toggle("active");
+        });
+
+        document.addEventListener("click", function (event) {
+            if (!profileBtn.contains(event.target) && !profileMenu.contains(event.target)) {
+                profileMenu.classList.remove("active");
+            }
+        });
+
+        // 프로필 메뉴 클릭 시 페이지 이동
+        document.querySelectorAll('.profile-menu li').forEach(item => {
+            item.addEventListener('click', function () {
+                const targetPage = this.getAttribute('data-link');
+                window.location.href = targetPage;
+            });
+        });
+
+    </script>
+</body>
+</html>
