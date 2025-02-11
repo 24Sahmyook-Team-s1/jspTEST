@@ -107,8 +107,30 @@
 
 <script>
 $(document).ready(function () {
-    console.log("페이지 로드 완료");
-    loadTasks();  // 페이지 로드 시 할 일 불러오기
+	const urlParams = new URLSearchParams(window.location.search);
+    const projectId = urlParams.get('projectid');
+    let userId;
+    
+    $.ajax({
+        url: "jsp/session.jsp",
+        type: "GET",
+        success: function(response) {
+            if (response.includes("로그인하지 않았습니다.")) {
+                alert("로그인이 필요합니다.");
+                window.location.href = "index.html"; // 로그인 페이지로 이동
+            }
+            else{
+            	userId = response; // 세션에서 사용자 ID를 가져오는 부분
+            	console.log("유저 id: " + userId);
+                console.log("프로젝트 id: " + projectId);
+                loadTasks(userId, projectId); // 페이지 로드 시 할 일 불러오기
+                console.log("페이지 로드 + 유저 id, 프로젝트 id 완료");
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("세션 확인 중 오류 발생:", error);
+        }
+    });
 	
     // 📌 사이드바 및 프로필 메뉴 클릭 시 페이지 이동
     $(".sidebar-link, .profile-menu li").on("click", function () {
