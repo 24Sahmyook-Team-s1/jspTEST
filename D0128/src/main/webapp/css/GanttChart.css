@@ -1,0 +1,610 @@
+/* 🌟 기본 스타일 */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #E2F9FF;
+    color: black;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* 🌟 헤더 스타일 */
+.header {
+    width: 100%;
+    height: 80px;
+    background-color: #f5f7fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: bold;
+    color: black;
+}
+
+/* 🌟 전체 콘텐어 */
+.container {
+    display: flex;
+    width: 90%;
+    max-width: 1400px;
+    margin: 20px auto;
+    gap: 40px;
+}
+
+/* 🌟 사이드바 */
+.sidebar {
+    width: 220px;
+    background: #f1f3f5;
+    padding: 20px;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+}
+
+/* 📌 사이드바 리스트 스타일 */
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar li {
+    display: flex;
+    align-items: center;
+    padding: 15px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    color: #333;
+}
+
+/* 📌 아이콘 추가 (CSS에서만 관리) */
+.sidebar li::before {
+    margin-right: 10px;
+    font-size: 18px;
+}
+
+/* 메뉴별 아이콘 지정 */
+.sidebar li:nth-child(1)::before { content: '📊'; }  /* 대쉘보드 */
+.sidebar li:nth-child(2)::before { content: '📁'; }  /* 팀 페이지 */
+.sidebar li:nth-child(3)::before { content: '📅'; }  /* 간트 체트 */
+.sidebar li:nth-child(4)::before { content: '🐞'; }  /* 이슈 */
+.sidebar li:nth-child(5)::before { content: '👥'; }  /* 팀 보드 */
+
+/* 📌 호박 효과 */
+.sidebar li:hover {
+    background-color: #007bff;
+    color: white;
+    transform: translateX(5px);
+}
+
+.sidebar li:hover::before {
+    transform: scale(1.2);
+}
+
+/* 🌟 반응형 */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
+        border-radius: 0;
+    }
+}
+
+/* 🌟 메인 콘텐츠 */
+.main-content {
+    flex: 1;
+    padding: 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 📌 상태 개요 및 최근 활동 */
+.overview {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.status-chart, .recent-activities {
+    flex: 1;
+    padding: 20px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 40px;
+}
+
+.status-chart h2,
+.recent-activities h2 {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+/* 📈 원형 그래프 */
+#statusPieChart {
+    max-width: 250px;
+    margin: 0 auto;
+}
+
+/* 📈 최근 활동 로그 */
+.activity-log {
+    background: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    max-width: 100%;
+    max-height: 200px; /* 고정 크기 설정 */
+    overflow-y: auto;  /* 스크롤 방지 */
+    word-break: break-word;
+    line-height: 1.5;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.activity-log p {
+    padding: 10px;
+    background: white;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* 📈 할 일 관리 */
+.tasks-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    gap: 40px;
+    margin-bottom: 40px;
+}
+
+.task-box {
+    flex: 1;
+    padding: 20px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 40px;
+}
+
+.task-box h3 {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+/* 📈 할 일 리스트 */
+.task-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.task-item {
+    background-color: #f1f3f5;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.task-item:hover {
+    background-color: #e9ecef;
+    transform: scale(1.05);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* ✅ 진행 중 상태 스타일 */
+#inProgressList .task-item {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+/* ✅ 완료 상태 스타일 */
+#completedList .task-item {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+/* 🌟 할 일 추가 버튼 */
+#addTaskBtn {
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    font-size: 14px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: background-color 0.3s ease-in-out;
+}
+
+#addTaskBtn:hover {
+    background-color: #0056b3;
+}
+
+/* 📈 프로필 버튼 */
+.profile-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+}
+
+/* ✅ 프로필 버튼 */
+.profile-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease-in-out;
+}
+
+.profile-btn:hover {
+    transform: scale(1.1);
+}
+
+/* ✅ 프로필 메뉴 */
+.profile-menu {
+    position: absolute;
+    bottom: 80px;
+    right: 0;
+    width: 120px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    display: none;
+    opacity: 0;
+    transition: all 0.3s ease-in-out;
+}
+
+.profile-menu ul {
+    list-style: none;
+    padding: 10px;
+    margin: 0;
+}
+
+.profile-menu ul li {
+    padding: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+}
+
+.profile-menu ul li:hover {
+    background: #f0f0f0;
+}
+
+/* ✅ 메뉴 활성화 시 보이게 */
+.profile-menu.active {
+    display: block;
+    opacity: 1;
+}
+
+/* 🔹 반응형 스타일 */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .tasks-container {
+        flex-direction: column;
+    }
+
+    .profile-container {
+        bottom: 10px;
+        right: 10px;
+    }
+}
+
+/* 🌟 모달 창 세련된 스타일 적용 */
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4); /* 어두운 반투명 배경 */
+    backdrop-filter: blur(5px); /* 배경 흐림 효과 */
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.4s ease;
+}
+
+/* 모달 컨텐츠 스타일 */
+.modal-content {
+    background: rgba(255, 255, 255, 0.9); /* 살짝 투명한 배경 */
+    padding: 30px 40px;
+    border-radius: 20px;
+    width: 400px;
+    text-align: center;
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    animation: slideUp 0.5s ease;
+}
+
+/* 모달 제목 */
+.modal-content h3 {
+    color: #0d47a1;
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+/* 체크박스 스타일 */
+.modal-content label {
+    display: inline-flex;
+    align-items: center;
+    margin: 10px 15px;
+    font-size: 16px;
+    color: #424242;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.modal-content input[type="checkbox"] {
+    margin-right: 8px;
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: 2px solid #90caf9;
+    accent-color: #1976d2; /* 체크박스 색상 */
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+/* 체크박스 호버 시 살짝 확대 */
+.modal-content input[type="checkbox"]:hover {
+    transform: scale(1.1);
+}
+
+/* 버튼 공통 스타일 */
+button[type="submit"], .close {
+    padding: 12px 20px;
+    margin: 15px 10px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* 저장 버튼 */
+button[type="submit"] {
+    background: linear-gradient(135deg, #42a5f5, #1e88e5);
+    color: white;
+}
+
+button[type="submit"]:hover {
+    background: linear-gradient(135deg, #1e88e5, #1565c0);
+    transform: translateY(-2px);
+}
+
+/* 닫기 버튼 */
+button.close {
+    background: linear-gradient(135deg, #e57373, #f44336);
+    color: white;
+}
+
+button.close:hover {
+    background: linear-gradient(135deg, #f44336, #d32f2f);
+    transform: translateY(-2px);
+}
+
+/* 애니메이션 효과 */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+
+/* 🌟 간트 차트 스타일만 세련되게 수정 */
+
+/* 간트 차트 컨테이너 */
+.gantt-chart-container {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    border: 1px solid #e0e0e0;
+}
+
+.gantt-chart-container:hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* 간트 헤더 스타일 */
+.gantt-header {
+    display: flex;
+    font-weight: 600;
+    padding: 15px;
+    background: linear-gradient(90deg, #e3f2fd, #bbdefb);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    color: #0d47a1;
+    font-size: 15px;
+}
+
+.gantt-project-name {
+    width: 30%;
+    font-size: 16px;
+}
+
+.gantt-days {
+    display: flex;
+    width: 70%;
+}
+
+.gantt-days div {
+    flex: 1;
+    text-align: center;
+    padding: 5px 0;
+    font-weight: 600;
+    color: #1976d2;
+    border-left: 1px solid #e0e0e0;
+}
+
+.gantt-days div:first-child {
+    border-left: none;
+}
+
+/* 프로젝트 리스트 스타일 */
+.gantt-row {
+    display: flex;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #eeeeee;
+    transition: background 0.3s ease, transform 0.2s ease;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.gantt-row:hover {
+    background: #f9f9f9;
+    transform: scale(1.01);
+}
+
+.project-name {
+    width: 30%;
+    font-weight: 500;
+    padding-left: 10px;
+    color: #424242;
+    font-size: 15px;
+}
+
+/* 진행도 표시 스타일 */
+.gantt-progress {
+    display: flex;
+    width: 70%;
+}
+
+.gantt-progress div {
+    flex: 1;
+    margin: 4px;
+    height: 20px;
+    background-color: #f0f0f0;
+    border-radius: 6px;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+}
+
+/* 활성화된 진행도 스타일 */
+.gantt-progress .active {
+    background: linear-gradient(135deg, #42a5f5, #1e88e5);
+    box-shadow: 0 2px 5px rgba(33, 150, 243, 0.4);
+}
+
+/* 진행도 위에 퍼센트 표시 */
+.gantt-progress div::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 12px;
+    font-weight: bold;
+    color: #ffffff;
+    display: none;
+}
+
+.gantt-progress .active::after {
+    content: '진행 중';
+    display: block;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .gantt-header, .gantt-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .gantt-project-name, .project-name {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .gantt-days, .gantt-progress {
+        width: 100%;
+    }
+}
+
+
+/* 📈 할 일 추가 모달 */
+#addTaskModal {
+    display: none;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.4);
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+}
+
+#addTaskModal .modal-content {
+    background: #fff;
+    padding: 20px;
+	border-radius: 10px; 
+	text-align: center; 
+	width: 300px; 
+	margin: auto; 
+	position: relative; 
+	}
+
+/* 📌 모달 입력 필드 */ 
+#addTaskModal .modal-content input[type="text"] { width: 80%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; }
+
+/* 📌 모달 버튼 */ 
+#addTaskModal .modal-btn {
+	display: block; 
+	width: 100%; 
+	padding: 10px; 
+	margin-top: 10px; 
+	border: none; 
+	border-radius: 5px; 
+	font-size: 14px; 
+	font-weight: bold; 
+	cursor: pointer; 
+	transition: 0.3s; 
+	}
+	
+
+#addTaskModal .modal-btn:hover {
+	opacity: 0.8; 
+	}
+
+/* 📌 닫기 버튼 */ #addTaskModal .close { 
+	background: #ccc; 
+	color: black; 
+	}
