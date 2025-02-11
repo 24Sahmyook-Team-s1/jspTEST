@@ -4,7 +4,7 @@
     request.setCharacterEncoding("utf-8");
     String userId = request.getParameter("userId");
     String projectId = request.getParameter("projectId");
-    System.out.print("projectId before session set: "+ projectId);
+    System.out.println("enterteamwindow projectId before session set: "+ projectId);
 	
     if (userId == null){
     	out.print("ue");
@@ -17,7 +17,7 @@
     else{
     	session.setAttribute("id", userId);
     	session.setAttribute("projectId", projectId);
-    	System.out.print("projectId after session set: "+ projectId);
+    	System.out.println("enterteamwindow projectId after session set: "+ projectId);
         out.print("OK");
     }
 %>

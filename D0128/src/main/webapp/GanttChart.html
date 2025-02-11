@@ -77,7 +77,7 @@
                     window.location.href = "index.html"; // 로그인 페이지로 이동
                 }
                 else{
-                	userId = response; // 세션에서 사용자 ID를 가져오는 부분
+                	userId = response.trim(); // 세션에서 사용자 ID를 가져오는 부분
                 	console.log("유저 id: " + userId);
                 	$.ajax({
                         url: "jsp/projectsession.jsp",
@@ -88,7 +88,7 @@
                                 window.location.href = "MainPage.html"; // 메인 페이지로 이동
                             }
                             else{
-                            	projectId = response; // 세션에서 사용자 ID를 가져오는 부분
+                            	projectId = response.trim(); // 세션에서 사용자 ID를 가져오는 부분
                                 console.log("프로젝트 id: " + projectId);
                                 loadGanttChart();
                                 console.log("페이지 로드 + 유저 id, 프로젝트 id 완료");
@@ -130,13 +130,29 @@
         loadGanttChart();
 
         function loadGanttChart() {
-            $.ajax({
-                url: "jsp/GetTasks.jsp",
-                type: "GET",
+        	console.log("projectId: "+projectId);
+        	$.ajax({
+                url: "jsp/GetProject.jsp",
+                type: "POST",
+                data: {projectId},
                 dataType: "json",
                 success: function (projects) {
-                    console.log("✅ 간트 차트 데이터 수신:", projects);
+                    console.log("✅ 간트 프로젝트 차트 데이터 수신:", projectId);
+                    console.log(projects);
                     renderGanttChart(projects);
+                },
+                error: function (xhr, status, error) {
+                    console.error("❌ 데이터 로드 오류:", error);
+                }
+            });
+        	
+            $.ajax({
+                url: "jsp/GetTasks.jsp",
+                type: "POST",
+                dataType: "json",
+                success: function (tasks) {
+                    console.log("✅ 간트 할일 차트 데이터 수신:", projects);
+                    renderGanttChart(tasks);
                 },
                 error: function (xhr, status, error) {
                     console.error("❌ 데이터 로드 오류:", error);
