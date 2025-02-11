@@ -5,16 +5,11 @@
 <%@ page import="javax.naming.NamingException"%>
 
 <%
-    String projectID = (String) session.getAttribute("projectID");
+    String projectIDParam = request.getParameter("projectID");
+	int projectID = Integer.parseInt(projectIDParam.trim());
     String userID = request.getParameter("userID");
     
-    if (projectID != null) {
-        System.out.println("User from session: " + projectID + " " + userID);
-    } else {
-        System.out.println("No user in session.");
-    }
-    
-    if (userID != null && projectID != null) {
+    if (userID != null && projectID != 0) {
         TeamDAO inviteDAO = new TeamDAO();
         boolean isInserted = inviteDAO.inviteTeamMember(projectID, userID);
         if (isInserted) {
