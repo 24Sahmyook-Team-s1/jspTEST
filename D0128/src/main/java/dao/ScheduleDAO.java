@@ -103,4 +103,36 @@ public class ScheduleDAO {
             if (conn != null) conn.close();
         }
     }
+    
+ // 모든 할 일 가져오기 (상태 포함)
+    public JSONArray getTasksByProjectIds(int projectId) throws NamingException, SQLException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        JSONArray tasks = new JSONArray();
+
+        try {
+            conn = ConnectionPool.get();
+            String sql = "SELECT ScheduleID, Task_Name, Start_Date, End_Date, NVL(Status, 'todo') AS Status FROM Schedule where projectid = ? ORDER BY Start_Date ASC";
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, projectId);
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                JSONObject task = new JSONObject();
+                task.put("scheduleId", rs.getInt("ScheduleID"));
+                task.put("taskName", rs.getString("Task_Name"));
+                task.put("startDate", rs.getDate("Start_Date").toString());
+                task.put("endDate", rs.getDate("End_Date").toString());
+                task.put("status", rs.getString("Status"));  // 상태 값 반환
+                tasks.add(task);
+            }
+        } finally {
+            if (rs != null) rs.close();
+            if (stmt != null) stmt.close();
+            if (conn != null) conn.close();
+        }
+
+        return tasks;
+    }
 }
