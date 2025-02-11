@@ -12,6 +12,29 @@ import util.ConnectionPool;
 
 public class TeamDAO {    
 	
+	public boolean inviteTeamMember(int projectId, String userId) throws NamingException, SQLException {
+	    Connection conn = null;
+	    PreparedStatement pstmt = null;
+	    boolean isSuccess = false;
+
+	    try {
+	        conn = ConnectionPool.get();
+	        String sql = "INSERT INTO teamInvitation (ProjectID, UserID) VALUES (?, ?)";
+	        pstmt = conn.prepareStatement(sql);
+	        pstmt.setInt(1, projectId);
+	        pstmt.setString(2, userId);
+
+	        int rowsAffected = pstmt.executeUpdate(); // 실행된 행 개수 확인
+	        isSuccess = (rowsAffected > 0); // 성공 여부 판단
+	    } finally {
+	        if (pstmt != null) pstmt.close();
+	        if (conn != null) conn.close();
+	    }
+
+	    return isSuccess;
+	}
+
+
 	public boolean addTeamMember(int projectId, String userId) throws NamingException, SQLException {
 	    Connection conn = null;
 	    PreparedStatement pstmt = null;
