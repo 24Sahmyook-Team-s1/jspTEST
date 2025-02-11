@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" type="text/css" href="https://cdn.dhtmlx.com/gantt/edge/dhtmlxgantt.css">
+    <script src="https://cdn.dhtmlx.com/gantt/edge/dhtmlxgantt.js"></script>
     <title>MOLE - Gantt Chart</title>
     <link rel="stylesheet" href="./css/GanttChart.css">
-    <link rel="stylesheet" type="text/css" href="./WEB-INF/lib/jquery-ui-1.8.4.css" />
-	<link rel="stylesheet" type="text/css" href="reset.css" />
-	<link rel="stylesheet" type="text/css" href="./css/jquery.ganttView.css" />
     <script src="js/jquery-3.6.0.min.js"></script>
 </head>
 <body>
@@ -33,27 +33,10 @@
         <!-- 📌 메인 컨텐츠 (간트차트) -->
         <div class="main-content">
             <h2>Gantt Chart</h2>
-            <div id="ganttChart"></div>
+            <div id="ganttChart" style="width:100%; height:700px"></div>
         </div>
     </div>
 
-
-    <!-- 📌 스케줄 수정 모달 -->
-    <div class="modal" id="scheduleModal">
-        <div class="modal-content">
-            <h3>프로젝트 스케줄 수정</h3>
-            <form id="scheduleForm">
-                <input type="hidden" id="projectId" name="projectId">
-                <label><input type="checkbox" name="monday"> 월요일</label>
-                <label><input type="checkbox" name="tuesday"> 화요일</label>
-                <label><input type="checkbox" name="wednesday"> 수요일</label>
-                <label><input type="checkbox" name="thursday"> 목요일</label>
-                <label><input type="checkbox" name="friday"> 금요일</label>
-                <button type="submit">저장</button>
-                <button type="button" class="close">닫기</button>
-            </form>
-        </div>
-    </div>
     <!-- 📌 프로필 메뉴 (오른쪽 하단 위치) -->
     <div class="profile-container">
         <img src="public/logo-transparent.png" alt="MOLE PMS Logo" class="profile-btn" id="profileBtn">
@@ -68,40 +51,18 @@
                 <li data-link="SettingsPage.html">설정</li> </ul>
         </div>
     </div>
-
     
-	<script type="text/javascript" src="WEB-INF/lib/jquery-1.4.2.js"></script>
-	<script type="text/javascript" src="WEB-INF/lib/date.js"></script>
-	<script type="text/javascript" src="WEB-INF/lib/jquery-ui-1.8.4.js"></script>
-	<script type="text/javascript" src="js/jquery.ganttView.js"></script>
-	<script type="text/javascript" src="js/data.js"></script>
 	<script>
-		$(function () {
-			$("#ganttChart").ganttView({ 
-				data: ganttData,
-				slideWidth: 900,
-				behavior: {
-					onClick: function (data) { 
-						var msg = "You clicked on an event: { start: " + data.start.toString("M/d/yyyy") + ", end: " + data.end.toString("M/d/yyyy") + " }";
-						$("#eventMessage").text(msg);
-					},
-					onResize: function (data) { 
-						var msg = "You resized an event: { start: " + data.start.toString("M/d/yyyy") + ", end: " + data.end.toString("M/d/yyyy") + " }";
-						$("#eventMessage").text(msg);
-					},
-					onDrag: function (data) { 
-						var msg = "You dragged an event: { start: " + data.start.toString("M/d/yyyy") + ", end: " + data.end.toString("M/d/yyyy") + " }";
-						$("#eventMessage").text(msg);
-					}
-				}
-			});
-			
-			// $("#ganttChart").ganttView("setSlideWidth", 600);
-		});
-		
-		
-		
-		
+	window.addEventListener("DOMContentLoaded", function () {
+		gantt.init("ganttChart");
+		gantt.parse({
+			"data": [
+                { "id": 1, "text": "Project #1", "start_date": "01-04-2021", "duration": 18, "progress": 0.4 },
+                { "id": 2, "text": "Task #1", "start_date": "02-04-2021", "duration": 8, "progress": 0.6, "parent": 1 },
+                { "id": 3, "text": "Task #2", "start_date": "11-04-2021", "duration": 8, "progress": 0.6, "parent": 1 }
+            ]
+		})
+	})
 		
     $(document).ready(function () {
     	let projectId;
@@ -182,24 +143,6 @@
                 }
             });
         }
-
-     // 📌 간트 차트 렌더링 및 클릭 이벤트
-        function renderGanttChart(projects) {
-            const ganttBody = $("#ganttBody").empty();
-            projects.forEach(project => {
-                const row = `
-                    <div class="gantt-row" data-id="${project.id}">
-                        <div class="project-name">${project.taskName}</div>
-                        <div class="gantt-progress">
-                            <div class="${project.ScheduleMonday === 'Y' ? 'active' : ''}"></div>
-                            <div class="${project.ScheduleTuesday === 'Y' ? 'active' : ''}"></div>
-                            <div class="${project.ScheduleWednesday === 'Y' ? 'active' : ''}"></div>
-                            <div class="${project.ScheduleThursday === 'Y' ? 'active' : ''}"></div>
-                            <div class="${project.ScheduleFriday === 'Y' ? 'active' : ''}"></div>
-                        </div>
-                    </div>
-                `;
-                ganttBody.append(row);
             });
 
             // 📌 프로젝트 클릭 시 모달 열기
@@ -208,29 +151,6 @@
                 $("#projectId").val(projectId);
                 $("#scheduleModal").show();
             });
-        }
-
-        // 📌 스케줄 저장
-        $("#scheduleForm").on("submit", function (e) {
-            e.preventDefault();
-            const formData = $(this).serialize();
-
-            $.post("jsp/UpdateProjectSchedule.jsp", formData, function (response) {
-                alert("스케줄이 저장되었습니다.");
-                $("#scheduleModal").hide();
-                loadGanttChart();  // 데이터 새로 불러오기
-            }).fail(function () {
-                alert("스케줄 저장 중 오류가 발생했습니다.");
-            });
-        });
-
-        // 📌 모달 닫기
-        $(".close").on("click", function () {
-            $("#scheduleModal").hide();
-        });
-    });
-    
-    
     </script>
 
 </body>
