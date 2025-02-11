@@ -5,7 +5,7 @@
 <%@ page import="javax.naming.NamingException"%>
 
 <%
-    String projectID = request.getParameter("projectID");
+    String projectID = (String) session.getAttribute("projectID");
     String userID = request.getParameter("userID");
     
     if (projectID != null) {
