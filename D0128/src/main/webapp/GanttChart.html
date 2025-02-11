@@ -53,20 +53,31 @@
     </div>
     
 	<script>
+	let projectId;
+    let userId;
+	
 	window.addEventListener("DOMContentLoaded", function () {
 		gantt.init("ganttChart");
-		gantt.parse({
-			"data": [
-                { "id": 1, "text": "Project #1", "start_date": "01-04-2021", "duration": 18, "progress": 0.4 },
-                { "id": 2, "text": "Task #1", "start_date": "02-04-2021", "duration": 8, "progress": 0.6, "parent": 1 },
-                { "id": 3, "text": "Task #2", "start_date": "11-04-2021", "duration": 8, "progress": 0.6, "parent": 1 }
-            ]
-		})
-	})
+
+        // 간트 차트 설정
+        gantt.config.columns = [
+            { name: "text", label: "Task name", width: "*", tree: true },
+            { name: "start_date", label: "Start date", align: "center", width: 100 },
+            { name: "duration", label: "Duration", align: "center", width: 70 },
+            { name: "progress", label: "Progress", align: "center", width: 70 }
+        ];
+
+        gantt.config.scale_unit = "week";
+        gantt.config.date_scale = "%F %Y";
+        gantt.config.subscales = [
+            { unit: "day", step: 1, date: "%j, %D" }
+        ];
+
+        gantt.config.fit_tasks = true;
+        gantt.config.autofit = true;
+    });
 		
     $(document).ready(function () {
-    	let projectId;
-        let userId;
         
         $.ajax({
             url: "jsp/session.jsp",
@@ -126,38 +137,115 @@
             }
         });
 
-        // 📌 간트 차트 데이터 불러오기
-        loadGanttChart();
-
         function loadGanttChart() {
-        	console.log("projectId: "+projectId);
-        	$.ajax({
+            console.log("projectId: "+projectId);
+            
+            // 프로젝트 기본 정보 먼저 가져오기
+            $.ajax({
                 url: "jsp/GetProject.jsp",
                 type: "POST",
                 data: {projectId},
                 dataType: "json",
-                success: function (projects) {
-                    console.log("✅ 간트 프로젝트 차트 데이터 수신:", projectId);
-                    console.log(projects);
-                    renderGanttChart(projects);
+                success: function (projectData) {
+                    console.log("✅ 프로젝트 데이터 수신:", projectData);
+                    
+                    // 해당 프로젝트의 할일 목록 가져오기
+                    $.ajax({
+                        url: "jsp/GetTasks.jsp",
+                        type: "POST",
+                        data: {projectId},
+                        dataType: "json",
+                        success: function (tasksData) {
+                            console.log("✅ 할일 데이터 수신:", tasksData);
+                            
+                            // 데이터 구조 변환
+                            const ganttData = [{
+                                id: projectData.id,
+                                text: projectData.name,
+                                start_date: convertDate(projectData.created_at),
+                                duration: calculateDuration(
+                                    projectData.created_at, 
+                                    tasksData.reduce((maxDate, task) => {
+                                        return new Date(task.endDate) > new Date(maxDate) ? task.endDate : maxDate;
+                                    }, projectData.created_at)
+                                ),
+                                progress: 0.4, // 프로젝트 진행률 (예시 값)
+                                open: true
+                            }];
+
+                            // 할일 데이터 추가
+                            tasksData.forEach((task, index) => {
+                            	let progress=0;
+                            	if (task.status === "todo") {
+                            	    progress = 0; // 시작하지 않음
+                            	} else if (task.status === "inProgress") {
+                            	    progress = 0.5; // 진행 중
+                            	} else if (task.status === "completed") {
+                            	    progress = 1; // 완료
+                            	} else {
+                            	    progress = 0; // 알 수 없는 상태
+                            	}
+                                ganttData.push({
+                                    id: task.scheduleId,
+                                    text: task.taskName,
+                                    start_date: convertDate(task.startDate),
+                                    duration: calculateDuration(task.startDate, task.endDate),
+                                    progress: progress, // 상태에 따른 진행률
+                                    parent: projectData.id
+                                });
+                            });
+
+                            // 간트 차트 렌더링
+                            renderGanttChart(ganttData);
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("❌ 할일 데이터 로드 오류:", error);
+                        }
+                    });
                 },
                 error: function (xhr, status, error) {
-                    console.error("❌ 데이터 로드 오류:", error);
+                    console.error("❌ 프로젝트 데이터 로드 오류:", error);
                 }
             });
-        	
-            $.ajax({
-                url: "jsp/GetTasks.jsp",
-                type: "POST",
-                dataType: "json",
-                success: function (tasks) {
-                    console.log("✅ 간트 할일 차트 데이터 수신:", projects);
-                    renderGanttChart(tasks);
-                },
-                error: function (xhr, status, error) {
-                    console.error("❌ 데이터 로드 오류:", error);
-                }
-            });
+        }
+
+        // 날짜 변환 함수 (yyyy-mm-dd → dd-mm-yyyy)
+        function convertDate(dateString) {
+            const [year, month, day] = dateString.split('-');
+            return `${day}-${month}-${year}`;
+        }
+
+        // 기간 계산 함수
+        function calculateDuration(startDate, endDate) {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            const diff = end - start;
+            return Math.ceil(diff / (1000 * 60 * 60 * 24));
+        }
+
+        // 간트 차트 렌더링 함수
+        function renderGanttChart(data) {
+            gantt.init("ganttChart");
+            
+            // 간트 차트 설정
+            gantt.config.columns = [
+                {name: "text", label: "Task name", width: "*", tree: true },
+                {name: "start_date", label: "Start", align: "center", width: 100 },
+                {name: "duration", label: "Duration", align: "center", width: 80 },
+                {name: "progress", label: "Progress", align: "center", width: 80 }
+            ];
+            
+            gantt.config.scale_unit = "day";
+            gantt.config.date_scale = "%d %M";
+            gantt.config.subscales = [
+                {unit: "week", step: 1, date: "Week #%W"}
+            ];
+            
+            gantt.templates.task_class = function(start, end, task) {
+                return task.parent ? "child-task" : "parent-project";
+            };
+            
+            gantt.parse({ data });
         }
             });
 
