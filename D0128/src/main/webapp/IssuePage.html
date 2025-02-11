@@ -32,9 +32,9 @@
           <h1>
 			    <span>위험 관리</span>
 			    <div class="issue-buttons">
-			        <button class="add-btn">이슈 추가</button>
-			        <button class="delete-btn">이슈 삭제</button>
-			        <button class="update-btn">이슈 업데이트</button>
+			        <button class="add-btn" data-link="jsp/projectIssueAdd.jsp">이슈 추가</button>
+			        <button class="delete-btn" data-link="jsp/projectIssueDelete.jsp">이슈 삭제</button>
+			        <button class="update-btn" data-link="jsp/projectIssueUpdate.jsp">이슈 업데이트</button>
 			    </div>
 			</h1>
 
@@ -124,6 +124,24 @@ document.addEventListener("click", function (event) {
     }
 });
 
+// 📌 프로필 메뉴 클릭 시 페이지 이동
+document.querySelectorAll('.profile-menu li').forEach(item => {
+    item.addEventListener('click', function () {
+        const targetPage = this.getAttribute('data-link');
+        window.location.href = targetPage;
+    });
+});
+
+//이슈 추가, 삭제, 업데이트 버튼 이벤트 핸들러 (기능 추가 가능)
+document.querySelector('.add-btn').addEventListener('click', function() {
+	window.location.href = this.getAttribute('data-link');
+});
+document.querySelector('.delete-btn').addEventListener('click', function() {
+    window.location.href = this.getAttribute('data-link');
+});
+document.querySelector('.update-btn').addEventListener('click', function() {
+    window.location.href = this.getAttribute('data-link');
+});
 
 $(document).ready(function () {
     loadIssues(); 
