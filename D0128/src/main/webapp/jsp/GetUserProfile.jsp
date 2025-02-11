@@ -3,7 +3,7 @@
 <%@ page import="org.json.simple.JSONObject" %>
 
 <%
-    String uid = (String) session.getAttribute("id");
+    String uid = (String) session.getAttribute("id").toString().trim();
     JSONObject userInfo = new JSONObject();
 
     if (uid != null) {

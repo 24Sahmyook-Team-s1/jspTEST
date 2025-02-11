@@ -2,7 +2,7 @@
 <%@ page import="java.sql.*, org.json.simple.JSONObject" %>
 
 <%
-    String userId = request.getParameter("userId").trim();
+    String userId = request.getParameter("userId").toString().trim();
     JSONObject result = new JSONObject();
 
     System.out.println("📥 BIO 불러오기 요청 - userId: " + userId); // 디버깅 로그 추가
