@@ -89,7 +89,6 @@
             <input type="text" id="newTaskInput" placeholder="할 일을 입력하세요">
             <input type="date" id="startDateInput" placeholder="시작일">
             <input type="date" id="endDateInput" placeholder="종료일">
-            <input type="number" id="projectIdInput" placeholder="프로젝트 ID">
             <button id="saveTaskBtn" class="modal-btn">추가</button>
             <button class="modal-btn close" id="closeAddTaskModal">닫기</button>
         </div>
@@ -190,7 +189,6 @@ $(document).ready(function () {
         const taskName = $("#newTaskInput").val().trim();
         const startDate = $("#startDateInput").val();
         const endDate = $("#endDateInput").val();
-        const projectId = $("#projectIdInput").val();
 
         if (taskName && startDate && endDate && projectId) {
             console.log("모든 입력 값 확인:", taskName, startDate, endDate, projectId);
@@ -228,6 +226,7 @@ $(document).ready(function () {
         $.ajax({
             url: "jsp/GetTasks.jsp",
             type: "GET",
+            data: {projectId:projectId},
             dataType: "json",
             success: function (tasks) {
                 console.log("GetTasks.jsp 응답:", tasks);

@@ -8,7 +8,7 @@
     String taskName = request.getParameter("taskName");
     String startDate = request.getParameter("startDate");
     String endDate = request.getParameter("endDate");
-    int projectId = Integer.parseInt(request.getParameter("projectId"));
+    int projectId = Integer.parseInt(request.getParameter("projectId").trim());
 
     JSONObject jsonResponse = new JSONObject();
     ScheduleDAO scheduleDAO = new ScheduleDAO();

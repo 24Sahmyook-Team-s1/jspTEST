@@ -4,7 +4,8 @@
 
 <%
     response.setContentType("application/json;charset=UTF-8");
+	int projectId = Integer.parseInt(request.getParameter("projectId").trim());
     ScheduleDAO scheduleDAO = new ScheduleDAO();
-    JSONArray tasks = scheduleDAO.getAllTasks();
+    JSONArray tasks = scheduleDAO.getTasksByProjectIds(projectId);
     out.print(tasks.toJSONString());
 %>
