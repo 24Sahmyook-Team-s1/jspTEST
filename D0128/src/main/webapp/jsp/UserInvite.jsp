@@ -1,19 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ page import="dao.*"%>
+<%@ page import="java.sql.SQLException"%>
+<%@ page import="javax.naming.NamingException"%>
 
 <%
-    String projectIDParam= request.getParameter("projectID");
+    Integer projectID = (Integer) session.getAttribute("projectID");
     String userID = request.getParameter("userID");
-
-    Integer projectID = null;
-    if (projectIDParam != null && !projectIDParam.isEmpty()) {
-        try {
-            projectID = Integer.parseInt(projectIDParam);
-        } catch (NumberFormatException e) {
-            projectID = null;
-        }
-    }
 
     if (userID != null && projectID != null) {
         TeamDAO invitation = new TeamDAO();

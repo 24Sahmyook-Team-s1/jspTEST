@@ -12,6 +12,55 @@ body, html {
     flex-direction: column;
     align-items: center;
 }
+		.contentGrid{
+			display:grid;
+			grid-template-columns: 3fr 2fr;
+			gap: 20px;
+			padding: 20px;
+		    background: white;
+		    border-radius: 12px;
+		    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+		}	
+		.card {
+            margin-bottom: 20px;
+            display:flex;
+            flex-direction: column;
+            padding:10px;
+        }
+        .danger-btn {
+            background: red;
+            color: white;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            width: 300px;
+        }
+        .team-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .team-list {
+            border: 2px solid #ccc;
+            padding: 10px;
+            margin-top: 10px;
+            flex-grow: 1;
+        }
+        .team-member {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px;
+            border-bottom: 1px solid #eee;
+        }
+        .remove-btn {
+            background: pink;
+            border: none;
+            padding: 5px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin:0px 10px;
+        }
 
 /* 해담바 스타일 */
 .header {

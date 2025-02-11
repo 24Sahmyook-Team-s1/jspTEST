@@ -27,10 +27,23 @@
         </div>
 
         <!-- 메인 컨텐츠 -->
-        <div class="main-content">
-            <div class="team-doc-container" id="teamDocContainer">
-                <!-- JavaScript로 동적으로 추가될 것입니다. -->
-            </div>
+        <div class="contentGrid">
+            <div class="card">
+	            <h2>프로젝트 명: 쌈@빵한 프로젝트 이름</h2>
+	            <p><strong>책임자:</strong> 책임자이름 (책임자 이메일)</p>
+	            <p><strong>프로젝트 설명:</strong> 쌈빵한 프로젝트 설명 12356788887654324098490544182358 ^ 235</p>
+	            <button class="danger-btn">프로젝트 폐기</button>
+        	</div>
+	        <div class="card team-container">
+	            <h3>팀원 관리</h3>
+	            <button onclick="addTeamMember()">팀원 추가</button>
+	            <div class="team-list" id="team-list">
+	                <div class="team-member">
+	                    <span>김재욱 (dummy@molepres.com)</span>
+	                    <button class="remove-btn" onclick="removeMember(this)">제거</button>
+	                </div>
+	            </div>
+        	</div>
         </div>
     </div>
 
@@ -82,6 +95,27 @@
             });
         });
 
+        function addTeamMember() {
+            const userID = prompt("초대할 팀원의 이메일을 입력하세요:");
+			$.ajax({
+				type:"POST",
+				url: "UserInvite.jsp",
+				data: {
+					userID: userID
+				},
+				success: function (response) {
+                    console.log("UserInvite.jsp 응답:", response);
+                },
+                error: function (xhr, status, error) {
+                    console.error("팀원 초대 AJAX 오류:", status, error);
+                }
+				
+				
+			});
+        }
+        function removeMember(button) {
+            button.parentElement.remove();
+        }
     </script>
 </body>
 </html>
