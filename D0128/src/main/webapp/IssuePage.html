@@ -5,18 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MOLE - 이슈 관리</title>
     <link rel="stylesheet" href="css/IssuePage.css">
-    <script src="js/jquery-3.6.0.min.js"></script>	
+    <script src="js/jquery-3.6.0.min.js"></script>
     <script src="js/core.js"></script>
 </head>
 <body>
 
     <!-- 상단바 -->
-   <div class="header"> 
-      <h2>MOLE</h2>
+    <div class="header">
+        <h2>MOLE</h2>
     </div>
 
     <div class="container">
-      <!-- 📌 왼쪽 사이드바 -->
+        <!-- 왼쪽 사이드바 -->
         <div class="sidebar">
             <ul>
                 <li class="sidebar-link" data-link="MainPage.html">대시보드</li>
@@ -29,14 +29,14 @@
 
         <!-- 메인 컨텐츠 -->
         <div class="main-content">
-          <h1>
-			    <span>위험 관리</span>
-			    <div class="issue-buttons">
-			        <button class="add-btn" data-link="jsp/projectIssueAdd.jsp">이슈 추가</button>
-			        <button class="delete-btn" data-link="jsp/projectIssueDelete.jsp">이슈 삭제</button>
-			        <button class="update-btn" data-link="jsp/projectIssueUpdate.jsp">이슈 업데이트</button>
-			    </div>
-			</h1>
+            <h1>
+                <span>위험 관리</span>
+                <div class="issue-buttons">
+                    <button class="add-btn">이슈 추가</button>
+                    <button class="delete-btn" data-link="jsp/projectIssueDelete.jsp">이슈 삭제</button>
+                    <button class="update-btn">이슈 업데이트</button>
+                </div>
+            </h1>
 
             <div class="issue-container">
                 <!-- HAZARD -->
@@ -46,9 +46,7 @@
                         <span>Name</span>
                         <span>Issue Description</span>
                     </div>
-                    <div class="issue-list" id="hazardList">
-                        <!-- 이슈 항목 추가 영역 -->
-                    </div>
+                    <div class="issue-list" id="hazardList"></div>
                 </div>
 
                 <!-- ISSUE -->
@@ -58,9 +56,7 @@
                         <span>Name</span>
                         <span>Issue Description</span>
                     </div>
-                    <div class="issue-list" id="issueList">
-                        <!-- 이슈 항목 추가 영역 -->
-                    </div>
+                    <div class="issue-list" id="issueList"></div>
                 </div>
 
                 <!-- SOLVED -->
@@ -70,14 +66,13 @@
                         <span>Name</span>
                         <span>Issue Description</span>
                     </div>
-                    <div class="issue-list" id="solvedList">
-                        <!-- 이슈 항목 추가 영역 -->
-                    </div>
+                    <div class="issue-list" id="solvedList"></div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- 📌 프로필 메뉴 -->
+
+    <!-- 프로필 메뉴 -->
     <div class="profile-container">
         <img src="public/logo-transparent.png" alt="MOLE PMS Logo" class="profile-btn" id="profileBtn">
         <div class="profile-menu" id="profileMenu">
@@ -92,106 +87,169 @@
             </ul>
         </div>
     </div>
-    
+
+    <!-- 이슈 추가/수정/삭제 모달 창 -->
+    <div id="issueModal" class="modal">
+        <div class="modal-content">
+            <h2 id="modalTitle">이슈 관리</h2>
+
+            <label for="issueTitle">이슈 제목</label>
+            <input type="text" id="issueTitle" placeholder="이슈 제목을 입력하세요">
+
+            <label for="issueDescription">이슈 설명</label>
+            <input type="text" id="issueDescription" placeholder="이슈 설명을 입력하세요">
+
+            <label for="issueLevel">이슈 레벨</label>
+            <select id="issueLevel">
+                <option value="0">HAZARD ⚠️</option>
+                <option value="1">ISSUE ⚠️</option>
+                <option value="2">SOLVED 🟢</option>
+            </select>
+
+            <button id="saveIssueBtn" class="add-btn">이슈 저장</button>
+            <button id="closeModalBtn" class="close">닫기</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll('.sidebar-link').forEach(link => {
+                link.addEventListener('click', function () {
+                    const targetPage = this.getAttribute('data-link');
+                    window.location.href = targetPage;
+                });
+            });
+        });
+
+        // 프로필 메뉴 토글
+        const profileBtn = document.getElementById("profileBtn");
+        const profileMenu = document.getElementById("profileMenu");
+
+        profileBtn.addEventListener("click", function (event) {
+            event.stopPropagation();
+            profileMenu.classList.toggle("active");
+        });
+
+        document.addEventListener("click", function (event) {
+            if (!profileBtn.contains(event.target) && !profileMenu.contains(event.target)) {
+                profileMenu.classList.remove("active");
+            }
+        });
+
+        document.querySelectorAll('.profile-menu li').forEach(item => {
+            item.addEventListener('click', function () {
+                const targetPage = this.getAttribute('data-link');
+                window.location.href = targetPage;
+            });
+        });
+
+        // 모달 관련 스크립트
+        const issueModal = document.getElementById("issueModal");
+        const modalTitle = document.getElementById("modalTitle");
+        const saveIssueBtn = document.getElementById("saveIssueBtn");
+
+        document.querySelector('.add-btn').addEventListener('click', function () {
+            modalTitle.textContent = "이슈 추가";
+            saveIssueBtn.textContent = "이슈 추가";
+            issueModal.style.display = "flex";
+        });
+
+        document.querySelector('.update-btn').addEventListener('click', function () {
+            modalTitle.textContent = "이슈 업데이트";
+            saveIssueBtn.textContent = "업데이트 저장";
+            issueModal.style.display = "flex";
+        });
+
+        document.getElementById("closeModalBtn").addEventListener('click', function () {
+            issueModal.style.display = "none";
+        });
+
+        window.addEventListener('click', function (event) {
+            if (event.target === issueModal) {
+                issueModal.style.display = "none";
+            }
+        });
+
+        saveIssueBtn.addEventListener('click', function () {
+            const issueTitle = document.getElementById("issueTitle").value;
+            const issueDescription = document.getElementById("issueDescription").value;
+            const issueLevel = document.getElementById("issueLevel").value;
+
+            if (!issueTitle || !issueDescription) {
+                alert("모든 필드를 입력하세요.");
+                return;
+            }
+
+            $.ajax({
+                url: "jsp/projectIssueAdd.jsp",
+                type: "POST",
+                data: {
+                    title: issueTitle,
+                    description: issueDescription,
+                    level: issueLevel
+                },
+                success: function (response) {
+                    alert("이슈가 성공적으로 추가되었습니다!");
+                    issueModal.style.display = "none";
+                    loadIssues();
+                },
+                error: function (xhr, status, error) {
+                    console.error("이슈 추가 실패:", error);
+                    alert("이슈 추가에 실패했습니다.");
+                }
+            });
+        });
+
+        // 이슈 데이터 로드
+        $(document).ready(function () {
+            loadIssues();
+
+            function loadIssues() {
+                $.ajax({
+                    url: "jsp/projectIssueList.jsp",
+                    type: "POST",
+                    data: { projectid: 1 },
+                    dataType: "json",
+                    success: function (issues) {
+                        console.log("✅ Loaded issues:", issues);
+                        displayIssues(issues);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("❌ AJAX 오류 발생:", error);
+                    }
+                });
+            }
+
+            function displayIssues(issues) {
+                const hazardList = $("#hazardList");
+                const issueList = $("#issueList");
+                const solvedList = $("#solvedList");
+
+                hazardList.empty();
+                issueList.empty();
+                solvedList.empty();
+
+                issues.forEach(issue => {
+                    if (issue.level === "0") {
+                        hazardList.append(getIssues(issue));
+                    } else if (issue.level === "1") {
+                        issueList.append(getIssues(issue));
+                    } else if (issue.level === "2") {
+                        solvedList.append(getIssues(issue));
+                    }
+                });
+            }
+
+            function getIssues(issue) {
+                return `
+                    <div class="issue-item">
+                        <span>${issue.title}</span>
+                        <span>${issue.description}</span>
+                    </div>
+                `;
+            }
+        });
+    </script>
 
 </body>
 </html>
-
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    // 사이드바 클릭 시 페이지 이동
-    document.querySelectorAll('.sidebar-link').forEach(link => {
-        link.addEventListener('click', function () {
-            const targetPage = this.getAttribute('data-link');
-            window.location.href = targetPage;
-        });
-    });
-    
-});
-
-// 📌 프로필 버튼 클릭 시 메뉴 표시
-const profileBtn = document.getElementById("profileBtn");
-const profileMenu = document.getElementById("profileMenu");
-
-profileBtn.addEventListener("click", function (event) {
-    event.stopPropagation();
-    profileMenu.classList.toggle("active");
-});
-
-document.addEventListener("click", function (event) {
-    if (!profileBtn.contains(event.target) && !profileMenu.contains(event.target)) {
-        profileMenu.classList.remove("active");
-    }
-});
-
-// 📌 프로필 메뉴 클릭 시 페이지 이동
-document.querySelectorAll('.profile-menu li').forEach(item => {
-    item.addEventListener('click', function () {
-        const targetPage = this.getAttribute('data-link');
-        window.location.href = targetPage;
-    });
-});
-
-//이슈 추가, 삭제, 업데이트 버튼 이벤트 핸들러 (기능 추가 가능)
-document.querySelector('.add-btn').addEventListener('click', function() {
-	window.location.href = this.getAttribute('data-link');
-});
-document.querySelector('.delete-btn').addEventListener('click', function() {
-    window.location.href = this.getAttribute('data-link');
-});
-document.querySelector('.update-btn').addEventListener('click', function() {
-    window.location.href = this.getAttribute('data-link');
-});
-
-$(document).ready(function () {
-    loadIssues(); 
-    
-    function loadIssues() {
-        $.ajax({
-            url: "jsp/projectIssueList.jsp",
-            type: "POST", // GET → POST 변경
-            data: { projectid: 1 }, // POST로 projectid 전달
-            dataType: "json",
-            success: function (issues) {
-                console.log("✅ Loaded issues:", issues);
-                DisplayIssues(issues);
-            },
-            error: function (xhr, status, error) {
-                console.error("❌ AJAX 오류 발생:", error);
-            },
-        });
-    }
-
-    function DisplayIssues(issues) {
-		console.log("display");
-        let hazardList = $("#hazardList");
-        let issueList = $("#issueList");
-        let solvedList = $("#solvedList");
-
-        hazardList.empty();
-        issueList.empty();
-        solvedList.empty();
-
-        issues.forEach(issue => {
-			console.log(issue, " ", issue.level);
-            if (issue.level === "0") {
-                hazardList.append(getIssues(issue));
-            } else if (issue.level === "1") {
-                issueList.append(getIssues(issue));
-            } else if (issue.level === "2") {
-                solvedList.append(getIssues(issue));
-            }
-        });
-    }
-    
-    function getIssues(issue) {
-        return `
-            <div class="issue-item">
-                    <span>${issue.title}</span>
-                    <span>${issue.description}</span>
-            </div>
-        `;
-    }
-});
-
-</script>

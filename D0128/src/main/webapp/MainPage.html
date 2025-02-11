@@ -90,6 +90,7 @@
     </div>
 
     <script>
+    let userId;
     
     $(document).ready(function () {
     	// 세션 확인 후 로그인 여부 체크
@@ -101,13 +102,15 @@
                     alert("로그인이 필요합니다.");
                     window.location.href = "index.html"; // 로그인 페이지로 이동
                 }
+                else{
+                	userId = response; // 세션에서 사용자 ID를 가져오는 부분
+                    loadProjects(); // 프로젝트 로드
+                }
             },
             error: function(xhr, status, error) {
                 console.error("세션 확인 중 오류 발생:", error);
             }
         });
-    	
-      loadProjects(); 
 		
       $(".sidebar-link, .profile-menu li").on("click", function () {
           const targetPage = $(this).data("link");
@@ -153,19 +156,27 @@
     	}
       
       function showProjects(projects) {
-        let projectContainer = $("#projectList");
-        projectContainer.empty();
+    	    console.log("프로젝트 데이터:", projects);  // 데이터 구조 확인
 
-        if (projects.length > 0) {
-          projects.forEach(project => {
-            projectContainer.append(getProjectCode(project));
-          });
-        } else {
-          projectContainer.append("<p>No On Going Projects</p>");
-        }
+    	    let projectContainer = $("#projectList");
+    	    projectContainer.empty();
 
-        updateGanttChart(projects);
-      }
+    	    if (projects.length > 0) {
+    	        projects.forEach(project => {
+    	            const projectCode = getProjectCode(project);
+    	            projectContainer.append(projectCode);
+    	            
+    	            $(`#project-${project.id}`).on("click", function() {
+    	                goToTeamPage(project.id);
+    	            });
+    	        });
+    	    } else {
+    	        projectContainer.append("<p>No On Going Projects</p>");
+    	    }
+
+    	    updateGanttChart(projects);
+    	}
+
 
       // 추가 작업 필요
       function goToTeamPage(projectId) {
@@ -174,7 +185,7 @@
     	}
       function getProjectCode(project) {
         return `
-         <div class="project" onclick="goToTeamPage(${project.id})">
+         <div class="project" id="project-${project.id}">
            <h3>${project.name}</h3>
            <p>📅 Created At: ${project.createdAt}</p>
          </div>
@@ -187,23 +198,27 @@
         }
 
       function updateGanttChart(projects) {
-          let ganttBody = $("#ganttBody");
-          ganttBody.empty();
+    	    let ganttBody = $("#ganttBody");
+    	    ganttBody.empty();
 
-          projects.forEach(project => {
-            let row = `<div class="gantt-row">
-              <div class="project-name">${project.name}</div>
-              <div class="gantt-progress">
-                <div class="${project.schedule[0] ? 'active' : ''}"></div>
-                <div class="${project.schedule[1] ? 'active' : ''}"></div>
-                <div class="${project.schedule[2] ? 'active' : ''}"></div>
-                <div class="${project.schedule[3] ? 'active' : ''}"></div>
-                <div class="${project.schedule[4] ? 'active' : ''}"></div>
-              </div>
-            </div>`;
-            ganttBody.append(row);
-          });
-        }
+    	    projects.forEach(project => {
+    	        const schedule = project.schedule || [false, false, false, false, false];  // 기본값 설정
+
+    	        let row = `
+    	            <div class="gantt-row">
+    	                <div class="project-name">${project.name}</div>
+    	                <div class="gantt-progress">
+    	                    <div class="${schedule[0] ? 'active' : ''}"></div>
+    	                    <div class="${schedule[1] ? 'active' : ''}"></div>
+    	                    <div class="${schedule[2] ? 'active' : ''}"></div>
+    	                    <div class="${schedule[3] ? 'active' : ''}"></div>
+    	                    <div class="${schedule[4] ? 'active' : ''}"></div>
+    	                </div>
+    	            </div>`;
+    	        ganttBody.append(row);
+    	    });
+    	}
+
       
       $("#addProjectBtn").on("click", function () {
         $("#projectModal").show();
