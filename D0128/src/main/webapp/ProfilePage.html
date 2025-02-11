@@ -7,116 +7,276 @@
     <script src="js/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-    <!-- 📌 상단바 -->
+    <!-- 상단바 -->
     <div class="header">
         <h1>MOLE</h1>
     </div>
 
     <!-- 프로필 콘텐츠 -->
     <div class="profile-container">
-        <!-- 확장된 프로필 박스 -->
         <div class="profile-info">
-            <!-- 프로필 왼쪽 (사진, 이름, 이메일) -->
             <div class="profile-left">
                 <div class="profile-picture"></div>
                 <h2 id="userName">사용자 이름</h2>
                 <p id="userEmail">이메일</p>
                 <button class="edit-profile-btn">프로필 수정</button>
+                <button class="append-bio-btn">추가 입력</button>
             </div>
-
-            <!-- 소개글 오른쪽 -->
             <div class="profile-bio empty" id="bioPreview">소개글이 없습니다.</div>
         </div>
 
-        <!-- 개인 소개글 작성 및 Pinned 프로젝트 -->
         <div class="sections-row">
             <div class="bio-section">
                 <p contenteditable="true" id="bioInput">여기에 개인소개글을 작성하세요.</p>
             </div>
 
             <div class="pinned-section">
-                <h3>Pinned <span class="customize">customize</span></h3>
+                <h3>Pinned <span class="customize" id="customizeBtn">customize</span></h3>
                 <div id="pinnedProjects" class="pinned-projects"></div>
             </div>
         </div>
     </div>
 
-	    <div class="profile-menu-container">
-	    <img src="public/logo-transparent.png" alt="MOLE PMS Logo" class="profile-btn" id="profileBtn">
-	    <div class="profile-menu" id="profileMenu">
-	        <ul>
-				<li data-link="MainPage.html">홈</li>
-				<li data-link="TeamPage.html">팀 페이지</li> <!-- ✅ 팀 페이지 추가 -->
-				<li data-link="FindTeam.html">팀 찾기</li>
-				<li data-link="CreateTeam.html">팀 만들기</li>
-	            <li data-link="TeamManage.html">팀 관리</li>
-	            <li data-link="ProfilePage.html">프로필</li>
-				<li data-link="SettingsPage.html">설정</li> </ul>
-	    </div>
-	</div>
+    <!-- 프로필 메뉴 -->
+    <div class="profile-menu-container">
+        <img src="public/logo-transparent.png" alt="MOLE PMS Logo" class="profile-btn" id="profileBtn">
+        <div class="profile-menu" id="profileMenu">
+            <ul>
+                <li data-link="MainPage.html">홈</li>
+                <li data-link="TeamPage.html">팀 페이지</li>
+                <li data-link="FindTeam.html">팀 찾기</li>
+                <li data-link="CreateTeam.html">팀 만들기</li>
+                <li data-link="TeamManage.html">팀 관리</li>
+                <li data-link="ProfilePage.html">프로필</li>
+                <li data-link="SettingsPage.html">설정</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 모달 창 -->
+    <div class="modal" id="projectModal">
+        <div class="modal-content">
+            <h2>프로젝트 관리</h2>
+            <label for="projectSelect">프로젝트 선택</label>
+            <select id="projectSelect"></select>
+
+            <label for="newProjectName">새 프로젝트 이름</label>
+            <input type="text" id="newProjectName" placeholder="새 이름 입력">
+
+            <button id="renameProjectBtn">이름 변경</button>
+            <button id="deleteProjectBtn">삭제</button>
+            <button id="closeModalBtn" class="close-btn">닫기</button>
+        </div>
+    </div>
 
     <script src="js/core.js"></script>
+
+    <script>
+    let userId;
+
+    $(document).ready(function () {
+    	 // 📌 사이드바 및 프로필 메뉴 클릭 시 페이지 이동
+        $(".sidebar-link, .profile-menu li").on("click", function () {
+            const targetPage = $(this).data("link");
+            window.location.href = targetPage;
+        });
+
+        // 📌 프로필 버튼 클릭 시 메뉴 토글
+        const profileBtn = $("#profileBtn");
+        const profileMenu = $("#profileMenu");
+
+        profileBtn.on("click", function (event) {
+            event.stopPropagation();
+            profileMenu.toggleClass("active");
+        });
+
+        $(document).on("click", function (event) {
+            if (!profileBtn.is(event.target) && !profileMenu.is(event.target) && profileMenu.has(event.target).length === 0) {
+                profileMenu.removeClass("active");
+            }
+        });
+    	// 세션 확인
+        $.ajax({
+            url: "jsp/session.jsp",
+            type: "GET",
+            success: function(response) {
+                if (response.includes("로그인하지 않았습니다.")) {
+                    alert("로그인이 필요합니다.");
+                    window.location.href = "index.html";
+                } else {
+                    // userId에서 "현재 로그인한 사용자 ID:" 부분 제거
+                    userId = response.replace("현재 로그인한 사용자 ID:", "").trim();  
+                    console.log("✅ 로그인된 사용자 ID:", userId);  // 디버깅 로그
+                    loadUserProfile();
+                    loadUserBio();
+                    loadUserProjects();
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("세션 확인 중 오류 발생:", error);
+            }
+        });
+
+        // 프로필 수정
+        $(".edit-profile-btn").click(function () {
+            const bioContent = $("#bioInput").text().trim();
+            if (bioContent !== "") {
+                $("#bioPreview").removeClass('empty').text(bioContent);
+                saveUserBio(bioContent, false);
+            } else {
+                $("#bioPreview").addClass('empty').text("소개글이 없습니다.");
+            }
+        });
+
+        // 추가 입력
+        $(".append-bio-btn").click(function () {
+            const newBio = $("#bioInput").text().trim();
+            if (newBio !== "") {
+                const currentBio = $("#bioPreview").hasClass('empty') ? "" : $("#bioPreview").text();
+                const updatedBio = currentBio ? `${currentBio}\n${newBio}` : newBio;
+                $("#bioPreview").removeClass('empty').text(updatedBio);
+                saveUserBio(newBio, true);
+            }
+        });
+
+        // Customize 버튼 클릭 시 모달 표시
+        $("#customizeBtn").click(function () {
+            populateProjectSelect();
+            $("#projectModal").show();
+        });
+
+        // 모달 닫기
+        $("#closeModalBtn").click(function () {
+            $("#projectModal").hide();
+        });
+
+        // 프로젝트 이름 변경
+        $("#renameProjectBtn").click(function () {
+            const projectId = $("#projectSelect").val();
+            const newProjectName = $("#newProjectName").val().trim();
+            if (newProjectName) {
+                $.ajax({
+                    url: "jsp/RenameProject.jsp",
+                    type: "POST",
+                    data: { projectId: projectId, newName: newProjectName },
+                    success: function () {
+                        alert("프로젝트 이름이 변경되었습니다.");
+                        loadUserProjects();
+                        $("#projectModal").hide();
+                    },
+                    error: function () {
+                        alert("프로젝트 이름 변경 실패.");
+                    }
+                });
+            } else {
+                alert("새 이름을 입력하세요.");
+            }
+        });
+
+        // 프로젝트 삭제
+        $("#deleteProjectBtn").click(function () {
+            const projectId = $("#projectSelect").val();
+            $.ajax({
+                url: "jsp/DeleteProject.jsp",
+                type: "POST",
+                data: { projectId: projectId },
+                success: function () {
+                    alert("프로젝트가 삭제되었습니다.");
+                    loadUserProjects();
+                    $("#projectModal").hide();
+                },
+                error: function () {
+                    alert("프로젝트 삭제 실패.");
+                }
+            });
+        });
+    });
+
+    function saveUserBio(bio, append) {
+        $.ajax({
+            url: "jsp/SaveBio.jsp",
+            type: "POST",
+            data: { userId: userId, bio: bio, append: append },
+            success: function (response) {
+                console.log("📤 BIO 저장 응답:", response); // 디버깅 로그
+                if (response.status === "success") {
+                    console.log("✅ 소개글 저장 성공.");
+                } else {
+                    console.error("❌ 소개글 저장 실패:", response.message);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("❌ 소개글 저장 중 오류:", error);
+            }
+        });
+    }
+
+
+    function loadUserProfile() {
+        $.ajax({
+            url: "jsp/GetUserProfile.jsp",
+            type: "GET",
+            dataType: "json",
+            success: function (data) {
+                $("#userName").text(data.name);
+                $("#userEmail").text(data.email);
+            },
+            error: function () {
+                console.error("사용자 정보를 불러오지 못했습니다.");
+            }
+        });
+    }
+
+    function loadUserBio() {
+        $.ajax({
+            url: "jsp/GetBio.jsp",
+            type: "GET",
+            data: { userId: userId },
+            success: function (response) {
+                console.log("📥 BIO 불러오기 응답:", response); // 디버깅 로그
+                if (response.status === "success" && response.bio) {
+                    $("#bioPreview").removeClass('empty').text(response.bio);
+                } else {
+                    $("#bioPreview").addClass('empty').text("소개글이 없습니다.");
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("❌ 소개글 불러오기 중 오류 발생:", error);
+            }
+        });
+    }
+
+    function loadUserProjects() {
+        $.ajax({
+            url: "jsp/GetUserProjects.jsp",
+            type: "GET",
+            dataType: "json",
+            success: function (projects) {
+                $("#pinnedProjects").empty();
+                projects.forEach(function (project) {
+                    $("#pinnedProjects").append(`<div class="pinned-project" data-id="${project.id}">${project.name}</div>`);
+                });
+            },
+            error: function () {
+                console.error("프로젝트 목록을 불러오지 못했습니다.");
+            }
+        });
+    }
+
+    function populateProjectSelect() {
+        $.ajax({
+            url: "jsp/GetUserProjects.jsp",
+            type: "GET",
+            dataType: "json",
+            success: function (projects) {
+                const projectSelect = $("#projectSelect");
+                projectSelect.empty();
+                projects.forEach(function (project) {
+                    projectSelect.append(`<option value="${project.id}">${project.name}</option>`);
+                });
+            }
+        });
+    }
+    </script>
 </body>
 </html>
-
-
-<script>
-$(document).ready(function () {
-    // 프로필 수정 버튼 클릭 시 소개글 표시
-    $(".edit-profile-btn").click(function () {
-        const bioContent = $("#bioInput").text().trim();
-        if (bioContent !== "") {
-            $("#bioPreview").removeClass('empty').text(bioContent);
-        } else {
-            $("#bioPreview").addClass('empty').text("소개글이 없습니다.");
-        }
-    });
-
-    // 메뉴 기능 (기존 유지)
-    $("#profileBtn").click(function () {
-        $("#profileMenu").toggleClass("active");
-    });
-
-    $(document).click(function (event) {
-        if (!$(event.target).closest('#profileBtn, #profileMenu').length) {
-            $("#profileMenu").removeClass("active");
-        }
-    });
-
-    $(".profile-menu li").click(function () {
-        window.location.href = $(this).data("link");
-    });
-
-    // 사용자 정보 불러오기
-    $.ajax({
-        url: "jsp/GetUserProfile.jsp",
-        method: "GET",
-        dataType: "json",
-        success: function (data) {
-            $("#userName").text(data.name);
-            $("#userEmail").text(data.email);
-        },
-        error: function () {
-            console.error("사용자 정보를 불러오지 못했습니다.");
-        }
-    });
-
-    // 프로젝트 불러오기
-    $.ajax({
-        url: "jsp/GetProjectList.jsp",
-        method: "GET",
-        dataType: "json",
-        success: function (projects) {
-            projects.forEach(function (project) {
-                $("#pinnedProjects").append(`
-                    <div class="pinned-project">${project.name}</div>
-                `);
-            });
-        },
-        error: function () {
-            console.error("프로젝트 목록을 불러오지 못했습니다.");
-        }
-    });
-});
-
-</script>
