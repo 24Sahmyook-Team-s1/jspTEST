@@ -156,8 +156,7 @@
     	}
       
       function showProjects(projects) {
-        let projectContainer = $("#projectList");
-        projectContainer.empty();
+    	    console.log("프로젝트 데이터:", projects);  // 데이터 구조 확인
 
         if (projects.length > 0) {
             projects.forEach(project => {
@@ -173,8 +172,22 @@
             projectContainer.append("<p>No On Going Projects</p>");
         }
 
-        updateGanttChart(projects);
-      }
+    	    if (projects.length > 0) {
+    	        projects.forEach(project => {
+    	            const projectCode = getProjectCode(project);
+    	            projectContainer.append(projectCode);
+    	            
+    	            $(`#project-${project.id}`).on("click", function() {
+    	                goToTeamPage(project.id);
+    	            });
+    	        });
+    	    } else {
+    	        projectContainer.append("<p>No On Going Projects</p>");
+    	    }
+
+    	    updateGanttChart(projects);
+    	}
+
 
       // 추가 작업 필요
       function goToTeamPage(projectId) {
@@ -196,23 +209,27 @@
         }
 
       function updateGanttChart(projects) {
-          let ganttBody = $("#ganttBody");
-          ganttBody.empty();
+    	    let ganttBody = $("#ganttBody");
+    	    ganttBody.empty();
 
-          projects.forEach(project => {
-            let row = `<div class="gantt-row">
-              <div class="project-name">${project.name}</div>
-              <div class="gantt-progress">
-                <div class="${project.schedule[0] ? 'active' : ''}"></div>
-                <div class="${project.schedule[1] ? 'active' : ''}"></div>
-                <div class="${project.schedule[2] ? 'active' : ''}"></div>
-                <div class="${project.schedule[3] ? 'active' : ''}"></div>
-                <div class="${project.schedule[4] ? 'active' : ''}"></div>
-              </div>
-            </div>`;
-            ganttBody.append(row);
-          });
-        }
+    	    projects.forEach(project => {
+    	        const schedule = project.schedule || [false, false, false, false, false];  // 기본값 설정
+
+    	        let row = `
+    	            <div class="gantt-row">
+    	                <div class="project-name">${project.name}</div>
+    	                <div class="gantt-progress">
+    	                    <div class="${schedule[0] ? 'active' : ''}"></div>
+    	                    <div class="${schedule[1] ? 'active' : ''}"></div>
+    	                    <div class="${schedule[2] ? 'active' : ''}"></div>
+    	                    <div class="${schedule[3] ? 'active' : ''}"></div>
+    	                    <div class="${schedule[4] ? 'active' : ''}"></div>
+    	                </div>
+    	            </div>`;
+    	        ganttBody.append(row);
+    	    });
+    	}
+
       
       $("#addProjectBtn").on("click", function () {
         $("#projectModal").show();

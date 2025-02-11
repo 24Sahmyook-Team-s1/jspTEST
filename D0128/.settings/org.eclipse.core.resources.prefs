@@ -1,2 +1,10 @@
 eclipse.preferences.version=1
+<<<<<<< HEAD
+encoding//src/main/webapp/jsp/GetProjectList.jsp=UTF-8
+=======
+
+encoding//src/main/webapp/jsp/GetProjectList.jsp=UTF-8
+encoding//src/main/webapp/jsp/JoinTeam.jsp=UTF-8
+
+>>>>>>> branch 'park' of https://github.com/24Sahmyook-Team-s1/jspTEST.git
 encoding/<project>=UTF-8
