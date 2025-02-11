@@ -3,141 +3,189 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MOLE - 팀 게시판</title>
+    <title>팀 게시판</title>
     <link rel="stylesheet" href="css/TeamBoard.css">
-    <script src="js/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-    <div class="header"><h1>MOLE</h1></div>
+
+    <div class="header">MOLE</div>
+
     <div class="container">
         <div class="sidebar">
             <ul>
-                <li data-link="MainPage.html">대시보드</li>
-                <li data-link="TeamPage.html">팀 페이지</li>
-                <li data-link="GanttChart.html">간트 차트</li>
-                <li data-link="IssuePage.html">이슈</li>
-                <li data-link="TeamBoard.html" class="active">팀 보드</li>
-                <li data-link="TeamSetting.html">팀 세팅</li>
+                <li class="sidebar-link" data-link="MainPage.html">대시보드</li>
+                <li class="sidebar-link" data-link="TeamPage.html">팀 페이지</li>
+                <li class="sidebar-link" data-link="GanttChart.html">간트 차트</li>
+                <li class="sidebar-link" data-link="IssuePage.html">이슈</li>
+                <li class="sidebar-link" data-link="TeamBoard.html">팀 보드</li>
+                <li class="sidebar-link" data-link="TeamSetting.html">팀 세팅</li>
             </ul>
         </div>
+
         <div class="main-content">
             <h2>팀 게시판</h2>
-            <button id="openModalBtn" class="open-modal-btn">글 작성</button>
-            <div id="postsContainer"></div>
+            <button id="createPostBtn">글 작성</button>
+            <div id="postList"></div>
         </div>
     </div>
 
-    <!-- 글 작성 모달 -->
-    <div id="postModal" class="modal">
+    <div id="postModal" class="modal" style="display: none;">
         <div class="modal-content">
             <h3>새 글 작성</h3>
             <input type="text" id="postTitle" placeholder="제목을 입력하세요">
             <textarea id="postContent" placeholder="내용을 입력하세요"></textarea>
-            <input type="file" id="postFile">
-            <button id="submitPostBtn">작성 완료</button>
-            <button id="closeModalBtn" class="close-btn">닫기</button>
+            <button id="submitPost">작성 완료</button>
+            <button id="closeModal">닫기</button>
         </div>
     </div>
+	<!-- 📌 프로필 메뉴 (오른쪽 하단 위치) -->
+    <div class="profile-container">
+        <img src="public/logo-transparent.png" alt="MOLE PMS Logo" class="profile-btn" id="profileBtn">
+        <div class="profile-menu" id="profileMenu">
+            <ul>
+				<li data-link="MainPage.html">홈</li>
+                <li data-link="TeamPage.html">팀 페이지</li> <!-- ✅ 팀 페이지 추가 -->
+                <li data-link="FindTeam.html">팀 찾기</li>
+                <li data-link="CreateTeam.html">팀 만들기</li>
+                <li data-link="TeamManage.html">팀 관리</li>
+                <li data-link="ProfilePage.html">프로필</li>
+                <li data-link="SettingsPage.html">설정</li> </ul>
+        </div>
+    </div>
+<script>
+$(document).ready(function() {
+    let projectId, userId;
 
-    <script>
-    let projectId;
+    // 세션에서 projectId 가져오기
+    $.ajax({
+        url: "jsp/projectsession.jsp",
+        type: "GET",
+        success: function(response) {
+            projectId = response.trim();
+            if (!projectId || projectId === "error") {
+                alert("프로젝트를 다시 선택하세요.");
+                window.location.href = "MainPage.html";
+            } else {
+                loadPosts(projectId);
+            }
+        },
+        error: function() {
+            alert("프로젝트 ID를 불러오는 데 실패했습니다.");
+        }
+    });
 
-    $(document).ready(function () {
-        // 프로젝트 세션 가져오기
+    // 세션에서 userId 가져오기
+    $.ajax({
+        url: "jsp/session.jsp",
+        type: "GET",
+        success: function(response) {
+            if (response.includes("로그인하지 않았습니다.")) {
+                alert("로그인이 필요합니다.");
+                window.location.href = "index.html";
+            } else {
+                userId = response.trim();
+            }
+        },
+        error: function() {
+            alert("사용자 정보를 불러오는 데 실패했습니다.");
+        }
+    });
+	
+    // 📌 사이드바 및 프로필 메뉴 클릭 시 페이지 이동
+    $(".sidebar-link, .profile-menu li").on("click", function () {
+        const targetPage = $(this).data("link");
+        window.location.href = targetPage;
+    });
+
+    // 📌 프로필 버튼 클릭 시 메뉴 토글
+    const profileBtn = $("#profileBtn");
+    const profileMenu = $("#profileMenu");
+
+    profileBtn.on("click", function (event) {
+        event.stopPropagation();
+        profileMenu.toggleClass("active");
+    });
+
+    $(document).on("click", function (event) {
+        if (!profileBtn.is(event.target) && !profileMenu.is(event.target) && profileMenu.has(event.target).length === 0) {
+            profileMenu.removeClass("active");
+        }
+    });
+    
+    // 게시글 불러오기
+    function loadPosts(projectId) {
         $.ajax({
-            url: "jsp/projectsession.jsp",
+            url: "jsp/GetPosts.jsp",
             type: "GET",
-            success: function(response) {
-                if (response.includes("error")) {
-                    alert("프로젝트를 다시 선택하세요.");
-                    window.location.href = "MainPage.html";
-                } else {
-                    projectId = response.trim();
-                    loadPosts();
-                }
+            data: { projectId: projectId },
+            dataType: "json",
+            success: function(posts) {
+                displayPosts(posts);
             },
-            error: function(xhr, status, error) {
-                console.error("프로젝트 세션 오류:", error);
+            error: function() {
+                alert("게시글을 불러오는 데 실패했습니다.");
             }
         });
+    }
 
-        // 모달 열기/닫기
-        $("#openModalBtn").click(() => $("#postModal").show());
-        $("#closeModalBtn").click(() => $("#postModal").hide());
+    // 게시글 표시
+    function displayPosts(posts) {
+        let postList = $("#postList");
+        postList.empty();
 
-        // 글 작성 이벤트
-        $("#submitPostBtn").click(function () {
-            const title = $("#postTitle").val().trim();
-            const content = $("#postContent").val().trim();
-            const file = $("#postFile")[0].files[0];
-            const formData = new FormData();
-
-            if (!title || !content) {
-                alert("제목과 내용을 입력하세요.");
-                return;
-            }
-
-            formData.append("projectId", projectId);
-            formData.append("title", title);
-            formData.append("content", content);
-            if (file) formData.append("file", file);
-
-            $.ajax({
-                url: "jsp/CreatePost.jsp",
-                type: "POST",
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function(response) {
-                    if (response.status === "success") {
-                        alert("글 작성 성공!");
-                        loadPosts();
-                        $("#postModal").hide();
-                    } else {
-                        alert("글 작성 실패: " + response.message);
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error("글 작성 오류:", error);
-                }
-            });
+        posts.forEach(post => {
+            let postHtml = `
+                <div class="post">
+                    <h3>${post.title || "제목 없음"}</h3>
+                    <p>${post.content || "내용 없음"}</p>
+                    <small>작성자: ${post.userId || "알 수 없음"}</small>
+                    <small>작성일: ${post.createdAt}</small>
+                </div>`;
+            postList.append(postHtml);
         });
+    }
 
-        // 게시글 불러오기
-        function loadPosts() {
-            $.ajax({
-                url: "jsp/GetPosts.jsp",
-                type: "GET",
-                data: { projectId: projectId },
-                dataType: "json",
-                success: function(posts) {
-                    $("#postsContainer").empty();
-                    if (posts.length > 0) {
-                        posts.forEach(post => {
-                            $("#postsContainer").append(`
-                                <div class="post">
-                                    <h3>${post.title || "제목 없음"}</h3>
-                                    <p>${post.content || "내용 없음"}</p>
-                                    <small>작성일: ${post.createdAt}</small>
-                                </div>
-                            `);
-                        });
-                    } else {
-                        $("#postsContainer").append("<p>게시글이 없습니다.</p>");
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error("게시글 불러오기 실패:", error);
-                }
-            });
+    // 글 작성 모달 열기
+    $("#createPostBtn").on("click", function() {
+        $("#postModal").show();
+    });
+
+    // 모달 닫기
+    $("#closeModal").on("click", function() {
+        $("#postModal").hide();
+    });
+
+    // 글 작성 완료
+    $("#submitPost").on("click", function() {
+        let title = $("#postTitle").val().trim();
+        let content = $("#postContent").val().trim();
+
+        if (!title || !content || !userId || !projectId) {
+            alert("모든 필드를 입력하세요.");
+            return;
         }
 
-        // 사이드바 클릭 이벤트
-        $(".sidebar li").on("click", function () {
-            const link = $(this).data("link");
-            if (link) window.location.href = link;
+        $.ajax({
+            url: "jsp/CreatePost.jsp",
+            type: "POST",
+            data: { title, content, projectId, userId },
+            success: function(response) {
+                if (response.status === "success") {
+                    alert("글이 성공적으로 작성되었습니다!");
+                    $("#postModal").hide();
+                    loadPosts(projectId);
+                } else {
+                    alert("글 작성 실패: " + response.message);
+                }
+            },
+            error: function() {
+                alert("글 작성 중 오류가 발생했습니다.");
+            }
         });
     });
-    </script>
+});
+</script>
+
 </body>
 </html>

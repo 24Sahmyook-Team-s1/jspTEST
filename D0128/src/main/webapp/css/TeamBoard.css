@@ -34,7 +34,7 @@ body, html {
     gap: 40px;
 }
 
-/* 사이드바 */
+/* 🌟 사이드바 */
 .sidebar {
     width: 220px;
     background: #f1f3f5;
@@ -45,23 +45,56 @@ body, html {
     color: #333;
 }
 
+/* 📌 사이드바 리스트 스타일 */
 .sidebar ul {
     list-style: none;
     padding: 0;
+    margin: 0;
 }
 
 .sidebar li {
+    display: flex;
+    align-items: center;
     padding: 15px 10px;
     border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    color: #333;
 }
 
-.sidebar li:hover, .sidebar .active {
+/* 📌 아이콘 추가 (CSS에서만 관리) */
+.sidebar li::before {
+    margin-right: 10px;
+    font-size: 18px;
+}
+
+/* 메뉴별 아이콘 지정 */
+.sidebar li:nth-child(1)::before { content: '📊'; }  /* 대쉘보드 */
+.sidebar li:nth-child(2)::before { content: '📁'; }  /* 팀 페이지 */
+.sidebar li:nth-child(3)::before { content: '📅'; }  /* 간트 체트 */
+.sidebar li:nth-child(4)::before { content: '🐞'; }  /* 이슈 */
+.sidebar li:nth-child(5)::before { content: '👥'; }  /* 팀 보드 */
+
+/* 📌 호박 효과 */
+.sidebar li:hover {
     background-color: #007bff;
     color: white;
+    transform: translateX(5px);
 }
 
+.sidebar li:hover::before {
+    transform: scale(1.2);
+}
+
+/* 🌟 반응형 */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
+        border-radius: 0;
+    }
+}
 /* 메인 콘텐츠 */
 .main-content {
     flex: 1;

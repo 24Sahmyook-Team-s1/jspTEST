@@ -1,11 +1,14 @@
+<%@ page contentType="application/json; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.sql.*, org.json.simple.JSONArray, org.json.simple.JSONObject" %>
+
 <%
     String projectId = request.getParameter("projectId");
-    JSONArray posts = new JSONArray();
 
     Connection conn = null;
     PreparedStatement pstmt = null;
     ResultSet rs = null;
+
+    JSONArray postList = new JSONArray();
 
     try {
         Class.forName("oracle.jdbc.driver.OracleDriver");
@@ -22,17 +25,17 @@
             post.put("title", rs.getString("TITLE"));
             post.put("content", rs.getString("CONTENT"));
             post.put("createdAt", rs.getString("CREATED_AT"));
-            post.put("filepath", rs.getString("FILEPATH"));
-            posts.add(post);
+            post.put("userId", rs.getString("USERID"));
+            postList.add(post);
         }
+
+        out.print(postList.toJSONString());
+
     } catch (Exception e) {
-        e.printStackTrace();
+        out.print("error: " + e.getMessage());
     } finally {
         if (rs != null) rs.close();
         if (pstmt != null) pstmt.close();
         if (conn != null) conn.close();
     }
-
-    response.setContentType("application/json;charset=UTF-8");
-    out.print(posts.toJSONString());
 %>
