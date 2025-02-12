@@ -4,6 +4,11 @@
 <%
     String projectId = request.getParameter("projectId");
 
+    if (projectId == null || projectId.isEmpty()) {
+        out.print("{\"status\":\"fail\", \"message\":\"프로젝트 ID가 전달되지 않았습니다.\"}");
+        return;
+    }
+
     Connection conn = null;
     PreparedStatement pstmt = null;
     ResultSet rs = null;
@@ -26,13 +31,14 @@
             post.put("content", rs.getString("CONTENT"));
             post.put("createdAt", rs.getString("CREATED_AT"));
             post.put("userId", rs.getString("USERID"));
+            post.put("imagePath", rs.getString("FILEPATH"));  // FILEPATH 컬럼 사용
             postList.add(post);
         }
 
         out.print(postList.toJSONString());
 
     } catch (Exception e) {
-        out.print("error: " + e.getMessage());
+        out.print("{\"status\":\"fail\", \"message\":\"" + e.getMessage() + "\"}");
     } finally {
         if (rs != null) rs.close();
         if (pstmt != null) pstmt.close();

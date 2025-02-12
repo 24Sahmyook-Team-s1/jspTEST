@@ -30,15 +30,18 @@
         </div>
     </div>
 
-    <div id="postModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <h3>새 글 작성</h3>
-            <input type="text" id="postTitle" placeholder="제목을 입력하세요">
-            <textarea id="postContent" placeholder="내용을 입력하세요"></textarea>
-            <button id="submitPost">작성 완료</button>
-            <button id="closeModal">닫기</button>
-        </div>
-    </div>
+	<!-- 모달 창 수정 -->
+	<div id="postModal" class="modal" style="display: none;">
+	    <div class="modal-content">
+	        <h3>새 글 작성</h3>
+	        <input type="text" id="postTitle" placeholder="제목을 입력하세요">
+	        <textarea id="postContent" placeholder="내용을 입력하세요"></textarea>
+	        <input type="file" id="postImage"> <!-- 📸 이미지 업로드 필드 추가 -->
+	        <button id="submitPost">작성 완료</button>
+	        <button id="closeModal">닫기</button>
+	    </div>
+	</div>
+
 	<!-- 📌 프로필 메뉴 (오른쪽 하단 위치) -->
     <div class="profile-container">
         <img src="public/logo-transparent.png" alt="MOLE PMS Logo" class="profile-btn" id="profileBtn">
@@ -113,7 +116,7 @@ $(document).ready(function() {
         }
     });
     
-    // 게시글 불러오기
+ // 게시글 불러오기 AJAX 요청
     function loadPosts(projectId) {
         $.ajax({
             url: "jsp/GetPosts.jsp",
@@ -121,30 +124,38 @@ $(document).ready(function() {
             data: { projectId: projectId },
             dataType: "json",
             success: function(posts) {
-                displayPosts(posts);
+                if (posts.status === "fail") {
+                    alert("에러: " + posts.message);
+                } else {
+                    displayPosts(posts);
+                }
             },
-            error: function() {
-                alert("게시글을 불러오는 데 실패했습니다.");
+            error: function(xhr, status, error) {
+                console.error("AJAX Error:", status, error);
+                alert("게시글을 불러오는 데 실패했습니다. 오류: " + error);
             }
         });
     }
 
-    // 게시글 표시
-    function displayPosts(posts) {
-        let postList = $("#postList");
-        postList.empty();
 
-        posts.forEach(post => {
-            let postHtml = `
-                <div class="post">
-                    <h3>${post.title || "제목 없음"}</h3>
-                    <p>${post.content || "내용 없음"}</p>
-                    <small>작성자: ${post.userId || "알 수 없음"}</small>
-                    <small>작성일: ${post.createdAt}</small>
-                </div>`;
-            postList.append(postHtml);
-        });
-    }
+    // 게시글 표시
+	   function displayPosts(posts) {
+	    let postList = $("#postList");
+	    postList.empty();
+	
+	    posts.forEach(post => {
+	        let postHtml = `
+	            <div class="post">
+	                <h3>${post.title || "제목 없음"}</h3>
+	                <p>${post.content || "내용 없음"}</p>
+	                ${post.imagePath ? `<img src="${post.imagePath}" alt="Post Image" class="post-image">` : ''}
+					<small>작성자: ${post.userId || "알 수 없음"}</small>
+	                <small>작성일: ${post.createdAt}</small>
+	            </div>`;
+	        postList.append(postHtml);
+	    });
+	}
+
 
     // 글 작성 모달 열기
     $("#createPostBtn").on("click", function() {
@@ -156,20 +167,39 @@ $(document).ready(function() {
         $("#postModal").hide();
     });
 
-    // 글 작성 완료
+ // 글 작성 완료 버튼 클릭 이벤트 수정
     $("#submitPost").on("click", function() {
         let title = $("#postTitle").val().trim();
         let content = $("#postContent").val().trim();
+        let imageFile = $("#postImage")[0].files[0];
 
         if (!title || !content || !userId || !projectId) {
             alert("모든 필드를 입력하세요.");
             return;
         }
 
+        // FormData 객체에 데이터 추가
+        let formData = new FormData();
+        formData.append("title", title);
+        formData.append("content", content);
+        formData.append("projectId", projectId);
+        formData.append("userId", userId);
+
+        if (imageFile) {
+            formData.append("image", imageFile);
+        }
+
+        // 디버깅: FormData 확인
+        for (let pair of formData.entries()) {
+            console.log(pair[0]+ ', ' + pair[1]);
+        }
+
         $.ajax({
             url: "jsp/CreatePost.jsp",
             type: "POST",
-            data: { title, content, projectId, userId },
+            data: formData,
+            contentType: false,  // multipart/form-data로 전송
+            processData: false,  // 데이터를 문자열로 변환하지 않음
             success: function(response) {
                 if (response.status === "success") {
                     alert("글이 성공적으로 작성되었습니다!");
@@ -179,11 +209,15 @@ $(document).ready(function() {
                     alert("글 작성 실패: " + response.message);
                 }
             },
-            error: function() {
+            error: function(xhr, status, error) {
+                console.error("AJAX Error:", status, error);
                 alert("글 작성 중 오류가 발생했습니다.");
             }
         });
     });
+
+
+
 });
 </script>
 
