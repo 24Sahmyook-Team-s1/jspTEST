@@ -105,6 +105,43 @@ public class ProjectissueDAO {
 
         return  jsonResult.toString(); // JSON 문자열 반환
 	}
+	
+	public String getIssuesByIssueIdJSON(int issueId) throws Exception {
+		Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+		StringBuilder jsonResult = new StringBuilder("[");
+
+        try {
+        	String sql = "SELECT projectissueid, userid, projectid, title, description, issuelevel, createdat FROM projectissues WHERE projectissueid = ?";
+    		conn = ConnectionPool.get();
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, issueId); // 프로젝트 ID
+            rs = stmt.executeQuery();
+            
+            int count = 0;
+			while (rs.next()) {
+				if (count++ > 0)
+					jsonResult.append(", "); // 첫 번째 항목이 아닐 경우 쉼표 추가
+				jsonResult.append("{").append("\"issueid\": ").append(rs.getInt("Projectissueid")).append(", ")
+						.append("\"userid\": \"").append(rs.getString("userid")).append("\", ")
+						.append("\"projectid\": \"").append(rs.getInt("projectid")).append("\", ")
+						.append("\"title\": \"").append(rs.getString("title")).append("\", ")
+						.append("\"description\": \"").append(rs.getString("description")).append("\", ")
+						.append("\"level\": \"").append(rs.getInt("issuelevel")).append("\", ")
+						.append("\"createdat\": \"").append(rs.getTimestamp("createdat")).append("\"") 
+
+						.append("}");
+			}
+			jsonResult.append("]");
+        } finally {
+            if (rs != null) rs.close();
+            if (stmt != null) stmt.close();
+            if (conn != null) conn.close();
+        }
+
+        return  jsonResult.toString(); // JSON 문자열 반환
+	}
 
 	// 이슈 수정
 	public void updateIssue(int projectIssueId, String title, String description, int issuelevel) throws NamingException, SQLException {
