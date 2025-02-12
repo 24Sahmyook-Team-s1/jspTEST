@@ -167,40 +167,71 @@
         });
         function addTeamMember() {
             const userID = prompt("초대할 팀원의 이메일을 입력하세요:");
-            
-            // 세션에서 projectID 가져오기
             $.ajax({
-                type: "GET",
-                url: "jsp/projectsession.jsp",
-                success: function(projectID) {
-                    if (projectID && userID) {
-                        // 프로젝트 ID와 사용자 ID 함께 전송
-                        $.ajax({
-                            type: "POST",
-                            url: "jsp/UserInvite.jsp",
-                            data: { projectID: projectID.trim(), userID: userID.trim() },
-                            success: function(response) {
-                                console.log("초대 응답:", response);
-                                if (response.status === "success") {
-                                    alert(response.message);
-                                } else {
-                                    alert("초대 실패: " + response.message);
-                                }
-                            },
-                            error: function(xhr, status, error) {
-                                console.error("초대 요청 오류:", status, error);
-                                alert("초대 요청 중 오류 발생.");
-                            }
-                        });
+                type: "POST",
+                url: "jsp/UserInvite.jsp",
+                data: { userID: userID },
+                success: function (response) {
+                    console.log("UserInvite.jsp 응답:", response);
+
+                    if (response.status === "success" || response.status === "exists") {
+                        alert(response.message);
+                        updateTeamList(response.teamMembers);  // 팀원 목록 업데이트
                     } else {
-                        alert("프로젝트 ID 또는 사용자 ID가 올바르지 않습니다.");
+                        alert("팀원 추가 실패: " + response.message);
                     }
                 },
-                error: function() {
-                    alert("프로젝트 ID를 불러오는 데 실패했습니다.");
+                error: function (xhr, status, error) {
+                    console.error("팀원 초대 AJAX 오류:", status, error);
                 }
             });
         }
+
+        // 팀원 목록 업데이트 함수
+        function updateTeamList(members) {
+            const teamList = document.getElementById("team-list");
+            teamList.innerHTML = "";  // 기존 목록 초기화
+
+            members.forEach(member => {
+                const memberElement = document.createElement("div");
+                memberElement.className = "team-member";
+                memberElement.innerHTML = `
+                    <span>${member.name} (${member.email})</span>
+                    <button class="remove-btn" onclick="removeMember(this)">제거</button>
+                `;
+                teamList.appendChild(memberElement);
+            });
+        }
+
+        function loadTeamMembers() {
+            $.ajax({
+                url: "jsp/GetTeamMembers.jsp",  // 팀원 정보를 가져오는 JSP
+                type: "GET",
+                dataType: "json",
+                success: function(members) {
+                    displayTeamMembers(members);
+                },
+                error: function() {
+                    alert("팀원 정보를 불러오는 데 실패했습니다.");
+                }
+            });
+        }
+
+        function displayTeamMembers(members) {
+            const teamList = $("#team-list");
+            teamList.empty();  // 기존 목록 비우기
+
+            members.forEach(member => {
+                const memberHtml = `
+                    <div class="team-member">
+                        <span>${member.name} (${member.email})</span>
+                        <button class="remove-btn" onclick="removeMember('${member.userID}')">제거</button>
+                    </div>`;
+                teamList.append(memberHtml);
+            });
+        }
+
+
 
 
         function removeMember(button) {

@@ -73,24 +73,47 @@ public class TeamDAO {
 	public boolean addTeamMember(int projectId, String userId) throws NamingException, SQLException {
 	    Connection conn = null;
 	    PreparedStatement pstmt = null;
+	    ResultSet rs = null;
 	    boolean isSuccess = false;
 
 	    try {
 	        conn = ConnectionPool.get();
-	        String sql = "INSERT INTO teamMembers (ProjectID, UserID) VALUES (?, ?)";
+
+	        // ✅ 1️⃣ 먼저 중복된 팀원이 있는지 확인
+	        String checkSql = "SELECT COUNT(*) FROM TEAMMEMBERS WHERE PROJECTID = ? AND USERID = ?";
+	        pstmt = conn.prepareStatement(checkSql);
+	        pstmt.setInt(1, projectId);
+	        pstmt.setString(2, userId);
+	        rs = pstmt.executeQuery();
+
+	        if (rs.next() && rs.getInt(1) > 0) {
+	            // 이미 존재하는 팀원이므로 삽입하지 않음
+	            System.out.println("이미 팀원으로 등록된 사용자입니다.");
+	            return false;  // 삽입하지 않고 false 반환
+	        }
+	        
+	        rs.close();
+	        pstmt.close();
+
+	        // ✅ 2️⃣ 존재하지 않으면 삽입
+	        String sql = "INSERT INTO TEAMMEMBERS (PROJECTID, USERID, JOINED_AT) VALUES (?, ?, SYSDATE)";
 	        pstmt = conn.prepareStatement(sql);
 	        pstmt.setInt(1, projectId);
 	        pstmt.setString(2, userId);
 
-	        int rowsAffected = pstmt.executeUpdate(); // 실행된 행 개수 확인
-	        isSuccess = (rowsAffected > 0); // 성공 여부 판단
+	        int rowsAffected = pstmt.executeUpdate();
+	        isSuccess = (rowsAffected > 0);
+	        
 	    } finally {
+	        if (rs != null) rs.close();
 	        if (pstmt != null) pstmt.close();
 	        if (conn != null) conn.close();
 	    }
 
 	    return isSuccess;
 	}
+
+
 
 
     
@@ -249,4 +272,41 @@ public class TeamDAO {
 
         return requestList;
     }
+	
+	public JSONArray getTeamMembers(int projectId) throws NamingException, SQLException {
+	    Connection conn = null;
+	    PreparedStatement pstmt = null;
+	    ResultSet rs = null;
+	    JSONArray membersList = new JSONArray();
+
+	    try {
+	        conn = ConnectionPool.get();
+	        String sql = "SELECT u.USERID, u.JSONSTR FROM TEAMMEMBERS t JOIN USER2 u ON t.USERID = u.USERID WHERE t.PROJECTID = ?";
+	        pstmt = conn.prepareStatement(sql);
+	        pstmt.setInt(1, projectId);
+	        rs = pstmt.executeQuery();
+
+	        while (rs.next()) {
+	            JSONObject member = new JSONObject();
+	            String userJson = rs.getString("JSONSTR");
+
+	            // JSON 문자열 파싱
+	            org.json.simple.parser.JSONParser parser = new org.json.simple.parser.JSONParser();
+	            JSONObject userObj = (JSONObject) parser.parse(userJson);
+
+	            member.put("name", userObj.get("name"));
+	            member.put("email", userObj.get("id"));
+	            membersList.add(member);
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        if (rs != null) rs.close();
+	        if (pstmt != null) pstmt.close();
+	        if (conn != null) conn.close();
+	    }
+
+	    return membersList;
+	}
+
 }
