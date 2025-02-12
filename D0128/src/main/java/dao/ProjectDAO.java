@@ -37,18 +37,30 @@ public class ProjectDAO {
     public boolean removeProjectById(int projectID) throws NamingException, SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
+
         try {
-            String sql = "DELETE FROM projects WHERE ProjectID = ?";
             conn = ConnectionPool.get();
-            stmt = conn.prepareStatement(sql);
+            
+            // 프로젝트 삭제 전, 관련된 팀원 데이터도 삭제
+            String deleteTeamMembersSql = "DELETE FROM TEAMMEMBERS WHERE PROJECTID = ?";
+            stmt = conn.prepareStatement(deleteTeamMembersSql);
             stmt.setInt(1, projectID);
-            int count = stmt.executeUpdate();
-            return (count == 1);
+            stmt.executeUpdate();
+            stmt.close();
+            
+            // 프로젝트 삭제
+            String deleteProjectSql = "DELETE FROM PROJECTS WHERE PROJECTID = ?";
+            stmt = conn.prepareStatement(deleteProjectSql);
+            stmt.setInt(1, projectID);
+            
+            int affectedRows = stmt.executeUpdate();
+            return affectedRows > 0;
         } finally {
             if (stmt != null) stmt.close();
             if (conn != null) conn.close();
         }
     }
+
 
     // ✅ 프로젝트 조회 (ID 기준) - 책임자 정보 포함
     public JSONObject getProjectById(int projectID) throws NamingException, SQLException {

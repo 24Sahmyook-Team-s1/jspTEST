@@ -343,5 +343,27 @@ public class TeamDAO {
 	    return teamList;
 	}
 
+	public boolean removeTeamMember(int projectId, String userId) throws NamingException, SQLException {
+	    Connection conn = null;
+	    PreparedStatement pstmt = null;
+	    boolean isSuccess = false;
+
+	    try {
+	        conn = ConnectionPool.get();
+	        String sql = "DELETE FROM TEAMMEMBERS WHERE PROJECTID = ? AND USERID = ?";
+	        pstmt = conn.prepareStatement(sql);
+	        pstmt.setInt(1, projectId);
+	        pstmt.setString(2, userId);
+
+	        int affectedRows = pstmt.executeUpdate();
+	        isSuccess = affectedRows > 0;
+	    } finally {
+	        if (pstmt != null) pstmt.close();
+	        if (conn != null) conn.close();
+	    }
+
+	    return isSuccess;
+	}
+
 
 }

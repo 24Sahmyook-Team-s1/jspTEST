@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MOLE - 팀 보드</title>
+    <title>MOLE - 팀 세팅</title>
     <link rel="stylesheet" href="css/TeamSetting.css">
     <script src="js/jquery-3.6.0.min.js"></script>
 </head>
@@ -29,10 +29,10 @@
         <!-- 메인 컨텐츠 -->
         <div class="contentGrid">
             <div class="card">
-                <h2>프로젝트 명: <span id="projectName">쌈@빵한 프로젝트 이름</span></h2>
-                <p><strong>책임자:</strong> <span id="projectOwner">책임자이름 (책임자 이메일)</span></p>
+                <h2>프로젝트 명: <span id="projectName">프로젝트 이름</span></h2>
+                <p><strong>책임자:</strong> <span id="projectOwner">책임자 이름 (책임자 이메일)</span></p>
                 <p><strong>프로젝트 설명:</strong> <span id="projectDescription">프로젝트 설명 없음</span></p>
-                <button class="danger-btn">프로젝트 폐기</button>
+                <button class="danger-btn" id="deleteProjectBtn">프로젝트 폐기</button>
             </div>
 
             <div class="card team-container">
@@ -42,7 +42,6 @@
             </div>
         </div>
     </div>
-
     <!-- 프로필 메뉴 -->
     <div class="profile-container">
         <img src="public/logo-transparent.png" alt="MOLE PMS Logo" class="profile-btn" id="profileBtn">
@@ -73,7 +72,6 @@
                     window.location.href = "index.html";
                 } else {
                     userId = response.trim();
-                    console.log("User ID:", userId);
                     loadProjectDetails(userId);
                 }
             },
@@ -92,9 +90,8 @@
                     alert("프로젝트를 다시 선택하세요.");
                     window.location.href = "MainPage.html";
                 } else {
-                    console.log("Project ID:", projectId);
                     loadProjectDetails(userId, projectId);
-                    loadTeamMembers();  // 페이지 로드 시 팀원 불러오기
+                    loadTeamMembers();
                 }
             },
             error: function() {
@@ -115,20 +112,19 @@
                         alert("에러: " + data.message);
                     } else {
                         $("#projectName").text(data.projectName || "프로젝트 이름 없음");
-                        $("#projectOwner").text(`${data.ownerName} (${data.ownerEmail})` || "책임자 정보 없음");
+                        $("#projectOwner").text(`${data.ownerName} (${data.ownerEmail})`);
                         $("#projectDescription").text(data.description || "프로젝트 설명 없음");
                     }
                 },
                 error: function(xhr, status, error) {
-                    console.error("AJAX 오류:", status, error);
-                    alert("프로젝트 정보를 불러오는 데 실패했습니다. 오류: " + error);
+                    alert("프로젝트 정보를 불러오는 데 실패했습니다.");
                 }
             });
         }
 
         // 팀원 추가
-        function addTeamMember() {
-            const userID = prompt("초대할 팀원의 이메일을 입력하세요:");
+        window.addTeamMember = function() {
+            const userID = prompt("추가할 팀원의 이메일을 입력하세요:");
             if (!userID) return;
 
             $.ajax({
@@ -138,13 +134,13 @@
                 success: function(response) {
                     if (response.status === "success" || response.status === "exists") {
                         alert(response.message);
-                        loadTeamMembers();  // 팀원 추가 후 목록 새로고침
+                        loadTeamMembers();
                     } else {
                         alert("팀원 추가 실패: " + response.message);
                     }
                 },
-                error: function(xhr, status, error) {
-                    console.error("팀원 초대 AJAX 오류:", status, error);
+                error: function() {
+                    alert("팀원 추가 중 오류 발생.");
                 }
             });
         }
@@ -154,7 +150,7 @@
             $.ajax({
                 url: "jsp/GetTeamMembers.jsp",
                 type: "GET",
-                data: { projectId: projectId },  // 프로젝트 ID 전달
+                data: { projectId: projectId },
                 dataType: "json",
                 success: function(members) {
                     displayTeamMembers(members);
@@ -177,54 +173,84 @@
                     const memberHtml = `
                         <div class="team-member">
                             <span>${member.name} (${member.email})</span>
-                            <button class="remove-btn" onclick="removeMember('${member.userID}')">제거</button>
+                            <button class="remove-btn" onclick="removeMember('${member.userId}')">제거</button>
                         </div>`;
                     teamList.append(memberHtml);
                 });
             }
         }
 
-        // 팀원 제거 (UI 상에서만 제거)
-        function removeMember(userID) {
-            $.ajax({
-                url: "jsp/RemoveTeamMember.jsp",
-                type: "POST",
-                data: { userID: userID, projectId: projectId },
-                success: function(response) {
-                    if (response.status === "success") {
-                        alert("팀원 제거 성공!");
-                        loadTeamMembers();  // 팀원 제거 후 목록 새로고침
-                    } else {
-                        alert("팀원 제거 실패: " + response.message);
-                    }
-                },
-                error: function() {
-                    alert("팀원 제거 중 오류 발생.");
-                }
-            });
-        }
+        // 팀원 제거
+       window.removeMember = function(userId) {
+	    $.ajax({
+	        url: "jsp/RemoveTeamMember.jsp",
+	        type: "POST",
+	        data: { userId: userId, projectId: projectId },
+	        dataType: "json",  // 이 부분이 중요!
+	        success: function(response) {
+	            console.log("응답 데이터:", response);  // 응답 확인
+	
+	            if (response.status === "success") {
+	                alert("팀원 제거 성공!");
+	                loadTeamMembers();
+	            } else {
+	                alert("팀원 제거 실패: " + response.message);
+	            }
+	        },
+	        error: function(xhr, status, error) {
+	            console.error("AJAX 오류:", status, error);
+	            alert("팀원 제거 중 오류 발생.");
+	        }
+	    });
+	}
 
-        // 사이드바 클릭 이벤트
-        $(".sidebar-link").on("click", function() {
-            window.location.href = $(this).data("link");
+
+        // 프로젝트 삭제
+        $("#deleteProjectBtn").on("click", function() {
+            if (confirm("정말로 이 프로젝트를 삭제하시겠습니까?")) {
+                $.ajax({
+                    url: "jsp/deleteProject.jsp",
+                    type: "POST",
+                    data: { projectId: projectId },
+                    success: function(response) {
+                        if (response.status === "success") {
+                            alert("프로젝트가 성공적으로 삭제되었습니다.");
+                            window.location.href = "MainPage.html";
+                        } else {
+                            alert("프로젝트 삭제 실패: " + response.message);
+                        }
+                    },
+                    error: function() {
+                        alert("프로젝트 삭제 중 오류 발생.");
+                    }
+                });
+            }
+        });
+        
+        // 사이드바 및 프로필 메뉴 클릭 시 페이지 이동
+        $(".sidebar-link, .profile-menu li").on("click", function () {
+            const targetPage = $(this).data("link");
+            window.location.href = targetPage;
         });
 
         // 프로필 메뉴 토글
-        $("#profileBtn").on("click", function(event) {
+        const profileBtn = $("#profileBtn");
+        const profileMenu = $("#profileMenu");
+
+        profileBtn.on("click", function(event) {
             event.stopPropagation();
-            $("#profileMenu").toggleClass("active");
+            profileMenu.toggleClass("active");
         });
 
         $(document).on("click", function(event) {
-            if (!$("#profileBtn").is(event.target) && !$("#profileMenu").is(event.target)) {
-                $("#profileMenu").removeClass("active");
+            if (!profileBtn.is(event.target) && !profileMenu.is(event.target) && profileMenu.has(event.target).length === 0) {
+                profileMenu.removeClass("active");
             }
         });
+    
 
-        $(".profile-menu li").on("click", function() {
-            window.location.href = $(this).data("link");
-        });
     });
+    
     </script>
 </body>
 </html>
