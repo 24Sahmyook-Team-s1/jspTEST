@@ -38,7 +38,7 @@ public class TeamDAO {
 	        // 2. INVITATION 테이블에 이미 초대된 사용자인지 확인
 	        String checkInvitationSql = "SELECT * FROM INVITATION WHERE PROJECTID = ? AND USERID = ?";
 	        pstmt = conn.prepareStatement(checkInvitationSql);
-	        pstmt.setString(1, projectId);
+	        pstmt.setInt(1, projectId);
 	        pstmt.setString(2, userId);
 	        rs = pstmt.executeQuery();
 
@@ -52,7 +52,7 @@ public class TeamDAO {
 	        // 3. 초대 진행 (INVITATION 테이블에 삽입)
 	        String inviteSql = "INSERT INTO INVITATION (PROJECTID, USERID) VALUES (?, ?)";
 	        pstmt = conn.prepareStatement(inviteSql);
-	        pstmt.setString(1, projectId);
+	        pstmt.setInt(1, projectId);
 	        pstmt.setString(2, userId);
 
 	        int rowsAffected = pstmt.executeUpdate();  // 초대 성공 여부 확인
