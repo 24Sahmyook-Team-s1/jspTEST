@@ -332,5 +332,61 @@ public class ProjectDAO {
 
         return projectDetails;
     }
+    // 프로젝트 추가
+    public boolean addProject(String name, String adminUserID, String desc) throws NamingException, SQLException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        boolean isSuccess = false;
+        TeamDAO teamdao = new TeamDAO();
 
+        try {
+            conn = ConnectionPool.get();
+
+            // 1️⃣ AdminUserID가 User2 테이블에 존재하는지 확인
+            String checkUserSql = "SELECT USERID FROM User2 WHERE USERID = ?";
+            stmt = conn.prepareStatement(checkUserSql);
+            stmt.setString(1, adminUserID);
+            rs = stmt.executeQuery();
+
+            if (!rs.next()) {
+                System.out.println("❌ AdminUserID not found: " + adminUserID);
+                return false;
+            }
+            rs.close();
+            stmt.close();
+
+            // 2️⃣ Projects 테이블에 프로젝트 추가
+            String insertProjectSql = "INSERT INTO Projects (ProjectName, AdminUserID, CreatedAt, description) VALUES (?, ?, SYSDATE, ?)";
+            stmt = conn.prepareStatement(insertProjectSql, new String[]{"ProjectID"});
+            stmt.setString(1, name);
+            stmt.setString(2, adminUserID);
+            stmt.setString(3, desc);
+
+            int result = stmt.executeUpdate();
+            if (result == 1) {
+                // 3️⃣ 생성된 프로젝트 ID 가져오기
+                rs = stmt.getGeneratedKeys();
+                int projectId = -1;
+                if (rs.next()) {
+                    projectId = rs.getInt(1);
+                }
+
+                // 4️⃣ 프로젝트 생성이 성공하면 팀 멤버 추가
+                if (projectId != -1) {
+                    isSuccess = teamdao.addTeamMember(projectId, adminUserID);
+                    if (!isSuccess) {
+                        System.out.println("❌ 팀 멤버 추가 실패");
+                    }
+                }
+            }
+
+        } finally {
+            if (rs != null) rs.close();
+            if (stmt != null) stmt.close();
+            if (conn != null) conn.close();
+        }
+
+        return isSuccess; // 프로젝트 생성 및 팀 멤버 추가 성공 여부 반환
+    }
 }
