@@ -308,5 +308,40 @@ public class TeamDAO {
 
 	    return membersList;
 	}
+	public JSONArray getTeamMembersByProjectId(int projectId) throws NamingException, SQLException {
+	    Connection conn = null;
+	    PreparedStatement pstmt = null;
+	    ResultSet rs = null;
+	    JSONArray teamList = new JSONArray();
+
+	    try {
+	        conn = ConnectionPool.get();
+	        String sql = "SELECT u.USERID, u.JSONSTR " +
+	                     "FROM TEAMMEMBERS tm " +
+	                     "JOIN USER2 u ON tm.USERID = u.USERID " +
+	                     "WHERE tm.PROJECTID = ?";
+	        pstmt = conn.prepareStatement(sql);
+	        pstmt.setInt(1, projectId);
+	        rs = pstmt.executeQuery();
+
+	        while (rs.next()) {
+	            String jsonStr = rs.getString("JSONSTR");
+	            JSONObject userDetails = (JSONObject) new JSONParser().parse(jsonStr);
+	            JSONObject teamMember = new JSONObject();
+	            teamMember.put("userId", rs.getString("USERID"));
+	            teamMember.put("name", userDetails.get("name"));
+	            teamMember.put("email", userDetails.get("id"));
+	            teamList.add(teamMember);
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        if (rs != null) rs.close();
+	        if (pstmt != null) pstmt.close();
+	        if (conn != null) conn.close();
+	    }
+	    return teamList;
+	}
+
 
 }
