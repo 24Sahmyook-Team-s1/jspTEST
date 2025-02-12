@@ -19,7 +19,16 @@ if (scheduleId == null || startDate == null || endDate == null || status == null
 } else {
     try {
         ScheduleDAO dao = new ScheduleDAO();
-        responseJson = dao.updateTask(Integer.parseInt(scheduleId), startDate, endDate, status);
+        // 작업 업데이트 메소드 호출
+        boolean result = dao.updateTask(Integer.parseInt(scheduleId), startDate, endDate, status);
+        
+        if (result) {
+            responseJson.put("status", "success");
+            responseJson.put("message", "Task updated successfully");
+        } else {
+            responseJson.put("status", "error");
+            responseJson.put("message", "Failed to update task");
+        }
     } catch (NamingException | SQLException e) {
         responseJson.put("status", "error");
         responseJson.put("message", e.getMessage());

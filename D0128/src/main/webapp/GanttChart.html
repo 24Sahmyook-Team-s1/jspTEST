@@ -1,57 +1,82 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="stylesheet" type="text/css" href="https://cdn.dhtmlx.com/gantt/edge/dhtmlxgantt.css">
-    <script src="https://cdn.dhtmlx.com/gantt/edge/dhtmlxgantt.js"></script>
-    <title>MOLE - Gantt Chart</title>
-    <link rel="stylesheet" href="./css/GanttChart.css">
-    <script src="js/jquery-3.6.0.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link rel="stylesheet" type="text/css"
+	href="https://cdn.dhtmlx.com/gantt/edge/dhtmlxgantt.css">
+<script src="https://cdn.dhtmlx.com/gantt/edge/dhtmlxgantt.js"></script>
+<title>MOLE - Gantt Chart</title>
+<link rel="stylesheet" href="./css/GanttChart.css">
+<script src="js/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 
-    <!-- 📌 상단바 -->
-    <div class="header">
-        <h1>MOLE</h1>
-    </div>
+	<!-- 📌 상단바 -->
+	<div class="header">
+		<h1>MOLE</h1>
+	</div>
 
-    <div class="container">
-        <!-- 📌 왼쪽 사이드바 -->
-        <div class="sidebar">
-            <ul>
-                <li class="sidebar-link" data-link="MainPage.html">대시보드</li>
-                <li class="sidebar-link" data-link="TeamPage.html">팀 페이지</li>
-                <li class="sidebar-link" data-link="GanttChart.html">간트 차트</li>
-                <li class="sidebar-link" data-link="IssuePage.html">이슈</li>
-                <li class="sidebar-link" data-link="TeamBoard.html">팀 보드</li>
-                <li class="sidebar-link active" data-link="TeamSetting.html">팀 세팅</li>
-            </ul>
-        </div>
+	<div class="container">
+		<!-- 📌 왼쪽 사이드바 -->
+		<div class="sidebar">
+			<ul>
+				<li class="sidebar-link" data-link="MainPage.html">대시보드</li>
+				<li class="sidebar-link" data-link="TeamPage.html">팀 페이지</li>
+				<li class="sidebar-link" data-link="GanttChart.html">간트 차트</li>
+				<li class="sidebar-link" data-link="IssuePage.html">이슈</li>
+				<li class="sidebar-link" data-link="TeamBoard.html">팀 보드</li>
+				<li class="sidebar-link active" data-link="TeamSetting.html">팀
+					세팅</li>
+			</ul>
+		</div>
 
-        <!-- 📌 메인 컨텐츠 (간트차트) -->
-        <div class="main-content">
-            <h2>Gantt Chart</h2>
-            <div id="ganttChart" style="width:100%; height:700px"></div>
-        </div>
-    </div>
+		<!-- 📌 메인 컨텐츠 (간트차트) -->
+		<div class="main-content">
+			<h2>Gantt Chart</h2>
+			<div id="ganttChart" style="width: 100%; height: 700px"></div>
+		</div>
+	</div>
 
-    <!-- 📌 프로필 메뉴 (오른쪽 하단 위치) -->
-    <div class="profile-container">
-        <img src="public/logo-transparent.png" alt="MOLE PMS Logo" class="profile-btn" id="profileBtn">
-        <div class="profile-menu" id="profileMenu">
-            <ul>
+	<!-- 📌 프로필 메뉴 (오른쪽 하단 위치) -->
+	<div class="profile-container">
+		<img src="public/logo-transparent.png" alt="MOLE PMS Logo"
+			class="profile-btn" id="profileBtn">
+		<div class="profile-menu" id="profileMenu">
+			<ul>
 				<li data-link="MainPage.html">홈</li>
-                <li data-link="TeamPage.html">팀 페이지</li> <!-- ✅ 팀 페이지 추가 -->
-                <li data-link="FindTeam.html">팀 찾기</li>
-                <li data-link="CreateTeam.html">팀 만들기</li>
-                <li data-link="TeamManage.html">팀 관리</li>
-                <li data-link="ProfilePage.html">프로필</li>
-                <li data-link="SettingsPage.html">설정</li> </ul>
-        </div>
-    </div>
-    
+				<li data-link="TeamPage.html">팀 페이지</li>
+				<!-- ✅ 팀 페이지 추가 -->
+				<li data-link="FindTeam.html">팀 찾기</li>
+				<li data-link="CreateTeam.html">팀 만들기</li>
+				<li data-link="TeamManage.html">팀 관리</li>
+				<li data-link="ProfilePage.html">프로필</li>
+				<li data-link="SettingsPage.html">설정</li>
+			</ul>
+		</div>
+	</div>
+
+	<!-- 모달 창 -->
+	<div id="taskModal" class="modal" style="display: none;">
+		<div class="modal-content">
+			<h3>작업 수정</h3>
+			<form id="taskForm">
+				<label for="taskName">작업명:</label> <input type="text" id="taskName"
+					name="taskName" required> <label for="startDate">시작일:</label>
+				<input type="date" id="startDate" name="startDate" required>
+
+				<label for="endDate">종료일:</label> <input type="date" id="endDate"
+					name="endDate" required> <label for="progress">진행률:</label>
+				<input type="number" id="progress" name="progress" min="0" max="100"
+					required>
+
+				<button type="submit">저장</button>
+				<button type="button" class="close">닫기</button>
+			</form>
+		</div>
+	</div>
+
 	<script>
 	let projectId;
     let userId;
@@ -77,6 +102,7 @@
         gantt.config.autofit = true;
     });
 		
+	// 세션 확인 동작
     $(document).ready(function () {
         
         $.ajax({
@@ -136,27 +162,96 @@
                 profileMenu.removeClass("active");
             }
         });
+     	// 전역 변수로 projectData 정의
+        let projectData = {};
 
+        // 작업 업데이트 이벤트 핸들러
+        gantt.attachEvent("onAfterTaskUpdate", function (id, task) {
+            console.log("onAfterTaskUpdate");
+            saveTaskChanges(task);
+            return true;
+        });
+
+        // 드래그 앤 드롭 이벤트 핸들러
+        gantt.attachEvent("onAfterTaskDrag", function (id, mode, e) {
+            console.log("onAfterTaskDrag");
+            const task = gantt.getTask(id);
+            const projectStartDate = new Date(projectData.created_at);
+
+            // 드래그 이동 후의 시작일 계산
+            const newStartDate = new Date(task.start_date);
+            
+            // 작업의 새로운 시작일이 프로젝트 시작일보다 이전인지 검사
+            if (newStartDate < projectStartDate) {
+                alert("작업의 시작일은 프로젝트의 시작일 이후여야 합니다."); // 경고 메시지
+                loadGanttChart()
+                return false; // 드래그 취소
+            }
+            saveTaskChanges(task);
+            return true;
+        });
+
+        // 작업 기간 변경 이벤트 핸들러
+        gantt.attachEvent("onAfterTaskResize", function (id, mode, e) {
+            console.log("onAfterTaskResize");
+            const task = gantt.getTask(id);
+            const projectStartDate = new Date(projectData.created_at);
+
+            // 드래그 이동 후의 시작일 계산
+            const newStartDate = new Date(task.start_date);
+            
+            // 작업의 새로운 시작일이 프로젝트 시작일보다 이전인지 검사
+            if (newStartDate < projectStartDate) {
+                alert("작업의 시작일은 프로젝트의 시작일 이후여야 합니다."); // 경고 메시지
+                loadGanttChart()
+                return false; // 드래그 취소
+            }
+            saveTaskChanges(task);
+            return true;
+        });
+        
+        // 할일 클릭
+        gantt.attachEvent("onTaskDblClick", function (id, e) {
+        	console.log("onTaskDblClick");
+            const task = gantt.getTask(id);
+
+            console.log(task);
+
+            // 부모(Task가 아닌 프로젝트) 클릭 방지
+            if (task.parent && gantt.getTask(task.parent)) {
+                openTaskModal(task);
+            }
+
+            return true;
+        });
+
+
+
+        // 간트 js 시작
         function loadGanttChart() {
-            console.log("projectId: "+projectId);
+            console.log("projectId: " + projectId);
             
             // 프로젝트 기본 정보 먼저 가져오기
             $.ajax({
                 url: "jsp/GetProject.jsp",
                 type: "POST",
-                data: {projectId},
+                data: { projectId },
                 dataType: "json",
-                success: function (projectData) {
+                success: function (data) {
+                    projectData = data; // projectData를 전역 변수에 저장
                     console.log("✅ 프로젝트 데이터 수신:", projectData);
                     
                     // 해당 프로젝트의 할일 목록 가져오기
                     $.ajax({
                         url: "jsp/GetTasks.jsp",
                         type: "POST",
-                        data: {projectId},
+                        data: { projectId },
                         dataType: "json",
                         success: function (tasksData) {
                             console.log("✅ 할일 데이터 수신:", tasksData);
+                            
+                            // 프로젝트 시작일 가져오기
+                            const projectStartDate = new Date(projectData.created_at);
                             
                             // 데이터 구조 변환
                             const ganttData = [{
@@ -169,30 +264,44 @@
                                         return new Date(task.endDate) > new Date(maxDate) ? task.endDate : maxDate;
                                     }, projectData.created_at)
                                 ),
-                                progress: 0.4, // 프로젝트 진행률 (예시 값)
                                 open: true
                             }];
 
                             // 할일 데이터 추가
-                            tasksData.forEach((task, index) => {
-                            	let progress=0;
-                            	if (task.status === "todo") {
-                            	    progress = 0; // 시작하지 않음
-                            	} else if (task.status === "inProgress") {
-                            	    progress = 0.5; // 진행 중
-                            	} else if (task.status === "completed") {
-                            	    progress = 1; // 완료
-                            	} else {
-                            	    progress = 0; // 알 수 없는 상태
-                            	}
-                                ganttData.push({
-                                    id: task.scheduleId,
-                                    text: task.taskName,
-                                    start_date: convertDate(task.startDate),
-                                    duration: calculateDuration(task.startDate, task.endDate),
-                                    progress: progress, // 상태에 따른 진행률
-                                    parent: projectData.id
-                                });
+                            tasksData.forEach((task) => {
+                                let progress = 0;
+                                if (task.status === "todo") {
+                                    progress = 0; // 시작하지 않음
+                                } else if (task.status === "inProgress") {
+                                    progress = 0.5; // 진행 중
+                                } else if (task.status === "completed") {
+                                    progress = 1; // 완료
+                                } else {
+                                    progress = 0; // 알 수 없는 상태
+                                }
+
+                                // 작업 시작일 검사 및 변경
+                                const taskStartDate = new Date(task.startDate);
+                                if (taskStartDate < projectStartDate) {
+                                    // 작업 시작일을 프로젝트 시작일로 변경하고, 기간을 기본 1로 설정
+                                    ganttData.push({
+                                        id: task.scheduleId,
+                                        text: task.taskName,
+                                        start_date: convertDate(projectStartDate.toISOString().split('T')[0]), // 프로젝트 시작일로 변경
+                                        duration: 1, // 기본 기간 1
+                                        progress: progress, // 상태에 따른 진행률
+                                        parent: projectData.id
+                                    });
+                                } else {
+                                    ganttData.push({
+                                        id: task.scheduleId,
+                                        text: task.taskName,
+                                        start_date: convertDate(task.startDate), // 원래 작업의 시작일 사용
+                                        duration: calculateDuration(task.startDate, task.endDate), // 원래 기간 사용
+                                        progress: progress, // 상태에 따른 진행률
+                                        parent: projectData.id
+                                    });
+                                }
                             });
 
                             // 간트 차트 렌더링
@@ -208,6 +317,7 @@
                 }
             });
         }
+
 
         // 날짜 변환 함수 (yyyy-mm-dd → dd-mm-yyyy)
         function convertDate(dateString) {
@@ -247,7 +357,122 @@
             
             gantt.parse({ data });
         }
+        
+
+        	// 작업 변경 사항 저장 함수
+           function saveTaskChanges(task) {
+               const convertToServerDate = (date) => {
+                   const year = date.getFullYear();
+                   const month = String(date.getMonth() + 1).padStart(2, "0");
+                   const day = String(date.getDate()).padStart(2, "0");
+                   return `${year}-${month}-${day}`;
+               };
+               
+               let status = "todo";
+               
+               if (task.duration > 0) {
+                   status = "inProgress";
+               } else if (task.duration === 1) {
+                   status = "completed";
+               }
+
+               const taskData = {
+                   scheduleId: task.id,
+                   startDate: convertToServerDate(task.start_date),
+                   endDate: convertToServerDate(gantt.calculateEndDate(task)),
+                   status: status
+               };
+
+               $.ajax({
+                   url: "jsp/UpdateTaskbyID.jsp",
+                   type: "POST",
+                   data: taskData,
+                   success: function(response) {
+                       console.log("✅ 작업 업데이트 성공:", response);
+                   },
+                   error: function(xhr, status, error) {
+                       console.error("❌ 작업 업데이트 실패:", error);
+                       alert("변경사항 저장에 실패했습니다.");
+                       gantt.refreshData(); // 원래 상태로 롤백
+                   }
+               });
+           }
+        
+        // 작업 수정 모달 열기
+           function openTaskModal(task) {
+               // 모달 필드에 기존 데이터 세팅
+               document.getElementById("taskName").value = task.text;
+               document.getElementById("startDate").value = formatDate(task.start_date);
+               document.getElementById("endDate").value = formatDate(task.end_date);
+               document.getElementById("progress").value = task.progress * 100; // 0-1 범위를 0-100으로 변환
+
+               // 모달 표시
+               document.getElementById("taskModal").style.display = "block";
+
+               // 저장 버튼 클릭 시
+               document.getElementById("taskForm").onsubmit = function(event) {
+                   event.preventDefault(); // 기본 제출 방지
+                   updateTask(task.id); // 작업 업데이트
+                   closeTaskModal(); // 모달 닫기
+               };
+           }
+
+           // 모달 닫기
+           function closeTaskModal() {
+               document.getElementById("taskModal").style.display = "none";
+           }
+           
+           function updateTask(id) {
+        	    // 입력 필드에서 값 가져오기
+        	    const taskName = document.getElementById("taskName").value;
+        	    const startDate = new Date(document.getElementById("startDate").value);
+        	    const endDate = new Date(document.getElementById("endDate").value);
+        	    const progress = document.getElementById("progress").value / 100; // 0-100을 0-1로 변환
+				
+        	    console.log(document.getElementById("startDate").value);
+        		 // 날짜 변환
+        	    const formattedStartDate = convertDate(startDate.toISOString().split('T')[0]);
+    			const formattedEndDate = convertDate(endDate.toISOString().split('T')[0]);
+        	    
+        	    
+
+        	    // Gantt 차트에서 작업 업데이트
+        	    gantt.updateTask(id, {
+        	        text: taskName,
+        	        start_date: formattedStartDate,
+        	        end_date: formattedEndDate,
+        	        progress: progress
+        	    });
+
+        	    // 변경된 작업 정보를 저장
+        	    const updatedTask = {
+        	        id: id,
+        	        text: taskName,
+        	        start_date: startDate,
+        	        end_date: endDate,
+        	        progress: progress
+        	    };
+
+        	    saveTaskChanges(updatedTask); // 서버에 변경 사항 저장
+
+        	    // 사용자에게 알림
+        	    alert("작업이 업데이트되었습니다.");
+        	}
+           
+           // 날짜 포맷 변환 함수 (필요 시)
+           function formatDate(dateString) {
+               const date = new Date(dateString);
+               return date.toISOString().split('T')[0]; // YYYY-MM-DD 형식으로 변환
+           }
+
+           // 닫기 버튼 클릭 시 모달 닫기
+           document.querySelector("#taskModal .close").onclick = closeTaskModal;
+
+
+
+        
             });
+	
 
             // 📌 프로젝트 클릭 시 모달 열기
             $(".gantt-row").on("click", function () {
