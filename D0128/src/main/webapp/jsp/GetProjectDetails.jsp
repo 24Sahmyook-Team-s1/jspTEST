@@ -15,7 +15,7 @@
         conn = DriverManager.getConnection("jdbc:oracle:thin:@15.164.30.107:1521:xe", "park", "1111");
 
         // 1️⃣ 관리자 및 팀원 모두 확인하는 쿼리
-        String sql = "SELECT P.PROJECTNAME, U.JSONSTR AS OWNERINFO, " +
+        String sql = "SELECT P.PROJECTNAME, U.JSONSTR AS OWNERINFO, P.DESCRIPTION, " +
                      "CASE WHEN P.ADMINUSERID = ? THEN 'admin' " +
                      "     WHEN EXISTS (SELECT 1 FROM TEAMMEMBERS TM WHERE TM.PROJECTID = P.PROJECTID AND TM.USERID = ?) THEN 'member' " +
                      "     ELSE 'none' END AS ROLE " +
@@ -47,13 +47,14 @@
 
                     projectDetails.put("ownerName", ownerJson.get("name") != null ? ownerJson.get("name") : "알 수 없음");
                     projectDetails.put("ownerEmail", ownerJson.get("id") != null ? ownerJson.get("id") : "알 수 없음");
+                    projectDetails.put("description", rs.getString("DESCRIPTION") != null ? rs.getString("DESCRIPTION") : "알 수 없음"); 
                 } else {
                     projectDetails.put("ownerName", "알 수 없음");
                     projectDetails.put("ownerEmail", "알 수 없음");
                 }
 
                 // 4️⃣ 설명 컬럼이 없는 경우 기본 값 설정
-                projectDetails.put("description", "프로젝트 설명 없음");
+                //projectDetails.put("description", "프로젝트 설명 없음");
             } else {
                 // 관리자가 아니고 팀원도 아닌 경우 접근 제한
                 projectDetails.put("status", "fail");
