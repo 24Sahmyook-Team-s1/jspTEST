@@ -12,7 +12,7 @@ import util.ConnectionPool;
 
 public class TeamDAO {    
 	
-	public boolean inviteTeamMember(String projectId, String userId) throws NamingException, SQLException {
+	public boolean inviteTeamMember(int projectId, String userId) throws NamingException, SQLException {
 	    Connection conn = null;
 	    PreparedStatement pstmt = null;
 	    ResultSet rs = null;
