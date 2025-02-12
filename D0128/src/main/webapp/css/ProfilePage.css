@@ -254,62 +254,115 @@ body {
     }
 }
 
-/* 모달 스타일 */
+/* 모달 전체 배경 스타일 */
 .modal {
     display: none;
     position: fixed;
     z-index: 1000;
     left: 0;
     top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    justify-content: center;
-    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.3);  /* 살짝 어두운 배경 */
+    display: flex;
+    justify-content: center;  /* 가로 중앙 정렬 */
+    align-items: center;      /* 세로 중앙 정렬 */
+    animation: fadeIn 0.4s ease;  /* 등장 애니메이션 */
 }
 
+/* 모달 창 스타일 (심플한 디자인으로 변경) */
 .modal-content {
-    background: white;
-    padding: 20px;
+    background: #ffffff;  /* 흰색 배경으로 가독성 향상 */
+    border: 1px solid #ccc;  /* 부드러운 테두리 */
     border-radius: 15px;
+    padding: 25px;
     width: 400px;
     text-align: center;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    color: #333;  /* 어두운 글씨 색상으로 변경 */
+    transition: transform 0.3s ease;
 }
 
+/* 모달 제목 스타일 */
 .modal-content h2 {
     margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #222;  /* 더 진한 색상 */
+}
+
+/* 입력 필드 및 드롭다운 스타일 */
+.modal-content label {
+    font-weight: 600;
+    margin: 10px 0 5px;
+    display: block;
+    text-align: left;
+    color: #444;  /* 글자 색상 진하게 */
 }
 
 .modal-content input, .modal-content select {
     width: 100%;
-    padding: 10px;
-    margin: 10px 0;
+    padding: 12px;
+    margin: 10px 0 20px;
     border-radius: 8px;
-    border: 1px solid #ccc;
+    border: 1px solid #bbb;
+    background: #f9f9f9;  /* 밝은 회색 배경 */
+    color: #333;  /* 어두운 글씨 색상 */
+    font-size: 14px;
 }
 
-.modal-content button {
-    padding: 10px 20px;
-    margin: 10px 5px;
+.modal-content input::placeholder {
+    color: #888;  /* 플레이스홀더 색상도 진하게 */
+}
+
+/* 버튼 스타일 (심플하고 직관적으로 변경) */
+.modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.primary-btn, .secondary-btn {
+    padding: 12px 20px;
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    transition: 0.3s;
+    font-weight: bold;
+    transition: all 0.3s ease;
 }
 
-#renameProjectBtn {
+/* 이름 변경 버튼 */
+.primary-btn {
     background-color: #4CAF50;
     color: white;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
-#deleteProjectBtn {
-    background-color: #e74c3c;
-    color: white;
+.primary-btn:hover {
+    background-color: #45A049;
+    transform: translateY(-2px);
 }
 
-.close-btn {
+/* 닫기 버튼 */
+.secondary-btn {
     background-color: #95a5a6;
     color: white;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
+.secondary-btn:hover {
+    background-color: #7f8c8d;
+    transform: translateY(-2px);
+}
+
+/* 모달 등장 애니메이션 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
