@@ -30,10 +30,7 @@
       <div class="box-col">
         <h2 class="title">Recent Issue</h2>
         <div class="recent-issue-container">
-          <div class="recent-issues">
-            <div class="issue">issue: something on svelte</div>
-            <div class="issue">issue: something on svelte</div>
-            <div class="issue">issue: something on svelte</div>
+          <div class="recent-issues" id="issueList">
           </div>
         </div>
       </div>
@@ -106,6 +103,7 @@
                 	userId = response; // 세션에서 사용자 ID를 가져오는 부분
                 	console.log(userId);
                     loadProjects(); // 프로젝트 로드
+                    loadIssues();
                 }
             },
             error: function(xhr, status, error) {
@@ -276,6 +274,40 @@
       });
 
     });
+    
+    
+    function loadIssues() {
+        	console.log(userId);
+            $.ajax({
+                url: "jsp/projectIssueListByUser.jsp",
+                type: "POST",
+                data: { userid: userId },
+                dataType: "json",
+                success: function (issues) {
+                    console.log("✅ Loaded issues:", issues);
+                    displayIssues(issues);
+                },
+                error: function (xhr, status, error) {
+                    console.error("❌ AJAX 오류 발생:", error);
+                }
+            });
+        }
+
+        function displayIssues(issues) {
+            const issueList = $("#issueList");
+			console.log("display");
+            issueList.empty();
+
+            issues.forEach(issue => {
+                issueList.append(getIssues(issue));
+            });
+        }
+
+        function getIssues(issue) {
+            return `
+            	<div class="issue"><span>${issue.title}</span></div>
+            `;
+        }
     </script>
   </body>
 </html>
