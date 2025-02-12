@@ -1,4 +1,4 @@
-/* 복습 기본 스타일 */
+/* 기본 스타일 */
 body, html {
     margin: 0;
     padding: 0;
@@ -7,62 +7,12 @@ body, html {
     color: black;
     width: 100%;
     height: 100%;
-    overflow-x: hidden;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
-		.contentGrid{
-			display:grid;
-			grid-template-columns: 3fr 2fr;
-			gap: 20px;
-			padding: 20px;
-		    background: white;
-		    border-radius: 12px;
-		    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-		}	
-		.card {
-            margin-bottom: 20px;
-            display:flex;
-            flex-direction: column;
-            padding:10px;
-        }
-        .danger-btn {
-            background: red;
-            color: white;
-            padding: 10px;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-            width: 300px;
-        }
-        .team-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-        }
-        .team-list {
-            border: 2px solid #ccc;
-            padding: 10px;
-            margin-top: 10px;
-            flex-grow: 1;
-        }
-        .team-member {
-            display: flex;
-            justify-content: space-between;
-            padding: 5px;
-            border-bottom: 1px solid #eee;
-        }
-        .remove-btn {
-            background: pink;
-            border: none;
-            padding: 5px;
-            cursor: pointer;
-            border-radius: 5px;
-            margin:0px 10px;
-        }
 
-/* 해담바 스타일 */
+/* 해더 스타일 */
 .header {
     width: 100%;
     height: 80px;
@@ -73,8 +23,6 @@ body, html {
     font-size: 36px;
     font-weight: bold;
     color: black;
-    text-transform: uppercase;
-    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
 }
 
 /* 전체 레이아웃 */
@@ -121,13 +69,13 @@ body, html {
 }
 
 /* 메뉴별 아이콘 지정 */
-.sidebar li:nth-child(1)::before { content: '📊'; }  /* 대시보드 */
+.sidebar li:nth-child(1)::before { content: '📊'; }  /* 대쉘보드 */
 .sidebar li:nth-child(2)::before { content: '📁'; }  /* 팀 페이지 */
-.sidebar li:nth-child(3)::before { content: '📅'; }  /* 간트 차트 */
+.sidebar li:nth-child(3)::before { content: '📅'; }  /* 간트 체트 */
 .sidebar li:nth-child(4)::before { content: '🐞'; }  /* 이슈 */
 .sidebar li:nth-child(5)::before { content: '👥'; }  /* 팀 보드 */
 
-/* 📌 호버 효과 */
+/* 📌 호박 효과 */
 .sidebar li:hover {
     background-color: #007bff;
     color: white;
@@ -148,7 +96,7 @@ body, html {
     }
 }
 
-/* 메인 컨텐츠 */
+/* 메인 콘텐츠 */
 .main-content {
     flex: 1;
     padding: 20px;
@@ -159,50 +107,40 @@ body, html {
 
 .main-content h2 {
     font-size: 28px;
-    font-weight: bold;
     margin-bottom: 20px;
 }
 
-/* 팀 문서 컨텐츠바스 */
-.team-doc-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: flex-start;
-}
-
-.team-doc {
-    width: 180px;
-    height: 200px;
-    background: #fff;
-    border-radius: 12px;
+#postList .post {
+    background: #f9f9f9;
     padding: 20px;
-    text-align: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.team-doc:hover {
-    transform: scale(1.05);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-}
-
-.team-doc img {
-    width: 50px;
-    height: 50px;
-    margin-bottom: 10px;
-}
-
-.team-doc h3 {
-    font-size: 16px;
-    margin: 10px 0;
+.post h3 {
     font-weight: bold;
-    color: #333;
+    margin-bottom: 10px;
+    font-size: 20px;
 }
 
-.team-doc p {
-    font-size: 12px;
-    color: #666;
+.post p {
+    margin-bottom: 10px;
+    color: #555;
+}
+
+.post small {
+    display: block;
+    margin-top: 5px;
+    color: gray;
+}
+
+/* 게시글 이미지 스타일 */
+.post-image {
+    max-width: 100%;
+    height: auto;
+    margin-top: 10px;
+    border-radius: 8px;
 }
 
 /* 프로필 버튼 */
@@ -218,14 +156,8 @@ body, html {
     border-radius: 50%;
     cursor: pointer;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s ease-in-out;
 }
 
-.profile-btn:hover {
-    transform: scale(1.1);
-}
-
-/* 프로필 메뉴 */
 .profile-menu {
     position: absolute;
     bottom: 80px;
@@ -235,8 +167,10 @@ body, html {
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     display: none;
-    opacity: 0;
-    transition: all 0.3s ease-in-out;
+}
+
+.profile-menu.active {
+    display: block;
 }
 
 .profile-menu ul {
@@ -247,46 +181,107 @@ body, html {
 
 .profile-menu ul li {
     padding: 10px;
-    font-size: 14px;
-    font-weight: 500;
     cursor: pointer;
-    transition: background 0.3s ease-in-out;
 }
 
 .profile-menu ul li:hover {
     background: #f0f0f0;
 }
 
-.profile-menu.active {
-    display: block;
-    opacity: 1;
+/* 모달 스타일 */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.modal-content {
+    background: white;
+    width: 400px;
+    padding: 30px;
+    border-radius: 16px;  /* 더 둥글게 */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);  /* 더 부드럽고 진한 그림자 */
+    position: relative;  /* 닫기 버튼 위치 조정에 필요 */
 }
 
-/* 반응형 스타일 */
-@media (max-width: 768px) {
-    .container {
-        flex-direction: column;
-        gap: 20px;
-    }
-
-    .sidebar {
-        width: 100%;
-        display: flex;
-        justify-content: space-around;
-        border-radius: 0;
-    }
-
-    .sidebar li {
-        flex: 1;
-        justify-content: center;
-    }
-
-    .main-content {
-        padding: 10px;
-    }
-
-    .team-doc {
-        width: 100%;
-        height: auto;
-    }
+.modal-content h3 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    text-align: center;
+    color: #333;
 }
+
+
+.modal-content input[type="text"],
+.modal-content textarea,
+.modal-content input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+/* 버튼 스타일 통일 */
+.modal-content button {
+    width: calc(50% - 10px);
+    padding: 12px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.modal-content button:hover {
+    background-color: #45a049;
+}
+#submitPost {
+    background-color: #28a745;  /* 녹색 */
+    color: white;
+}
+
+#submitPost:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
+}
+
+#closeModal {
+    background-color: #dc3545;  /* 빨간색 */
+    color: white;
+}
+
+#closeModal:hover {
+    background-color: #c82333;
+    transform: translateY(-2px);
+    
+}
+
+#createPostBtn {
+    background-color: #007bff;  /* 진한 파란색 */
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+#createPostBtn:hover {
+    background-color: #0056b3;  /* 더 진한 파란색 */
+    transform: translateY(-2px);  /* 살짝 위로 움직이는 효과 */
+}
+
+#createPostBtn:active {
+    transform: translateY(0);  /* 클릭 시 원래 위치로 */
+}
+
