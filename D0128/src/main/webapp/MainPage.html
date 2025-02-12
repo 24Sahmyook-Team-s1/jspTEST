@@ -82,6 +82,9 @@
         <label for="projectOwner">프로젝트 소유자</label>
         <input type="text" id="projectOwner" placeholder="현재 프로젝트를 만드는 유저명">
 
+        <label for="projectDesc">프로젝트 설명</label>
+        <input type="text" id="projectDesc" placeholder="프로젝트 설명을 입력">
+
         <button id="createProjectBtn">프로젝트 만들기</button>
       </div>
     </div>
@@ -208,6 +211,7 @@
       function clearInputs() {
           $("#projectName").val('');
           $("#projectOwner").val('');
+          $("#projectDesc").val('');
         }
 
       function updateGanttChart(projects) {
@@ -246,16 +250,20 @@
       $("#createProjectBtn").on("click", function () {
         const projectName = $("#projectName").val();
         const projectOwner = $("#projectOwner").val();
+		const projectDesc = $("#projectDesc").val();
 		
         console.log("프로젝트 소유자:", projectOwner);
         
-        if (projectName && projectOwner) {
+        console.log("프로젝트 설명:", projectDesc);
+        
+        if (projectName && projectOwner && projectDesc) {
           $.ajax({
             url: "jsp/AddProject.jsp",
             type: "POST",
             data: {
               projectName: projectName,
-              adminUserID: projectOwner
+              adminUserID: projectOwner,
+              projectDesc: projectDesc
             },
             success: function(response) {
               alert("프로젝트가 성공적으로 추가되었습니다!");
@@ -305,7 +313,7 @@
 
         function getIssues(issue) {
             return `
-            	<div class="issue"><span>${issue.title}</span></div>
+            	<div class="issue"><span>⚠️${issue.title}</span></div>
             `;
         }
     </script>

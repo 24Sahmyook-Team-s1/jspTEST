@@ -40,7 +40,7 @@ public class ProjectDAO {
         Connection conn = null;
         PreparedStatement stmt = null;
         try {
-            String sql = "DELETE FROM projects WHERE ProjectID = ?";
+            String sql = "DELETE FROM projects WHERE ProjectID = ? CASCADE CONSTRAINTS";
             conn = ConnectionPool.get();
             stmt = conn.prepareStatement(sql);
             stmt.setInt(1, projectID);
@@ -186,7 +186,7 @@ public class ProjectDAO {
         }
     }
     // 프로젝트 추가
-    public boolean addProject(String name, String adminUserID) throws NamingException, SQLException {
+    public boolean addProject(String name, String adminUserID, String desc) throws NamingException, SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -210,10 +210,11 @@ public class ProjectDAO {
             stmt.close();
 
             // 2️⃣ Projects 테이블에 프로젝트 추가
-            String insertProjectSql = "INSERT INTO Projects (ProjectName, AdminUserID, CreatedAt) VALUES (?, ?, SYSDATE)";
+            String insertProjectSql = "INSERT INTO Projects (ProjectName, AdminUserID, CreatedAt, description) VALUES (?, ?, SYSDATE, ?)";
             stmt = conn.prepareStatement(insertProjectSql, new String[]{"ProjectID"});
             stmt.setString(1, name);
             stmt.setString(2, adminUserID);
+            stmt.setString(3, desc);
 
             int result = stmt.executeUpdate();
             if (result == 1) {
