@@ -1,0 +1,244 @@
+/* 기본 스타일 */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #E2F9FF;
+    color: #333;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* 헤더 스타일 */
+.header {
+    width: 100%;
+    height: 80px;
+    background-color: #f5f7fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    font-weight: bold;
+    color: black;
+}
+
+/* 전체 레이아웃 */
+.container {
+    display: flex;
+    width: 90%;
+    max-width: 1400px;
+    margin: 20px auto;
+    gap: 40px;
+}
+
+/* 사이드바 스타일 */
+.sidebar {
+    width: 220px;
+    background: #f1f3f5;
+    padding: 20px;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar li {
+    display: flex;
+    align-items: center;
+    padding: 15px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.sidebar li::before {
+    margin-right: 10px;
+    font-size: 18px;
+}
+
+.sidebar li:nth-child(1)::before { content: '📊'; }
+.sidebar li:nth-child(2)::before { content: '📁'; }
+.sidebar li:nth-child(3)::before { content: '📅'; }
+.sidebar li:nth-child(4)::before { content: '🐞'; }
+.sidebar li:nth-child(5)::before { content: '👥'; }
+.sidebar li:nth-child(6)::before { content: '⚙️'; }
+
+.sidebar li:hover {
+    background-color: #007bff;
+    color: white;
+    transform: translateX(5px);
+}
+
+.sidebar li.active {
+    background-color: #007bff;
+    color: white;
+}
+
+/* 메인 컨텐츠 그리드 */
+.contentGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    width: 100%;
+    padding: 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 카드 스타일 */
+.card {
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.card h2, .card h3 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.card p {
+    margin: 10px 0;
+    line-height: 1.6;
+}
+
+/* 위험 버튼 스타일 (프로젝트 폐기) */
+.danger-btn {
+    background-color: #dc3545;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.danger-btn:hover {
+    background-color: #c82333;
+}
+
+/* 팀원 관리 */
+.team-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.team-list {
+    margin-top: 15px;
+}
+
+.team-member {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #e9ecef;
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+/* 팀원 제거 버튼 */
+.remove-btn {
+    background-color: #ff6b6b;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.remove-btn:hover {
+    background-color: #fa5252;
+}
+
+/* 팀원 추가 버튼 */
+.team-container button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.team-container button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+/* 프로필 메뉴 */
+.profile-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+}
+
+.profile-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.profile-menu {
+    position: absolute;
+    bottom: 80px;
+    right: 0;
+    width: 150px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    display: none;
+}
+
+.profile-menu.active {
+    display: block;
+}
+
+.profile-menu ul {
+    list-style: none;
+    padding: 10px;
+    margin: 0;
+}
+
+.profile-menu ul li {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.profile-menu ul li:hover {
+    background: #f0f0f0;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
+    }
+
+    .contentGrid {
+        grid-template-columns: 1fr;
+    }
+}
