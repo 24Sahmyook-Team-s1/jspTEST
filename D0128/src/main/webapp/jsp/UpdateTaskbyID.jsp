@@ -7,24 +7,23 @@ request.setCharacterEncoding("UTF-8");
 
 // 요청 파라미터 받기
 String scheduleId = request.getParameter("scheduleId");
+String taskName = request.getParameter("taskName"); // ✅ 추가된 taskName
 String startDate = request.getParameter("startDate");
 String endDate = request.getParameter("endDate");
 String status = request.getParameter("status");
 
 JSONObject responseJson = new JSONObject();
 
-if (scheduleId == null || startDate == null || endDate == null || status == null) {
+if (scheduleId == null || taskName == null || startDate == null || endDate == null || status == null) {
     responseJson.put("status", "error");
-    responseJson.put("message", "Missing parameters");
+    responseJson.put("message", "Missing parameters: scheduleId, taskName, startDate, endDate, status required.");
 } else {
     try {
         ScheduleDAO dao = new ScheduleDAO();
-        // 작업 업데이트 메소드 호출
-        boolean result = dao.updateTask(Integer.parseInt(scheduleId), startDate, endDate, status);
-        
+        boolean result = dao.updateTaskWithName(Integer.parseInt(scheduleId), taskName, startDate, endDate, status); // ✅ 새로운 DAO 메서드 사용
+
         if (result) {
             responseJson.put("status", "success");
-            responseJson.put("message", "Task updated successfully");
         } else {
             responseJson.put("status", "error");
             responseJson.put("message", "Failed to update task");
