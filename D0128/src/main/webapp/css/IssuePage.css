@@ -71,11 +71,13 @@ body, html {
 }
 
 /* 메뉴별 아이콘 지정 */
-.sidebar li:nth-child(1)::before { content: '📊'; }
-.sidebar li:nth-child(2)::before { content: '📁'; }
-.sidebar li:nth-child(3)::before { content: '📅'; }
-.sidebar li:nth-child(4)::before { content: '🐞'; }
-.sidebar li:nth-child(5)::before { content: '👥'; }
+.sidebar li:nth-child(1)::before { content: '📊'; }  /* 대쉘보드 */
+.sidebar li:nth-child(2)::before { content: '📁'; }  /* 팀 페이지 */
+.sidebar li:nth-child(3)::before { content: '📅'; }  /* 간트 체트 */
+.sidebar li:nth-child(4)::before { content: '🐞'; }  /* 이슈 */
+.sidebar li:nth-child(5)::before { content: '👥'; }  /* 팀 보드 */
+.sidebar li:nth-child(6)::before { content: '⚙️'; }  /* 팀 보드 */
+
 
 .sidebar li:hover {
     background-color: #007bff;
@@ -430,4 +432,3 @@ h1 {
         font-size: 14px;
     }
 }
-

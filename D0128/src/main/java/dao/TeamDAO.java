@@ -15,47 +15,105 @@ public class TeamDAO {
 	public boolean inviteTeamMember(String projectId, String userId) throws NamingException, SQLException {
 	    Connection conn = null;
 	    PreparedStatement pstmt = null;
+	    ResultSet rs = null;
 	    boolean isSuccess = false;
 
 	    try {
 	        conn = ConnectionPool.get();
-	        String sql = "INSERT INTO teamInvitation (ProjectID, UserID) VALUES (?, ?)";
-	        pstmt = conn.prepareStatement(sql);
+
+	        // 1. USER2 테이블에서 사용자 존재 여부 확인
+	        String checkUserSql = "SELECT USERID FROM USER2 WHERE JSONSTR LIKE ?";
+	        pstmt = conn.prepareStatement(checkUserSql);
+	        pstmt.setString(1, "%\"id\":\"" + userId + "\"%");  // 문자열로 수정
+
+	        rs = pstmt.executeQuery();
+
+	        if (!rs.next()) {
+	            // 사용자 존재하지 않음
+	            return false;
+	        }
+	        rs.close();
+	        pstmt.close();
+
+	        // 2. INVITATION 테이블에 이미 초대된 사용자인지 확인
+	        String checkInvitationSql = "SELECT * FROM INVITATION WHERE PROJECTID = ? AND USERID = ?";
+	        pstmt = conn.prepareStatement(checkInvitationSql);
+	        pstmt.setString(1, projectId);
+	        pstmt.setString(2, userId);
+	        rs = pstmt.executeQuery();
+
+	        if (rs.next()) {
+	            // 이미 초대된 사용자
+	            return false;
+	        }
+	        rs.close();
+	        pstmt.close();
+
+	        // 3. 초대 진행 (INVITATION 테이블에 삽입)
+	        String inviteSql = "INSERT INTO INVITATION (PROJECTID, USERID) VALUES (?, ?)";
+	        pstmt = conn.prepareStatement(inviteSql);
 	        pstmt.setString(1, projectId);
 	        pstmt.setString(2, userId);
 
-	        int rowsAffected = pstmt.executeUpdate(); // 실행된 행 개수 확인
-	        isSuccess = (rowsAffected > 0); // 성공 여부 판단
+	        int rowsAffected = pstmt.executeUpdate();  // 초대 성공 여부 확인
+	        isSuccess = (rowsAffected > 0);
+
 	    } finally {
+	        if (rs != null) rs.close();
 	        if (pstmt != null) pstmt.close();
 	        if (conn != null) conn.close();
 	    }
 
 	    return isSuccess;
 	}
+
+
 
 
 	public boolean addTeamMember(int projectId, String userId) throws NamingException, SQLException {
 	    Connection conn = null;
 	    PreparedStatement pstmt = null;
+	    ResultSet rs = null;
 	    boolean isSuccess = false;
 
 	    try {
 	        conn = ConnectionPool.get();
-	        String sql = "INSERT INTO teamMembers (ProjectID, UserID) VALUES (?, ?)";
+
+	        // ✅ 1️⃣ 먼저 중복된 팀원이 있는지 확인
+	        String checkSql = "SELECT COUNT(*) FROM TEAMMEMBERS WHERE PROJECTID = ? AND USERID = ?";
+	        pstmt = conn.prepareStatement(checkSql);
+	        pstmt.setInt(1, projectId);
+	        pstmt.setString(2, userId);
+	        rs = pstmt.executeQuery();
+
+	        if (rs.next() && rs.getInt(1) > 0) {
+	            // 이미 존재하는 팀원이므로 삽입하지 않음
+	            System.out.println("이미 팀원으로 등록된 사용자입니다.");
+	            return false;  // 삽입하지 않고 false 반환
+	        }
+	        
+	        rs.close();
+	        pstmt.close();
+
+	        // ✅ 2️⃣ 존재하지 않으면 삽입
+	        String sql = "INSERT INTO TEAMMEMBERS (PROJECTID, USERID, JOINED_AT) VALUES (?, ?, SYSDATE)";
 	        pstmt = conn.prepareStatement(sql);
 	        pstmt.setInt(1, projectId);
 	        pstmt.setString(2, userId);
 
-	        int rowsAffected = pstmt.executeUpdate(); // 실행된 행 개수 확인
-	        isSuccess = (rowsAffected > 0); // 성공 여부 판단
+	        int rowsAffected = pstmt.executeUpdate();
+	        isSuccess = (rowsAffected > 0);
+	        
 	    } finally {
+	        if (rs != null) rs.close();
 	        if (pstmt != null) pstmt.close();
 	        if (conn != null) conn.close();
 	    }
 
 	    return isSuccess;
 	}
+
+
 
 
     
@@ -214,4 +272,98 @@ public class TeamDAO {
 
         return requestList;
     }
+	
+	public JSONArray getTeamMembers(int projectId) throws NamingException, SQLException {
+	    Connection conn = null;
+	    PreparedStatement pstmt = null;
+	    ResultSet rs = null;
+	    JSONArray membersList = new JSONArray();
+
+	    try {
+	        conn = ConnectionPool.get();
+	        String sql = "SELECT u.USERID, u.JSONSTR FROM TEAMMEMBERS t JOIN USER2 u ON t.USERID = u.USERID WHERE t.PROJECTID = ?";
+	        pstmt = conn.prepareStatement(sql);
+	        pstmt.setInt(1, projectId);
+	        rs = pstmt.executeQuery();
+
+	        while (rs.next()) {
+	            JSONObject member = new JSONObject();
+	            String userJson = rs.getString("JSONSTR");
+
+	            // JSON 문자열 파싱
+	            org.json.simple.parser.JSONParser parser = new org.json.simple.parser.JSONParser();
+	            JSONObject userObj = (JSONObject) parser.parse(userJson);
+
+	            member.put("name", userObj.get("name"));
+	            member.put("email", userObj.get("id"));
+	            membersList.add(member);
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        if (rs != null) rs.close();
+	        if (pstmt != null) pstmt.close();
+	        if (conn != null) conn.close();
+	    }
+
+	    return membersList;
+	}
+	public JSONArray getTeamMembersByProjectId(int projectId) throws NamingException, SQLException {
+	    Connection conn = null;
+	    PreparedStatement pstmt = null;
+	    ResultSet rs = null;
+	    JSONArray teamList = new JSONArray();
+
+	    try {
+	        conn = ConnectionPool.get();
+	        String sql = "SELECT u.USERID, u.JSONSTR " +
+	                     "FROM TEAMMEMBERS tm " +
+	                     "JOIN USER2 u ON tm.USERID = u.USERID " +
+	                     "WHERE tm.PROJECTID = ?";
+	        pstmt = conn.prepareStatement(sql);
+	        pstmt.setInt(1, projectId);
+	        rs = pstmt.executeQuery();
+
+	        while (rs.next()) {
+	            String jsonStr = rs.getString("JSONSTR");
+	            JSONObject userDetails = (JSONObject) new JSONParser().parse(jsonStr);
+	            JSONObject teamMember = new JSONObject();
+	            teamMember.put("userId", rs.getString("USERID"));
+	            teamMember.put("name", userDetails.get("name"));
+	            teamMember.put("email", userDetails.get("id"));
+	            teamList.add(teamMember);
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        if (rs != null) rs.close();
+	        if (pstmt != null) pstmt.close();
+	        if (conn != null) conn.close();
+	    }
+	    return teamList;
+	}
+
+	public boolean removeTeamMember(int projectId, String userId) throws NamingException, SQLException {
+	    Connection conn = null;
+	    PreparedStatement pstmt = null;
+	    boolean isSuccess = false;
+
+	    try {
+	        conn = ConnectionPool.get();
+	        String sql = "DELETE FROM TEAMMEMBERS WHERE PROJECTID = ? AND USERID = ?";
+	        pstmt = conn.prepareStatement(sql);
+	        pstmt.setInt(1, projectId);
+	        pstmt.setString(2, userId);
+
+	        int affectedRows = pstmt.executeUpdate();
+	        isSuccess = affectedRows > 0;
+	    } finally {
+	        if (pstmt != null) pstmt.close();
+	        if (conn != null) conn.close();
+	    }
+
+	    return isSuccess;
+	}
+
+
 }

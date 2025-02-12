@@ -1,38 +1,40 @@
-<%@ page language="java" contentType="application/json; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="java.sql.*, org.json.simple.JSONObject" %>
+<%@ page language="java" contentType="application/json; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="dao.ProjectDAO" %>
+<%@ page import="java.sql.SQLException" %>
+<%@ page import="javax.naming.NamingException" %>
+<%@ page import="org.json.simple.JSONObject" %>
 
 <%
-    String projectId = request.getParameter("projectId");
-    JSONObject result = new JSONObject();
+    response.setContentType("application/json");
+    request.setCharacterEncoding("UTF-8");
 
-    Connection conn = null;
-    PreparedStatement pstmt = null;
+    String projectIdStr = request.getParameter("projectId");
+    JSONObject jsonResponse = new JSONObject();
 
-    try {
-        Class.forName("oracle.jdbc.driver.OracleDriver");
-        conn = DriverManager.getConnection("jdbc:oracle:thin:@15.164.30.107:1521:xe", "park", "1111");
+    if (projectIdStr == null || projectIdStr.trim().isEmpty()) {
+        jsonResponse.put("status", "fail");
+        jsonResponse.put("message", "프로젝트 ID가 유효하지 않습니다.");
+    } else {
+        try {
+            int projectId = Integer.parseInt(projectIdStr);
+            ProjectDAO dao = new ProjectDAO();
+            boolean isDeleted = dao.removeProjectById(projectId);
 
-        String sql = "DELETE FROM PROJECTS WHERE PROJECTID = ?";
-        pstmt = conn.prepareStatement(sql);
-        pstmt.setString(1, projectId);
-
-        int deletedRows = pstmt.executeUpdate();
-
-        if (deletedRows > 0) {
-            result.put("status", "success");
-        } else {
-            result.put("status", "fail");
-            result.put("message", "프로젝트를 찾을 수 없습니다.");
+            if (isDeleted) {
+                jsonResponse.put("status", "success");
+                jsonResponse.put("message", "프로젝트가 성공적으로 삭제되었습니다.");
+            } else {
+                jsonResponse.put("status", "fail");
+                jsonResponse.put("message", "프로젝트 삭제에 실패했습니다.");
+            }
+        } catch (NumberFormatException e) {
+            jsonResponse.put("status", "error");
+            jsonResponse.put("message", "프로젝트 ID 형식이 잘못되었습니다.");
+        } catch (Exception e) {
+            jsonResponse.put("status", "error");
+            jsonResponse.put("message", "서버 오류 발생: " + e.getMessage());
         }
-
-    } catch (Exception e) {
-        result.put("status", "error");
-        result.put("message", e.getMessage());
-    } finally {
-        if (pstmt != null) pstmt.close();
-        if (conn != null) conn.close();
     }
 
-    response.setContentType("application/json;charset=UTF-8");
-    out.print(result.toJSONString());
+    out.print(jsonResponse.toJSONString());
 %>

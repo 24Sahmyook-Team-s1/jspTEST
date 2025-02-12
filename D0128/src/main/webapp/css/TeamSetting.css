@@ -1,0 +1,299 @@
+/* 기본 스타일 */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #E2F9FF;
+    color: #333;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* 헤더 스타일 */
+.header {
+    width: 100%;
+    height: 80px;
+    background-color: #f5f7fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    font-weight: bold;
+    color: black;
+}
+
+/* 전체 레이아웃 */
+.container {
+    display: flex;
+    width: 90%;
+    max-width: 1400px;
+    margin: 20px auto;
+    gap: 40px;
+}
+
+/* 사이드바 스타일 */
+.sidebar {
+    width: 220px;
+    background: #f1f3f5;
+    padding: 20px;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar li {
+    display: flex;
+    align-items: center;
+    padding: 15px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.sidebar li::before {
+    margin-right: 10px;
+    font-size: 18px;
+}
+
+.sidebar li:nth-child(1)::before { content: '📊'; }
+.sidebar li:nth-child(2)::before { content: '📁'; }
+.sidebar li:nth-child(3)::before { content: '📅'; }
+.sidebar li:nth-child(4)::before { content: '🐞'; }
+.sidebar li:nth-child(5)::before { content: '👥'; }
+.sidebar li:nth-child(6)::before { content: '⚙️'; }
+
+.sidebar li:hover {
+    background-color: #007bff;
+    color: white;
+    transform: translateX(5px);
+}
+
+.sidebar li.active {
+    background-color: #007bff;
+    color: white;
+}
+
+/* 메인 컨텐츠 그리드 */
+.contentGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    width: 100%;
+    padding: 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 프로젝트 정보 카드 */
+.card {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* 호버 시 효과 */
+    margin-bottom: 20px;
+}
+
+/* 카드 호버 효과 */
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* 프로젝트 제목 스타일 */
+.card h2 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 15px;
+    color: #333333;
+}
+
+/* 책임자 및 설명 텍스트 */
+.card p {
+    font-size: 16px;
+    color: #555555;
+    margin-bottom: 10px;
+}
+
+/* 강조 텍스트 */
+.card p strong {
+    color: #222222;
+}
+
+/* 프로젝트 폐기 버튼 */
+.danger-btn {
+    background-color: #ff4d4f;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* 프로젝트 폐기 버튼 호버 효과 */
+.danger-btn:hover {
+    background-color: #d9363e;
+    transform: translateY(-2px);
+}
+
+/* 팀원 관리 섹션 */
+.team-container {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* 팀원 관리 호버 효과 */
+.team-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* 팀원 관리 제목 */
+.team-container h3 {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #333333;
+}
+
+/* 팀원 추가 버튼 */
+.team-container button {
+    background-color: #007bff;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-bottom: 20px;
+}
+
+/* 팀원 추가 버튼 호버 */
+.team-container button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+/* 팀원 리스트 */
+.team-member {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f7f9fc;
+    padding: 15px 20px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* 팀원 제거 버튼 */
+.remove-btn {
+    background-color: #ff6b6b;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* 팀원 제거 버튼 호버 */
+.remove-btn:hover {
+    background-color: #fa5252;
+    transform: translateY(-2px);
+}
+
+
+/* 📈 프로필 버튼 */
+.profile-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+}
+
+/* ✅ 프로필 버튼 */
+.profile-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease-in-out;
+}
+
+.profile-btn:hover {
+    transform: scale(1.1);
+}
+
+/* ✅ 프로필 메뉴 */
+.profile-menu {
+    position: absolute;
+    bottom: 80px;
+    right: 0;
+    width: 120px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    display: none;
+    opacity: 0;
+    transition: all 0.3s ease-in-out;
+}
+
+.profile-menu ul {
+    list-style: none;
+    padding: 10px;
+    margin: 0;
+}
+
+.profile-menu ul li {
+    padding: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+}
+
+.profile-menu ul li:hover {
+    background: #f0f0f0;
+}
+
+/* ✅ 메뉴 활성화 시 보이게 */
+.profile-menu.active {
+    display: block;
+    opacity: 1;
+}
+
+/* 🔹 반응형 스타일 */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .tasks-container {
+        flex-direction: column;
+    }
+
+    .profile-container {
+        bottom: 10px;
+        right: 10px;
+    }
+}
