@@ -279,12 +279,10 @@
         } else {
           alert("모든 필드를 입력해주세요!");
         }
-      });
+	});
 
-    });
-    
-    
-    function loadIssues() {
+
+		function loadIssues() {
         	console.log(userId);
             $.ajax({
                 url: "jsp/projectIssueListByUser.jsp",
@@ -308,14 +306,36 @@
 
             issues.forEach(issue => {
                 issueList.append(getIssues(issue));
+            
+            	$(`#issue-${issue.issueid}`).on("click", function() {
+					$.ajax({
+			        	url: "jsp/enterteamwindow.jsp",
+			        	type: "POST",
+			        	data: { userId: userId, projectId: issue.projectid},
+			        	success: function(response) {
+			            	if (response.trim() === "OK") {
+			                	window.location.href = "IssuePage.html";  // ✅ URL에서 ID 제거 (세션 사용)
+			            	} else {
+			                	alert("세션 저장 중 오류가 발생했습니다.");
+			            	}
+			        	},
+			        	error: function(xhr, status, error) {
+			            	console.error("세션 설정 오류:", error);
+			        	}
+			    	});
+				});
             });
         }
 
         function getIssues(issue) {
             return `
-            	<div class="issue"><span>⚠️${issue.title}</span></div>
+            	<div class="issue" id="issue-${issue.issueid}"><span>⚠️${issue.title}</span></div>
             `;
         }
+
+
+    });  
+    
     </script>
   </body>
 </html>
