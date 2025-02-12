@@ -135,4 +135,60 @@ public class ScheduleDAO {
 
         return tasks;
     }
+    
+    public boolean updateTask(int scheduleId, String startDate, String endDate, String status) throws NamingException, SQLException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        boolean isUpdated = false;
+
+        try {
+            conn = ConnectionPool.get();
+            String sql = "UPDATE Schedule SET Start_Date = ?, End_Date = ?, Status = ? WHERE ScheduleID = ?";
+            stmt = conn.prepareStatement(sql);
+            // 스트링 형식으로 날짜를 설정
+            stmt.setString(1, startDate); // 시작일
+            stmt.setString(2, endDate);   // 종료일
+            stmt.setString(3, status);     // 상태
+            stmt.setInt(4, scheduleId);    // 작업 ID
+
+            int rowsAffected = stmt.executeUpdate();
+            isUpdated = (rowsAffected > 0);
+        } finally {
+            if (stmt != null) stmt.close();
+            if (conn != null) conn.close();
+        }
+
+        return isUpdated;
+    }
+
+ // ✅ 작업 이름 포함하여 업데이트하는 새로운 메서드
+    public boolean updateTaskWithName(int scheduleId, String taskName, String startDate, String endDate, String status) throws NamingException, SQLException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        boolean isUpdated = false;
+
+        try {
+            conn = ConnectionPool.get();
+            String sql = "UPDATE Schedule SET Task_Name = ?, Start_Date = ?, End_Date = ?, Status = ? WHERE ScheduleID = ?";
+            stmt = conn.prepareStatement(sql);
+            
+            stmt.setString(1, taskName); // ✅ 작업 이름 업데이트
+            stmt.setString(2, startDate); // 시작일
+            stmt.setString(3, endDate);   // 종료일
+            stmt.setString(4, status);    // 상태
+            stmt.setInt(5, scheduleId);   // 작업 ID
+
+            int rowsAffected = stmt.executeUpdate();
+            isUpdated = (rowsAffected > 0);
+        } finally {
+            if (stmt != null) stmt.close();
+            if (conn != null) conn.close();
+        }
+
+        return isUpdated;
+    }
+
+    
+    
+
 }
