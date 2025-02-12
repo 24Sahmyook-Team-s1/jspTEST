@@ -34,8 +34,8 @@
                 <span>위험 관리</span>
                 <div class="issue-buttons">
                     <button class="add-btn">이슈 추가</button>
-                    <button class="delete-btn" data-link="jsp/projectIssueDelete.jsp">이슈 삭제</button>
-                    <button class="update-btn">이슈 업데이트</button>
+                    <!--<button class="delete-btn" data-link="jsp/projectIssueDelete.jsp">이슈 삭제</button>
+                    <button class="update-btn">이슈 업데이트</button>-->
                 </div>
             </h1>
 
@@ -107,6 +107,8 @@
                 <option value="2">SOLVED 🟢</option>
             </select>
 
+            <button id="deleteIssueBtn" class="del-btn" style="display: none;">이슈 삭제</button>
+            <button id="updateIssueBtn" class="add-btn" style="display: none;">이슈 업데이트</button>
             <button id="saveIssueBtn" class="add-btn">이슈 저장</button>
             <button id="closeModalBtn" class="close">닫기</button>
         </div>
@@ -115,6 +117,7 @@
     <script>
         let projectId;
         let userId;
+        let issueId;
         document.addEventListener("DOMContentLoaded", function () {
             document.querySelectorAll('.sidebar-link').forEach(link => {
                 link.addEventListener('click', function () {
@@ -150,18 +153,26 @@
         const issueModal = document.getElementById("issueModal");
         const modalTitle = document.getElementById("modalTitle");
         const saveIssueBtn = document.getElementById("saveIssueBtn");
+        const deleteIssueBtn = document.getElementById("deleteIssueBtn");
+        const updateIssueBtn = document.getElementById("updateIssueBtn");
+        const textTitle = document.getElementById("issueTitle"); 
+        const textDesc = document.getElementById("issueDescription"); 
+        const selectLevel = document.getElementById("issueLevel"); 
 
         document.querySelector('.add-btn').addEventListener('click', function () {
             modalTitle.textContent = "이슈 추가";
             saveIssueBtn.textContent = "이슈 추가";
             issueModal.style.display = "flex";
+            deleteIssueBtn.style.display = "none";
+            updateIssueBtn.style.display = "none";
+            saveIssueBtn.style.display = "block";
+            textTitle.value = "";
+		    textDesc.value = "";
+		    selectLevel.value = 0;
         });
 
-        document.querySelector('.update-btn').addEventListener('click', function () {
-            modalTitle.textContent = "이슈 업데이트";
-            saveIssueBtn.textContent = "업데이트 저장";
-            issueModal.style.display = "flex";
-        });
+        //document.querySelector('.update-btn').addEventListener('click', function () {
+        
 
         document.getElementById("closeModalBtn").addEventListener('click', function () {
             issueModal.style.display = "none";
@@ -205,6 +216,65 @@
             });
 
         });
+        
+        updateIssueBtn.addEventListener('click', function () {
+            const issueTitle = document.getElementById("issueTitle").value;
+            const issueDescription = document.getElementById("issueDescription").value;
+            const issueLevel = document.getElementById("issueLevel").value;
+
+            if (!issueTitle || !issueDescription) {
+                alert("모든 필드를 입력하세요.");
+                return;
+            }
+
+            $.ajax({
+                url: "jsp/projectIssueUpdate.jsp",
+                type: "POST",
+                data: {
+                    title: issueTitle,
+                    description: issueDescription,
+                    level: issueLevel,
+                    userid: userId,
+                    projectid:projectId,
+                    issueid:issueId
+                },
+                success: function (response) {
+                    alert("이슈가 성공적으로 수정되었습니다!");
+                    issueModal.style.display = "none";
+                    loadIssues();
+                },
+                error: function (xhr, status, error) {
+                    console.error("이슈 업데이트 실패:", error);
+                    alert("이슈 업데이트에 실패했습니다.");
+                }
+            });
+
+        });
+        
+		deleteIssueBtn.addEventListener('click', function () {
+            if (!confirm("삭제하시겠습니까?")) {
+            	return;
+            }
+
+            $.ajax({
+                url: "jsp/projectIssueDelete.jsp",
+                type: "POST",
+                data: {
+                    issueid:issueId
+                },
+                success: function (response) {
+                    alert("이슈가 성공적으로 제거되었습니다!");
+                    issueModal.style.display = "none";
+                    loadIssues();
+                },
+                error: function (xhr, status, error) {
+                    console.error("이슈 삭제 실패:", error);
+                    alert("이슈 삭제에 실패했습니다.");
+                }
+            });
+
+        });
+        
 
         // 이슈 데이터 로드
         $(document).ready(function () {
@@ -283,11 +353,43 @@
                     solvedList.append(getIssues(issue));
                 }
             });
+            
+            //document.querySelector('.issue-item').addEventListener('click', function () {
+            //modalTitle.textContent = "이슈 업데이트";
+            //saveIssueBtn.textContent = "업데이트 저장";
+            //deleteIssueBtn.style.visibility = "visible";
+            //issueModal.style.display = "flex";
+        	//});
+        	
+        	document.querySelectorAll('.issue-item').forEach(divs => {
+				divs.addEventListener('click', function () {
+	            	modalTitle.textContent = "이슈 업데이트";
+		            //saveIssueBtn.textContent = "업데이트 저장";
+		            saveIssueBtn.style.display = "none";
+		            deleteIssueBtn.style.display = "block";
+		            updateIssueBtn.style.display = "block";
+		            issueModal.style.display = "flex";
+		            
+		            console.log(this.id);
+		            let iid = this.id;
+		            issueId = this.id;
+		            console.log(issueId);
+		            
+		        	issues.forEach(issue => {
+						console.log(iid);
+						if (issue.issueid == iid) {
+							textTitle.value = issue.title;
+		            		textDesc.value = issue.description;
+		            		issueLevel.value = issue.level;
+						}
+					});
+	        	});
+			});
         }
 
         function getIssues(issue) {
             return `
-                <div class="issue-item">
+                <div class="issue-item" id=${issue.issueid}>
                     <span>${issue.title}</span>
                     <span>${issue.description}</span>
                 </div>
