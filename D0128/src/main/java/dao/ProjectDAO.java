@@ -62,7 +62,7 @@ public class ProjectDAO {
     }
 
 
-    // ✅ 프로젝트 조회 (ID 기준) - 책임자 정보 포함
+    // ✅ 프로젝트 조회 (ID 기준) - 책임자 정보 + End Date 포함
     public JSONObject getProjectById(int projectID) throws NamingException, SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -70,9 +70,9 @@ public class ProjectDAO {
         JSONObject project = null;
 
         try {
-            // 책임자 정보 포함하여 USER2 테이블과 조인
+            // ✅ `end_date` 추가 및 USER2 테이블과 조인
             String sql = "SELECT p.ProjectID, p.ProjectName, TO_CHAR(p.CreatedAt, 'YYYY-MM-DD') AS CreatedAt, " +
-                         "u.JSONSTR AS OwnerInfo " +
+                         "TO_CHAR(p.End_Date, 'YYYY-MM-DD') AS EndDate, u.JSONSTR AS OwnerInfo " +
                          "FROM projects p " +
                          "JOIN USER2 u ON p.AdminUserId = u.UserId " +
                          "WHERE p.ProjectID = ?";
@@ -86,8 +86,9 @@ public class ProjectDAO {
                 project.put("id", rs.getInt("ProjectID"));
                 project.put("name", rs.getString("ProjectName"));
                 project.put("created_at", rs.getString("CreatedAt"));
+                project.put("end_date", rs.getString("EndDate")); // ✅ `end_date` 추가
 
-                // 책임자 정보 파싱
+                // ✅ 책임자 정보 파싱
                 String ownerJson = rs.getString("OwnerInfo");
                 if (ownerJson != null) {
                     JSONParser parser = new JSONParser();
@@ -110,6 +111,7 @@ public class ProjectDAO {
         return project;
     }
 
+
     // ✅ 사용자 ID 기준 참여 프로젝트 조회
     public JSONArray getProjectsByUserId(String userId) throws NamingException, SQLException {
         JSONArray projectList = new JSONArray();
@@ -127,6 +129,7 @@ public class ProjectDAO {
             while (rs.next()) {
                 int projectId = rs.getInt("ProjectID");
                 JSONObject projectData = getProjectById(projectId);
+                System.out.println("🔍 get 프로젝트 데이터: " + projectData.toJSONString());
                 if (projectData != null) {
                     projectList.add(projectData);
                 }
@@ -389,4 +392,28 @@ public class ProjectDAO {
 
         return isSuccess; // 프로젝트 생성 및 팀 멤버 추가 성공 여부 반환
     }
+    
+ // ✅ 프로젝트의 end_date 업데이트
+    public boolean updateProjectEndDate(int projectId, String endDate) throws NamingException, SQLException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        boolean isUpdated = false;
+
+        try {
+            conn = ConnectionPool.get();
+            String sql = "UPDATE projects SET End_Date = TO_DATE(?, 'YYYY-MM-DD') WHERE ProjectID = ?";
+            stmt = conn.prepareStatement(sql);
+            stmt.setString(1, endDate);
+            stmt.setInt(2, projectId);
+
+            int rowsAffected = stmt.executeUpdate();
+            isUpdated = (rowsAffected > 0);
+        } finally {
+            if (stmt != null) stmt.close();
+            if (conn != null) conn.close();
+        }
+
+        return isUpdated;
+    }
+
 }

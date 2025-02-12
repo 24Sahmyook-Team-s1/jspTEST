@@ -172,12 +172,26 @@
                             console.error("❌ 할일 데이터 로드 오류:", tasksData.error);
                             return;
                         }
+                        
+                        let maxEndDate = projectData.end_date; // 기존 프로젝트 종료일
+                        tasksData.forEach((task) => {
+                            if (new Date(task.endDate) > new Date(maxEndDate)) {
+                                maxEndDate = task.endDate; // 가장 늦은 종료일 찾기
+                            }
+                        });
+
+                        console.log("🟡 최종 프로젝트 종료일:", maxEndDate);
+
+                        // ✅ `end_date`가 변경되었으면 업데이트 실행
+                        if (maxEndDate !== projectData.end_date) {
+                            updateProjectEndDate(projectData.id, maxEndDate);
+                        }
 
                         const ganttData = [{
                             id: projectData.id,
                             text: projectData.name,
                             start_date: new Date(projectData.created_at),
-                            duration: 30,
+                            duration: calculateDuration(projectData.created_at, maxEndDate),
                             open: true
                         }];
 
@@ -346,6 +360,25 @@
         }
     });
 	}
+    
+    function updateProjectEndDate(projectId, newEndDate) {
+        $.ajax({
+            url: "jsp/UpdateProjectEndDate.jsp",
+            type: "POST",
+            data: {
+                projectId: projectId,
+                endDate: newEndDate
+            },
+            dataType: "json",
+            success: function(response) {
+                console.log("✅ 프로젝트 종료일 업데이트 성공:", response);
+            },
+            error: function(xhr, status, error) {
+                console.error("❌ 프로젝트 종료일 업데이트 실패:", error);
+            }
+        });
+    }
+
 	
     //최신 작업의 scheduleId 가져오기
     function fetchLatestTaskFromProject(task) {
