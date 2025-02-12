@@ -44,30 +44,30 @@
             <ul>
                 <li data-link="MainPage.html">홈</li>
                 <li data-link="TeamPage.html">팀 페이지</li>
-                <li data-link="FindTeam.html">팀 찾기</li>
-                <li data-link="CreateTeam.html">팀 만들기</li>
-                <li data-link="TeamManage.html">팀 관리</li>
                 <li data-link="ProfilePage.html">프로필</li>
-                <li data-link="SettingsPage.html">설정</li>
+                <li data-link="jsp/logout.jsp">로그아웃</li>
             </ul>
         </div>
     </div>
 
-    <!-- 모달 창 -->
-    <div class="modal" id="projectModal">
-        <div class="modal-content">
-            <h2>프로젝트 관리</h2>
-            <label for="projectSelect">프로젝트 선택</label>
-            <select id="projectSelect"></select>
+    <!-- 모달 창 (삭제 버튼 제거 및 버튼 디자인 개선) -->
+<div class="modal" id="projectModal" style="display: none;">  <!-- 기본적으로 숨김 처리 -->
+    <div class="modal-content">
+        <h2>프로젝트 관리</h2>
 
-            <label for="newProjectName">새 프로젝트 이름</label>
-            <input type="text" id="newProjectName" placeholder="새 이름 입력">
+        <label for="projectSelect">프로젝트 선택</label>
+        <select id="projectSelect"></select>
 
-            <button id="renameProjectBtn">이름 변경</button>
-            <button id="deleteProjectBtn">삭제</button>
-            <button id="closeModalBtn" class="close-btn">닫기</button>
+        <label for="newProjectName">새 프로젝트 이름</label>
+        <input type="text" id="newProjectName" placeholder="새 이름 입력">
+
+        <div class="modal-buttons">
+            <button id="renameProjectBtn" class="primary-btn">이름 변경</button>
+            <button id="closeModalBtn" class="secondary-btn">닫기</button>
         </div>
     </div>
+</div>
+
 
     <script src="js/core.js"></script>
 
