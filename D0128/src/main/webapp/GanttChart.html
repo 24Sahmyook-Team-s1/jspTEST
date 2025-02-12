@@ -60,7 +60,7 @@
         // ✅ 날짜 포맷 설정
         gantt.config.date_format = "%Y-%m-%d";
         gantt.config.xml_date = "%Y-%m-%d";
-
+        gantt.config.drag_move = true;
         checkUserSession();
     });
     
@@ -251,7 +251,6 @@
         const projectStartDate = new Date(projectData.created_at);
 
         if (new Date(task.start_date) < projectStartDate) {
-        	loadGanttChart()
             alert("작업의 시작일은 프로젝트 시작일 이후여야 합니다.");
             loadGanttChart();
             return false;
@@ -287,7 +286,8 @@
                 endDate: convertDate(task.end_date),
                 status: task.status
             },
-            success: function() {
+            success: function(response) {
+            	console.log("updatetaskbyid"+response);
                 loadGanttChart();
             }
         });
