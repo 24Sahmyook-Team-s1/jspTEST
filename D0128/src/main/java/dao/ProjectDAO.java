@@ -389,8 +389,4 @@ public class ProjectDAO {
 
         return isSuccess; // 프로젝트 생성 및 팀 멤버 추가 성공 여부 반환
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> branch 'dev' of https://github.com/24Sahmyook-Team-s1/jspTEST.git

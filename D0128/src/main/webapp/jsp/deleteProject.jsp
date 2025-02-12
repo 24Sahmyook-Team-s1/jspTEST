@@ -37,8 +37,4 @@
     }
 
     out.print(jsonResponse.toJSONString());
-<<<<<<< HEAD
 %>
-=======
-%>
->>>>>>> branch 'dev' of https://github.com/24Sahmyook-Team-s1/jspTEST.git
