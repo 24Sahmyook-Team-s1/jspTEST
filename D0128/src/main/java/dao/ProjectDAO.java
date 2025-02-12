@@ -6,10 +6,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
-import dao.TeamDAO;
 import javax.naming.NamingException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import util.ConnectionPool;
 
 public class ProjectDAO {
@@ -50,7 +50,7 @@ public class ProjectDAO {
         }
     }
 
-    // ✅ 프로젝트 조회 (ID 기준)
+    // ✅ 프로젝트 조회 (ID 기준) - 책임자 정보 포함
     public JSONObject getProjectById(int projectID) throws NamingException, SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -58,8 +58,12 @@ public class ProjectDAO {
         JSONObject project = null;
 
         try {
-            String sql = "SELECT ProjectID, ProjectName, TO_CHAR(CreatedAt, 'YYYY-MM-DD') AS CreatedAt, AdminUserId " +
-                         "FROM projects WHERE ProjectID = ?";
+            // 책임자 정보 포함하여 USER2 테이블과 조인
+            String sql = "SELECT p.ProjectID, p.ProjectName, TO_CHAR(p.CreatedAt, 'YYYY-MM-DD') AS CreatedAt, " +
+                         "u.JSONSTR AS OwnerInfo " +
+                         "FROM projects p " +
+                         "JOIN USER2 u ON p.AdminUserId = u.UserId " +
+                         "WHERE p.ProjectID = ?";
             conn = ConnectionPool.get();
             stmt = conn.prepareStatement(sql);
             stmt.setInt(1, projectID);
@@ -70,8 +74,21 @@ public class ProjectDAO {
                 project.put("id", rs.getInt("ProjectID"));
                 project.put("name", rs.getString("ProjectName"));
                 project.put("created_at", rs.getString("CreatedAt"));
-                project.put("adminuserid", rs.getString("AdminUserId"));
+
+                // 책임자 정보 파싱
+                String ownerJson = rs.getString("OwnerInfo");
+                if (ownerJson != null) {
+                    JSONParser parser = new JSONParser();
+                    JSONObject ownerData = (JSONObject) parser.parse(ownerJson);
+                    project.put("ownerName", ownerData.get("name"));
+                    project.put("ownerEmail", ownerData.get("id"));  // 이메일은 JSON의 id 필드에 저장됨
+                } else {
+                    project.put("ownerName", "정보 없음");
+                    project.put("ownerEmail", "정보 없음");
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         } finally {
             if (rs != null) rs.close();
             if (stmt != null) stmt.close();
@@ -122,7 +139,7 @@ public class ProjectDAO {
         try {
             conn = ConnectionPool.get();
 
-            // 🔹 AdminUserID가 존재하는지 확인
+            // AdminUserID가 존재하는지 확인
             String checkUserSql = "SELECT USERID FROM User2 WHERE USERID = ?";
             stmt = conn.prepareStatement(checkUserSql);
             stmt.setString(1, adminUserID);
@@ -134,7 +151,7 @@ public class ProjectDAO {
             rs.close();
             stmt.close();
 
-            // 🔹 시퀀스를 사용하여 ProjectID 가져오기
+            // 시퀀스를 사용하여 ProjectID 가져오기
             String getNextIdSql = "SELECT projects_seq.NEXTVAL FROM dual";
             stmt = conn.prepareStatement(getNextIdSql);
             rs = stmt.executeQuery();
@@ -146,7 +163,7 @@ public class ProjectDAO {
             rs.close();
             stmt.close();
 
-            // 🔹 프로젝트 추가
+            // 프로젝트 추가
             String insertProjectSql = "INSERT INTO Projects (ProjectID, ProjectName, AdminUserID, CreatedAt) VALUES (?, ?, ?, SYSDATE)";
             stmt = conn.prepareStatement(insertProjectSql);
             stmt.setInt(1, projectId);
@@ -187,7 +204,7 @@ public class ProjectDAO {
                 project.put("owner", rs.getString("AdminUserID"));
                 project.put("createdAt", rs.getDate("CreatedAt").toString());
 
-                // 🔹 간트차트용 스케줄 정보 추가
+                // 간트차트용 스케줄 정보 추가
                 JSONArray schedule = getScheduleByProjectId(projectId, conn);
                 project.put("schedule", schedule);
 
@@ -242,4 +259,66 @@ public class ProjectDAO {
 
         return scheduleArray;
     }
+    
+    public JSONObject getProjectDetails(int projectId, String userId) throws NamingException, SQLException {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        JSONObject projectDetails = new JSONObject();
+
+        try {
+            conn = ConnectionPool.get();
+
+            // 1️⃣ 프로젝트 기본 정보 가져오기
+            String projectSql = "SELECT PROJECTNAME, ADMINUSERID FROM PROJECTS WHERE PROJECTID = ?";
+            pstmt = conn.prepareStatement(projectSql);
+            pstmt.setInt(1, projectId);
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                String adminUserId = rs.getString("ADMINUSERID");
+                String projectName = rs.getString("PROJECTNAME");
+
+                // 2️⃣ 관리자 권한 확인
+                if (userId.equals(adminUserId)) {
+                    projectDetails.put("status", "success");
+                    projectDetails.put("projectName", projectName);
+                    projectDetails.put("role", "admin");
+                    return projectDetails;
+                }
+
+                rs.close();
+                pstmt.close();
+
+                // 3️⃣ 팀원인지 확인
+                String teamSql = "SELECT USERID FROM TEAMMEMBERS WHERE PROJECTID = ? AND USERID = ?";
+                pstmt = conn.prepareStatement(teamSql);
+                pstmt.setInt(1, projectId);
+                pstmt.setString(2, userId);
+                rs = pstmt.executeQuery();
+
+                if (rs.next()) {
+                    projectDetails.put("status", "success");
+                    projectDetails.put("projectName", projectName);
+                    projectDetails.put("role", "member");
+                    return projectDetails;
+                } else {
+                    // 팀원도 아니고, 관리자도 아님 → 접근 불가
+                    projectDetails.put("status", "fail");
+                    projectDetails.put("message", "프로젝트에 접근할 수 없습니다.");
+                }
+            } else {
+                // 프로젝트가 존재하지 않음
+                projectDetails.put("status", "fail");
+                projectDetails.put("message", "해당 프로젝트를 찾을 수 없습니다.");
+            }
+        } finally {
+            if (rs != null) rs.close();
+            if (pstmt != null) pstmt.close();
+            if (conn != null) conn.close();
+        }
+
+        return projectDetails;
+    }
+
 }
