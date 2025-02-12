@@ -95,58 +95,112 @@ body, html {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* 카드 스타일 */
+/* 프로젝트 정보 카드 */
 .card {
-    background: #f9f9f9;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* 호버 시 효과 */
+    margin-bottom: 20px;
 }
 
-.card h2, .card h3 {
+/* 카드 호버 효과 */
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* 프로젝트 제목 스타일 */
+.card h2 {
+    font-size: 28px;
+    font-weight: 700;
     margin-bottom: 15px;
-    color: #333;
+    color: #333333;
 }
 
+/* 책임자 및 설명 텍스트 */
 .card p {
-    margin: 10px 0;
-    line-height: 1.6;
+    font-size: 16px;
+    color: #555555;
+    margin-bottom: 10px;
 }
 
-/* 위험 버튼 스타일 (프로젝트 폐기) */
+/* 강조 텍스트 */
+.card p strong {
+    color: #222222;
+}
+
+/* 프로젝트 폐기 버튼 */
 .danger-btn {
-    background-color: #dc3545;
+    background-color: #ff4d4f;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* 프로젝트 폐기 버튼 호버 효과 */
+.danger-btn:hover {
+    background-color: #d9363e;
+    transform: translateY(-2px);
+}
+
+/* 팀원 관리 섹션 */
+.team-container {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* 팀원 관리 호버 효과 */
+.team-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* 팀원 관리 제목 */
+.team-container h3 {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #333333;
+}
+
+/* 팀원 추가 버튼 */
+.team-container button {
+    background-color: #007bff;
     color: white;
     padding: 12px 20px;
     border: none;
     border-radius: 8px;
+    font-size: 16px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-bottom: 20px;
 }
 
-.danger-btn:hover {
-    background-color: #c82333;
+/* 팀원 추가 버튼 호버 */
+.team-container button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
 }
 
-/* 팀원 관리 */
-.team-container {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.team-list {
-    margin-top: 15px;
-}
-
+/* 팀원 리스트 */
 .team-member {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #e9ecef;
-    padding: 10px 15px;
-    border-radius: 8px;
-    margin-bottom: 10px;
+    background: #f7f9fc;
+    padding: 15px 20px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
 
 /* 팀원 제거 버튼 */
@@ -156,30 +210,17 @@ body, html {
     border: none;
     padding: 8px 12px;
     border-radius: 6px;
+    font-size: 14px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.remove-btn:hover {
-    background-color: #fa5252;
-}
-
-/* 팀원 추가 버튼 */
-.team-container button {
-    background-color: #007bff;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 16px;
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.team-container button:hover {
-    background-color: #0056b3;
+/* 팀원 제거 버튼 호버 */
+.remove-btn:hover {
+    background-color: #fa5252;
     transform: translateY(-2px);
 }
+
 
 /* 프로필 메뉴 */
 .profile-container {

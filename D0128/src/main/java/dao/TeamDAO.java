@@ -15,24 +15,59 @@ public class TeamDAO {
 	public boolean inviteTeamMember(String projectId, String userId) throws NamingException, SQLException {
 	    Connection conn = null;
 	    PreparedStatement pstmt = null;
+	    ResultSet rs = null;
 	    boolean isSuccess = false;
 
 	    try {
 	        conn = ConnectionPool.get();
-	        String sql = "INSERT INTO teamInvitation (ProjectID, UserID) VALUES (?, ?)";
-	        pstmt = conn.prepareStatement(sql);
+
+	        // 1. USER2 테이블에서 사용자 존재 여부 확인
+	        String checkUserSql = "SELECT USERID FROM USER2 WHERE JSONSTR LIKE ?";
+	        pstmt = conn.prepareStatement(checkUserSql);
+	        pstmt.setString(1, "%\"id\":\"" + userId + "\"%");  // 문자열로 수정
+
+	        rs = pstmt.executeQuery();
+
+	        if (!rs.next()) {
+	            // 사용자 존재하지 않음
+	            return false;
+	        }
+	        rs.close();
+	        pstmt.close();
+
+	        // 2. INVITATION 테이블에 이미 초대된 사용자인지 확인
+	        String checkInvitationSql = "SELECT * FROM INVITATION WHERE PROJECTID = ? AND USERID = ?";
+	        pstmt = conn.prepareStatement(checkInvitationSql);
+	        pstmt.setString(1, projectId);
+	        pstmt.setString(2, userId);
+	        rs = pstmt.executeQuery();
+
+	        if (rs.next()) {
+	            // 이미 초대된 사용자
+	            return false;
+	        }
+	        rs.close();
+	        pstmt.close();
+
+	        // 3. 초대 진행 (INVITATION 테이블에 삽입)
+	        String inviteSql = "INSERT INTO INVITATION (PROJECTID, USERID) VALUES (?, ?)";
+	        pstmt = conn.prepareStatement(inviteSql);
 	        pstmt.setString(1, projectId);
 	        pstmt.setString(2, userId);
 
-	        int rowsAffected = pstmt.executeUpdate(); // 실행된 행 개수 확인
-	        isSuccess = (rowsAffected > 0); // 성공 여부 판단
+	        int rowsAffected = pstmt.executeUpdate();  // 초대 성공 여부 확인
+	        isSuccess = (rowsAffected > 0);
+
 	    } finally {
+	        if (rs != null) rs.close();
 	        if (pstmt != null) pstmt.close();
 	        if (conn != null) conn.close();
 	    }
 
 	    return isSuccess;
 	}
+
+
 
 
 	public boolean addTeamMember(int projectId, String userId) throws NamingException, SQLException {

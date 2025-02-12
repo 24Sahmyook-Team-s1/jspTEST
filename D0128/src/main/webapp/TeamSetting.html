@@ -165,25 +165,44 @@
                 window.location.href = targetPage;
             });
         });
-
         function addTeamMember() {
             const userID = prompt("초대할 팀원의 이메일을 입력하세요:");
-			$.ajax({
-				type:"POST",
-				url: "jsp/UserInvite.jsp",
-				data: {
-					userID: userID
-				},
-				success: function (response) {
-                    console.log("UserInvite.jsp 응답:", response);
+            
+            // 세션에서 projectID 가져오기
+            $.ajax({
+                type: "GET",
+                url: "jsp/projectsession.jsp",
+                success: function(projectID) {
+                    if (projectID && userID) {
+                        // 프로젝트 ID와 사용자 ID 함께 전송
+                        $.ajax({
+                            type: "POST",
+                            url: "jsp/UserInvite.jsp",
+                            data: { projectID: projectID.trim(), userID: userID.trim() },
+                            success: function(response) {
+                                console.log("초대 응답:", response);
+                                if (response.status === "success") {
+                                    alert(response.message);
+                                } else {
+                                    alert("초대 실패: " + response.message);
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                console.error("초대 요청 오류:", status, error);
+                                alert("초대 요청 중 오류 발생.");
+                            }
+                        });
+                    } else {
+                        alert("프로젝트 ID 또는 사용자 ID가 올바르지 않습니다.");
+                    }
                 },
-                error: function (xhr, status, error) {
-                    console.error("팀원 초대 AJAX 오류:", status, error);
+                error: function() {
+                    alert("프로젝트 ID를 불러오는 데 실패했습니다.");
                 }
-				
-				
-			});
+            });
         }
+
+
         function removeMember(button) {
             button.parentElement.remove();
         }
