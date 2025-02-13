@@ -287,7 +287,10 @@
                 status: task.status
             },
             success: function(response) {
-            	console.log("updatetaskbyid"+response);
+            	console.log("updatetaskbyid"+response.status);
+            	setTimeout(() => {
+            	    console.log("1초 후 실행됨!");
+            	}, 1000); // 1000ms = 1초
                 loadGanttChart();
             }
         });
