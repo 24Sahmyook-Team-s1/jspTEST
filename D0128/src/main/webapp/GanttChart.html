@@ -258,12 +258,18 @@
         console.log("🟡 Task 수정 요청 데이터:", task);
         console.log("🟡 task.status 값 확인:", task.status); // ✅ 여기서 status 확인
         updateTask(task);
+        setTimeout(() => {
+    	    console.log("1초 후 실행됨!");
+    	}, 1000); // 1000ms = 1초
         return true;
     });
 
     // ✅ 작업 수정 시 서버에 업데이트
     gantt.attachEvent("onAfterTaskUpdate", function(id, task) {
         updateTask(task);
+        setTimeout(() => {
+    	    console.log("1초 후 실행됨!");
+    	}, 1000); // 1000ms = 1초
     });
 	
     gantt.attachEvent("onBeforeTaskChanged", function(id, mode, task) {
@@ -322,7 +328,13 @@
         };
 
         gantt.addTask(newTask);
-        saveNewTask(newTask)
+        setTimeout(() => {
+    	    console.log("1초 후 실행됨!");
+    	}, 1000); // 1000ms = 1초
+        saveNewTask(newTask);
+        setTimeout(() => {
+    	    console.log("1초 후 실행됨!");
+    	}, 1000); // 1000ms = 1초
         loadGanttChart();
     }
 
@@ -351,7 +363,9 @@
 
             if (response.success) {
                 console.log("✅ 서버에 작업이 추가됨. 최신 ID 가져오기...");
-
+                setTimeout(() => {
+            	    console.log("1초 후 실행됨!");
+            	}, 1000); // 1000ms = 1초
                 // ✅ 기존 DAO 메서드 활용: 프로젝트의 최신 작업 리스트 가져오기
                 fetchLatestTaskFromProject(task);
             } else {
